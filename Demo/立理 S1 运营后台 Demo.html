@@ -966,13 +966,13 @@ let PARTNERS = [
     flow: [
       { time: '2026-03-25 01:00', order_id: 'ORD-20260218-0301', type: '解冻计入', points: '+89.70', status: '已划入可结算金额' },
       { time: '2026-11-03 14:20', order_id: 'ORD-20261103-0921', type: '冻结计入 (续购)', points: '+73.80', status: '冻结中 (预计 2026-12-10 解冻)' },
-      { time: '2026-10-28 15:00', order_id: 'SETTLE-202610-008', type: '线下结算核销', points: '-2,000.00', status: '财务已打款 (流水 BCM202610288892)' },
+      { time: '2026-10-28 15:00', order_id: 'SETTLE-202610-008', type: '线下结算核销', points: '-2,074.98', status: '财务已打款 (流水 BCM202610288892)' },
       { time: '2026-10-25 16:40', order_id: 'ORD-20261025-0811', type: '冻结计入 (升级补差·续购)', points: '+240.00', status: '冻结中 (预计 2027-11-01 解冻)' },
       { time: '2026-10-27 01:00', order_id: 'ORD-20260920-0088', type: '年卡分期解冻 (第 1/12 期)', points: '+24.98', status: '划入可结算金额' },
       { time: '2026-11-06 10:30', order_id: 'ORD-20260820-0066', type: '退款扣除', points: '-712.26', status: '退款 ¥2,374.20（第 3 期半退，第 4 期起全退）' }
     ],
     settlements: [
-      { batch_no: 'SETTLE-202610-008', points: 2000, voucher: 'BCM202610288892', operator: '财务王敏', time: '2026-10-28 15:00', remark: '2026年9-10月度推广服务费，招商银行公对私打款付清' }
+      { batch_no: 'SETTLE-202610-008', points: 2074.98, voucher: 'BCM202610288892', operator: '财务王敏', time: '2026-10-28 15:00', remark: '2026年9-10月度推广服务费，招商银行公对私打款付清' }
     ],
     customers: [
       { phone: '13812345678', bind_time: '2026-10-02 10:20', reg_time: '2026-10-02 10:25', plan: 'Pro 月卡', plan_status: 'ACTIVE_MONTH', expire_at: '2026-12-02', orders_cnt: 2, gmv: 668.00 },
@@ -1087,7 +1087,7 @@ let SETTLEMENT_HISTORY = [
     partner_name: '李维国',
     partner_phone: '13700001111',
     channel_type: 'EXTERNAL',
-    points: 2000,
+    points: 2074.98,
     voucher: 'BCM202610288892',
     operator: '财务王敏',
     settle_time: '2026-10-28 15:00',
@@ -1224,7 +1224,7 @@ function allocSettled(settleId, keys) {
 }
 function seqKeys(orderId, from, to) { const r = []; for (let k = from; k <= to; k++) r.push(orderId + '#' + k); return r; }
 
-allocSettled('SETTLE-202610-008', seqKeys('ORG-20260810-001', 1, 2));
+allocSettled('SETTLE-202610-008', seqKeys('ORG-20260810-001', 1, 2).concat(seqKeys('ORD-20260820-0066', 1, 1)));
 allocSettled('SETTLE-202609-002', seqKeys('ORD-20260410-0155', 1, 5));
 recalcAll();
 
@@ -1257,36 +1257,11 @@ function productTagHtml(o, extra) {
   return productTags(o).map(x => `<span class="badge ${x.cls}" style="font-size:10.5px;">${x.t}</span>`).join(' ') + (extra || '');
 }
 function lineStateBadge(l) {
-  if (l.state === 'SETTLED') return `<span class="badge badge-neutral">已结算${LINE_SETTLE_ID[l.key] ? ' · ' + LINE_SETTLE_ID[l.key] : ''}</span>`;
+  if (l.state === 'SETTLED') return `<span class="badge badge-neutral">已结算</span>${LINE_SETTLE_ID[l.key] ? `<div style="font-size:10px; color:var(--muted-foreground); margin-top:2px;">${LINE_SETTLE_ID[l.key]}</div>` : ''}`;
   if (l.state === 'UNLOCKED') return '<span class="badge badge-success">可结算</span>';
   if (l.state === 'FROZEN') return '<span class="badge badge-warning">冻结中</span>';
   if (l.state === 'REFUND') return '<span class="badge badge-danger">退款扣除</span>';
   return '';
-}
-function lineBar(lines) {
-  const color = { SETTLED: '#18181B', UNLOCKED: '#22C55E', FROZEN: '#FBBF24', REFUND: '#EF4444' };
-  return '<div style="display:flex; gap:2px; width:120px;">' + lines.map(l => `<div style="flex:1; height:6px; border-radius:3px; background:${color[l.state]};"></div>`).join('') + '</div>';
-}
-
-function orderStatusHtml(o, p) {
-  const kind = orderKind(o);
-  if (o.status === 'VOID_REFUND') return '<span class="badge badge-danger">已退款</span>';
-  const ls = orderLines(o, p);
-  const active = ls.filter(l => l.state !== 'REFUND');
-  const done = active.filter(l => l.state === 'SETTLED' || l.state === 'UNLOCKED').length;
-  const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
-  const tx = refunded > 0 ? ` <span class="badge badge-danger">${refunded >= o.pay_amount ? '全额退款' : '部分退款'}</span>` : '';
-  if (kind === 'MONTH' || kind === 'LUMP') return (done ? '<span class="badge badge-success">已解冻</span>' : '<span class="badge badge-warning">冻结中</span>') + tx;
-  const b = done >= active.length ? '<span class="badge badge-success">已全部解冻</span>' : `<span class="badge badge-warning">分期解冻中 ${done}/${active.length}</span>`;
-  return b + ` <a style="font-size:12px; color:#1D4ED8; cursor:pointer;" onclick="showOrderLines('${o.id}')">分期明细</a>` + tx;
-}
-function orderUnfreezeText(o, p) {
-  const kind = orderKind(o);
-  if (kind === 'NONE') return '-';
-  const ls = orderLines(o, p);
-  if (kind === 'MONTH' || kind === 'LUMP') return ls[0].unlock;
-  const next = ls.find(l => l.state === 'FROZEN');
-  return '按月分期 · ' + (next ? '下期 ' + next.unlock : '已全部解冻');
 }
 
 function findOrder(orderId) {
@@ -1496,17 +1471,16 @@ function openSettleSheet(pid) {
             <button class="btn btn-outline btn-sm" onclick="sheetSelectAll(false)">清空</button>
           </div>
           <div class="table-container"><table class="official-table">
-            <thead><tr><th style="width:36px;"></th><th>来源订单</th><th>客户 / 机构</th><th>期次 / 服务期间</th><th>解冻日</th><th>核验信息</th><th style="text-align:right;">本次可结算</th><th>明细状态</th></tr></thead>
+            <thead><tr><th style="width:36px;"></th><th>商品名称</th><th>订单号</th><th>客户 / 机构</th><th>期次 / 服务期间</th><th>解冻日</th><th style="text-align:right;">本次可结算</th></tr></thead>
             <tbody>${lines.map(l => `
               <tr>
                 <td><input type="checkbox" class="sheet-chk" data-key="${l.key}" data-unlock="${l.unlock}" checked onchange="toggleSheetLine(this)"></td>
-                <td>${kindBadge(l.kind)} <span class="code-badge">${l.order_id}</span><div style="font-size:11.5px; color:var(--muted-foreground);">${l.kind === 'ORG' ? '机构版合同' : l.source}</div></td>
+                <td>${kindBadge(l.kind)} ${l.kind === 'ORG' ? '机构版合同' : l.source}</td>
+                <td><span class="code-badge">${l.order_id}</span></td>
                 <td class="num">${l.customer || '-'}</td>
                 <td>${l.n > 1 ? '第 ' + l.k + '/' + l.n + ' 期' : '一次性'}<div style="font-size:11.5px; color:var(--muted-foreground);">${l.period}</div></td>
                 <td>${l.unlock}</td>
-                <td style="font-size:11.5px; color:var(--muted-foreground); line-height:1.55;">实付 ¥${formatNum(l.pay)} · 分成 ${l.rate}%<div>本单总佣金 ¥${fmtC(l.order_total)}</div></td>
                 <td class="num" style="text-align:right;"><strong>¥${fmtC(l.remaining)}</strong>${l.settled > 0 ? `<div style="font-size:11px; color:var(--muted-foreground);">已结算 ¥${fmtC(l.settled)}（原 ¥${fmtC(l.amt)}）</div>` : ''}</td>
-                <td>${l.settled > 0 ? '<span class="badge badge-warning">已部分结算</span>' : '<span class="badge badge-success">可结算</span>'}</td>
               </tr>`).join('')}</tbody>
           </table></div>
           ${dueOffset > 0 ? `<div style="background:#FEF2F2; border:1px solid #FCA5A5; border-radius:8px; padding:8px 12px; font-size:12.5px; color:#B91C1C; margin-bottom:12px;">该合伙人存在退款待追回 <strong class="num">¥${fmtC(p.points.unrecovered)}</strong>，本次结算自动扣减 <strong class="num">¥${fmtC(dueOffset)}</strong>${p.points.unrecovered > total ? '，剩余 ¥' + fmtC(p.points.unrecovered - total) + ' 结转下次扣减' : ''}。</div>` : '<div style="margin-bottom:8px;"></div>'}
@@ -2213,49 +2187,38 @@ function renderPartnerListView(container) {
       <table class="official-table">
         <thead>
           <tr>
-            <th>合伙人姓名 / 单位</th>
+            <th>合伙人姓名</th>
+            <th>账号状态</th>
+            <th>单位</th>
             <th>手机号 (完整展示)</th>
             <th>渠道</th>
             <th>推荐码</th>
             <th>首购 / 续购比例</th>
-            <th>发展客户 (付费)</th>
             <th>总销售额</th>
             <th>累计总金额</th>
-            <th>当前可结算</th>
-            <th>冻结中</th>
-            <th>已核销</th>
-            <th>账号状态</th>
             <th>加入时间</th>
             <th class="col-sticky" style="text-align: right;">操作</th>
           </tr>
         </thead>
         <tbody>
           ${list.length === 0 ? `
-            <tr><td colspan="14" style="text-align:center; padding:48px; color:var(--muted-foreground);">暂无符合筛选条件的合伙人</td></tr>
+            <tr><td colspan="11" style="text-align:center; padding:48px; color:var(--muted-foreground);">暂无符合筛选条件的合伙人</td></tr>
           ` : pagedRows.map(p => `
             <tr>
+              <td><span style="font-weight: 600;">${p.name}</span></td>
               <td>
-                <div style="font-weight: 600;">${p.name}</div>
-                <div style="font-size: 11.5px; color: var(--muted-foreground); max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                  ${p.org}
-                </div>
+                ${p.status === 'NORMAL' ? '<span class="badge badge-success">正常</span>' : ''}
+                ${p.status === 'FROZEN' ? '<span class="badge badge-warning" title="'+p.freeze_reason+'">已冻结</span>' : ''}
               </td>
+              <td><div style="font-size: 12px; color: var(--muted-foreground); max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.org}</div></td>
               <td><strong class="num">${p.phone}</strong></td>
               <td>
                 ${p.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部</span>' : '<span class="badge badge-neutral">外部</span>'}
               </td>
               <td><span class="code-badge">${p.code}</span>${p.status === 'FROZEN' ? '<div style="font-size:10.5px; color:var(--destructive); margin-top:2px;">已失效</div>' : ''}</td>
               <td><strong class="num">${p.first_rate.toFixed(1)}%</strong> <span style="font-size:11px; color:var(--muted-foreground);">/ 续 ${p.renew_rate.toFixed(1)}%</span></td>
-              <td><span class="num">${p.customers_count}</span> <span style="font-size: 11px; color: var(--muted-foreground);">(${p.paying_count})</span></td>
               <td><strong class="num">¥${formatNum(partnerSales(p))}</strong></td>
               <td><strong class="num">¥${fmtC(p.points.total)}</strong></td>
-              <td><strong class="num" style="color: ${p.points.withdrawable > 0 ? '#15803D' : 'inherit'};">¥${fmtC(p.points.withdrawable)}</strong></td>
-              <td class="num" style="color: #A16207;">¥${fmtC(p.points.frozen)}</td>
-              <td class="num" style="color: var(--muted-foreground);">¥${fmtC(p.points.settled)}</td>
-              <td>
-                ${p.status === 'NORMAL' ? '<span class="badge badge-success">正常</span>' : ''}
-                ${p.status === 'FROZEN' ? '<span class="badge badge-warning" title="'+p.freeze_reason+'">已冻结</span>' : ''}
-              </td>
               <td style="color: var(--muted-foreground); font-size: 12px;">${p.join_time.split(' ')[0]}</td>
               <td class="col-sticky" style="text-align: right;">
                 <button class="btn btn-outline btn-sm" onclick="navigate('partner/${p.id}/orders')">详情</button>
@@ -2277,6 +2240,7 @@ function renderPartnerListView(container) {
 // 3. 页面：合伙人详情穿透页 (PARTNER DETAIL)
 // ==========================================
 function renderPartnerDetailView(container, p, activeTab = 'orders') {
+  if (!['orders', 'settlements'].includes(activeTab)) activeTab = 'orders';
   container.innerHTML = `
     <!-- 顶部导航 -->
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px;">
@@ -2363,16 +2327,10 @@ function renderPartnerDetailView(container, p, activeTab = 'orders') {
     <!-- 分段明细选项卡 -->
     <div class="segmented-tabs">
       <button class="seg-tab-btn ${activeTab==='orders'?'active':''}" onclick="navigate('partner/${p.id}/orders')">
-        带单订单 (${p.orders.length})
-      </button>
-      <button class="seg-tab-btn ${activeTab==='flow'?'active':''}" onclick="navigate('partner/${p.id}/flow')">
-        佣金明细流水 (${p.flow.length})
+        归属订单
       </button>
       <button class="seg-tab-btn ${activeTab==='settlements'?'active':''}" onclick="navigate('partner/${p.id}/settlements')">
-        线下结算历史 (${p.settlements.length})
-      </button>
-      <button class="seg-tab-btn ${activeTab==='logs'?'active':''}" onclick="navigate('partner/${p.id}/logs')">
-        操作日志 (${p.logs.length})
+        线下结算历史
       </button>
     </div>
 
@@ -2392,74 +2350,45 @@ function renderDetailTabTable(p, tab) {
         <thead>
           <tr>
             <th>订单编号</th>
-            <th>下单客户 (完整手机号)</th>
-            <th>购买商品 / 套餐类型</th>
-            <th>实付金额</th>
-            <th>锁定比例</th>
-            <th>分成金额</th>
-            <th>分成状态</th>
-            <th>计划解冻时间</th>
+            <th>下单客户 / 机构</th>
+            <th>商品名称</th>
+            <th>订单状态</th>
+            <th>订单金额</th>
+            <th>分成比例</th>
+            <th>本单佣金</th>
             <th>下单时间</th>
+            <th class="col-sticky" style="text-align:right;">操作</th>
           </tr>
         </thead>
         <tbody>
-          ${p.orders.length === 0 ? '<tr><td colspan="9" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无带单订单</td></tr>' : rows.map(o => `
-            <tr>
-              <td><span class="code-badge">${o.id}</span></td>
-              <td>${o.kind === 'ORG' ? `<strong>${o.org_name}</strong><div style="font-size:11.5px; color:var(--muted-foreground);">合同 ${o.contract_no}</div>` : `<strong class="num">${o.customer_phone}</strong>`}</td>
-              <td>
-                ${productName(o)}
-                <div style="margin-top:3px;">${productTagHtml(o)}${o.months ? ` <span class="badge badge-neutral" style="font-size:10px;">${o.months} 个月服务期</span>` : ''}</div>
+          ${p.orders.length === 0 ? '<tr><td colspan="9" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无归属订单</td></tr>' : rows.map(o => {
+            const lines = orderLines(o, p);
+            const netPoints = Math.max(0, o.points - (o._recover || 0));
+            const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
+            const pc = netPoints > 0 ? '#15803D' : 'var(--muted-foreground)';
+            const isRefund = refunded > 0 || o.status === 'VOID_REFUND';
+            const payBadge = isRefund
+              ? '<span class="badge badge-danger" style="font-size:10.5px;">已退款</span>'
+              : '<span class="badge badge-success" style="font-size:10.5px;">已支付</span>';
+            const isOrg = o.kind === 'ORG';
+            return `<tr>
+              <td>${isOrg ? `<span class="code-badge">${o.contract_no}</span><div style="font-size:11.5px; color:var(--muted-foreground); margin-top:2px;">${o.id}</div>` : `<span class="code-badge">${o.id}</span>`}</td>
+              <td>${isOrg ? `<strong>${o.org_name}</strong>` : `<strong class="num">${o.customer_phone}</strong>`}</td>
+              <td style="font-size:12.5px;">${productName(o)}<div style="margin-top:3px;">${productTagHtml(o)}${o.months ? ` <span class="badge badge-neutral" style="font-size:10px;">${o.months} 个月服务期</span>` : ''}</div></td>
+              <td>${payBadge}</td>
+              <td class="num">¥${formatNum(o.pay_amount)}</td>
+              <td class="num">${o.rate.toFixed(1)}%</td>
+              <td><strong class="num" style="color:${pc};">${netPoints > 0 ? '+' : ''}¥${fmtC(netPoints)}</strong>${o._recover > 0 ? `<div style="font-size:11px; color:var(--destructive);">原 +¥${fmtC(o.points)} · 扣回 ¥${fmtC(o._recover)}</div>` : ''}</td>
+              <td class="num" style="color:var(--muted-foreground); font-size:11.5px;">${o.created_at || o.start}</td>
+              <td class="col-sticky" style="text-align:right; white-space:nowrap;">
+                ${lines.length ? `<button class="btn btn-outline btn-sm" onclick="showOrderLines('${o.id}')">分期明细</button>` : ''}
+                ${o.points > 0 && refunded < o.pay_amount ? `<button class="btn btn-outline btn-sm" onclick="openRefundDrawer('${o.id}')">退款登记</button>` : ''}
               </td>
-              <td><span class="num">¥${o.pay_amount.toFixed(2)}</span></td>
-              <td><span class="num">${o.rate.toFixed(1)}%</span></td>
-              <td>
-                <strong class="num" style="color: ${o.points > 0 ? '#15803D' : (o.points < 0 ? 'var(--destructive)' : 'var(--muted-foreground)')};">
-                  ${o.points > 0 ? '+¥' : (o.points < 0 ? '-¥' : '¥')}${fmtC(Math.abs(o.points))}
-                </strong>
-              </td>
-              <td>${orderStatusHtml(o, p)}</td>
-              <td style="color: var(--muted-foreground); font-size:12px;">${orderUnfreezeText(o, p)}</td>
-              <td style="color: var(--muted-foreground); font-size:12px;">${o.created_at}</td>
-            </tr>
-          `).join('')}
+            </tr>`;
+          }).join('')}
         </tbody>
       </table>
       ${pagerBar(key, p.orders.length)}
-    `;
-  }
-
-  if (tab === 'flow') {
-    const key = 'det-flow-' + p.id;
-    const rows = pagedList(key, p.flow);
-    return `
-      <table class="official-table">
-        <thead>
-          <tr>
-            <th>入账时间</th>
-            <th>关联单据</th>
-            <th>明细类型</th>
-            <th>变动金额</th>
-            <th>状态说明与流水附言</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${p.flow.length === 0 ? '<tr><td colspan="5" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无流水</td></tr>' : rows.map(f => `
-            <tr>
-              <td style="color: var(--muted-foreground); font-size:12px;">${f.time}</td>
-              <td><span class="code-badge">${f.order_id}</span></td>
-              <td><strong>${f.type}</strong></td>
-              <td>
-                <strong class="num" style="color: ${f.points.startsWith('+') ? '#15803D' : 'var(--destructive)'};">
-                  ${f.points.startsWith('+') ? '+¥' + f.points.slice(1) : (f.points.startsWith('-') ? '-¥' + f.points.slice(1) : '¥' + f.points)}
-                </strong>
-              </td>
-              <td style="color: var(--muted-foreground); font-size:12px;">${f.status}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-      ${pagerBar(key, p.flow.length)}
     `;
   }
 
@@ -2496,28 +2425,6 @@ function renderDetailTabTable(p, tab) {
     `;
   }
 
-  if (tab === 'logs') {
-    const key = 'det-logs-' + p.id;
-    const rows = pagedList(key, p.logs);
-    return `
-      <div style="padding: 18px 20px;">
-        ${rows.map(log => `
-          <div style="padding: 10px 0; border-bottom: 1px solid var(--border); font-size:13px;">
-            <div style="display:flex; justify-content:space-between; color:var(--muted-foreground); font-size:11.5px;">
-              <span>${log.time} · 操作人: <strong>${log.operator}</strong></span>
-              <span>${log.action}</span>
-            </div>
-            <div style="margin-top: 4px; font-weight: 500;">
-              ${log.before ? `变更: [${log.before} → ${log.after}]` : ''}
-              <span style="color: var(--muted-foreground); font-weight:normal; margin-left:6px;">说明: ${log.reason}</span>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-      ${pagerBar(key, p.logs.length)}
-    `;
-  }
-
   return '';
 }
 
@@ -2532,10 +2439,8 @@ function renderSettlementsView(container) {
   const totalPending = pendingPartners.reduce((s, p) => s + p.points.withdrawable, 0);
   const sumLines = (p, kind) => partnerLines(p).filter(l => l.state === 'UNLOCKED' && (kind === 'ORG' ? l.kind === 'ORG' : l.kind !== 'ORG')).reduce((a, l) => a + l.remaining, 0);
   const orgPending = pendingPartners.reduce((s, p) => s + sumLines(p, 'ORG'), 0);
-  const tabBtn = (key, label, cnt) => `<button class="seg-tab-btn ${settleSubTab === key ? 'active' : ''}" onclick="settleSubTab='${key}'; renderSettlementsView(document.getElementById('main-view-container'))">${label} (${cnt})</button>`;
-  const headerBtn = settleSubTab === 'pending'
-    ? ''
-    : `<button class="btn btn-outline" onclick="toast('已导出历史对账报表')">导出结算台账</button>`;
+  const tabBtn = (key, label) => `<button class="seg-tab-btn ${settleSubTab === key ? 'active' : ''}" onclick="settleSubTab='${key}'; renderSettlementsView(document.getElementById('main-view-container'))">${label}</button>`;
+  const headerBtn = '';
 
   let body = '';
   if (settleSubTab === 'pending') {
@@ -2549,21 +2454,19 @@ function renderSettlementsView(container) {
       <div class="table-container">
         <table class="official-table">
           <thead><tr>
-            <th>合伙人 / 单位</th><th>渠道</th><th>账号状态</th><th>可结算构成</th><th>可结算金额</th><th>最早解冻日</th>
+            <th>合伙人姓名</th><th>单位</th><th>手机号</th><th>渠道</th><th>账号状态</th><th>可结算金额</th><th>最早解冻日</th>
             <th class="col-sticky" style="text-align:right;">操作</th>
           </tr></thead>
           <tbody>
-            ${pendingPartners.length === 0 ? '<tr><td colspan="7" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无可结算明细</td></tr>' : pagedPending.map(p => {
+            ${pendingPartners.length === 0 ? '<tr><td colspan="8" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无可结算明细</td></tr>' : pagedPending.map(p => {
               const ls = partnerLines(p).filter(l => l.state === 'UNLOCKED');
-              const orders = new Set(ls.map(l => l.order_id)).size;
               const earliest = ls.map(l => l.unlock).sort()[0];
-              const on = sumLines(p, 'ONLINE'), og = sumLines(p, 'ORG');
               return `<tr>
-                <td><strong>${p.name}</strong><div style="font-size:11.5px; color:var(--muted-foreground);">${p.org}</div><div class="num" style="font-size:11.5px; color:var(--muted-foreground);">${p.phone}</div></td>
+                <td><strong>${p.name}</strong></td>
+                <td style="font-size:12px; color:var(--muted-foreground);">${p.org}</td>
+                <td><span class="num">${p.phone}</span></td>
                 <td>${p.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部</span>' : '<span class="badge badge-neutral">外部</span>'}</td>
                 <td>${p.status === 'NORMAL' ? '<span class="badge badge-success">正常</span>' : '<span class="badge badge-warning" title="账号已冻结，请审慎核销">已冻结</span>'}</td>
-                <td style="font-size:12.5px;">${on > 0 ? `线上套餐 <span class="num">¥${fmtC(on)}</span>` : ''}${on > 0 && og > 0 ? '<br>' : ''}${og > 0 ? `机构订单 <span class="num">¥${fmtC(og)}</span>` : ''}
-                  <div style="font-size:11.5px; color:var(--muted-foreground);">${orders} 笔订单 · ${ls.length} 期明细</div></td>
                 <td><strong class="num" style="color:#15803D; font-size:15px;">¥${fmtC(p.points.withdrawable)}</strong></td>
                 <td style="color:var(--muted-foreground); font-size:12px;">${earliest}</td>
                 <td class="col-sticky" style="text-align:right;">${p.status === 'FROZEN'
@@ -2595,8 +2498,6 @@ function renderSettlementsView(container) {
               <td style="color:var(--muted-foreground); font-size:12px; max-width:200px;" title="${esc(s.remark)}">${esc(s.remark)}</td>
               <td class="col-sticky" style="text-align:right; white-space:nowrap;">
                 <button class="btn btn-outline btn-sm" onclick="openSettleDetail('${s.settle_id}')">查看明细</button>
-                <button class="btn btn-outline btn-sm" onclick="openEditVoucherModal('${s.settle_id}')">修改备注</button>
-                ${s.imported ? '' : `<button class="btn btn-outline btn-sm" onclick="revokeSettlement('${s.settle_id}')">撤销结算</button>`}
                 <button class="btn btn-outline btn-sm" onclick="navigate('partner/${s.partner_id}/settlements')">合伙人详情</button>
               </td></tr>`; }).join('')}
           </tbody>
@@ -2613,8 +2514,8 @@ function renderSettlementsView(container) {
       <div>${headerBtn}</div>
     </div>
     <div class="segmented-tabs">
-      ${tabBtn('pending', '待结算', pendingPartners.length)}
-      ${tabBtn('history', '结算历史', SETTLEMENT_HISTORY.length)}
+      ${tabBtn('pending', '待结算')}
+      ${tabBtn('history', '结算历史')}
     </div>
     ${body}
   `;
@@ -2626,15 +2527,9 @@ function renderSettlementsView(container) {
 let orderSubTab = 'user';
 let ordKw = '';
 let ordStatus = 'ALL';
-let ordKindFilter = 'ALL';
 
 function ordIsRefunded(o) {
   return (o.refunds || []).length > 0 || o.status === 'VOID_REFUND';
-}
-function ordCategory(o) {
-  if (o.is_upgrade) return 'LUMP';
-  if (/加油包/.test(o.product)) return 'PACK';
-  return orderKind(o);
 }
 
 function allUserOrders() {
@@ -2646,7 +2541,7 @@ function allUserOrders() {
 function renderOrdersView(container) {
   const userOrders = allUserOrders();
   const orgOrders = allOrgOrders();
-  const tabBtn = (key, label, cnt) => `<button class="seg-tab-btn ${orderSubTab === key ? 'active' : ''}" onclick="orderSubTab='${key}'; resetPage('orders-user'); resetPage('orders-org'); renderOrdersView(document.getElementById('main-view-container'))">${label} (${cnt})</button>`;
+  const tabBtn = (key, label) => `<button class="seg-tab-btn ${orderSubTab === key ? 'active' : ''}" onclick="orderSubTab='${key}'; resetPage('orders-user'); resetPage('orders-org'); renderOrdersView(document.getElementById('main-view-container'))">${label}</button>`;
   const headerBtn = orderSubTab === 'user'
     ? ''
     : `<button class="btn btn-primary" onclick="openOrgEntryDrawer()">＋ 录入机构订单</button>`;
@@ -2656,13 +2551,10 @@ function renderOrdersView(container) {
     const filteredUserOrders = userOrders.filter(({ p, o }) => {
       if (ordStatus === 'PAID' && ordIsRefunded(o)) return false;
       if (ordStatus === 'REFUNDED' && !ordIsRefunded(o)) return false;
-      if (ordKindFilter !== 'ALL' && ordCategory(o) !== ordKindFilter) return false;
       if (!kw) return true;
       return o.id.toLowerCase().includes(kw)
         || o.customer_phone.includes(kw)
-        || p.name.toLowerCase().includes(kw)
-        || (p.code || '').toLowerCase().includes(kw)
-        || productName(o).toLowerCase().includes(kw);
+        || p.name.toLowerCase().includes(kw);
     });
     const filteredUserPay = filteredUserOrders.reduce((a, { o }) => {
       const refunded = (o.refunds || []).reduce((s, r) => s + r.amount, 0);
@@ -2674,12 +2566,12 @@ function renderOrdersView(container) {
       <div class="filter-card">
         <div class="filter-title-row">
           <span class="filter-title">筛选订单</span>
-          <button class="btn btn-outline btn-sm" onclick="ordKw=''; ordStatus='ALL'; ordKindFilter='ALL'; resetPage('orders-user'); renderOrdersView(document.getElementById('main-view-container'))">重置</button>
+          <button class="btn btn-outline btn-sm" onclick="ordKw=''; ordStatus='ALL'; resetPage('orders-user'); renderOrdersView(document.getElementById('main-view-container'))">重置</button>
         </div>
         <div class="filter-inputs-grid">
           <div class="filter-field" style="flex: 2; min-width: 280px;">
             <span class="field-label">关键词</span>
-            <input class="input-control" type="text" placeholder="订单编号、客户手机号、合伙人姓名、推荐码、套餐名" value="${ordKw}" oninput="ordKw=this.value; resetPage('orders-user'); renderOrdersView(document.getElementById('main-view-container'))">
+            <input class="input-control" type="text" placeholder="订单编号、客户手机号、合伙人姓名" value="${ordKw}" oninput="ordKw=this.value; resetPage('orders-user'); renderOrdersView(document.getElementById('main-view-container'))">
           </div>
           <div class="filter-field" style="flex: 1;">
             <span class="field-label">订单状态</span>
@@ -2687,16 +2579,6 @@ function renderOrdersView(container) {
               <option value="ALL" ${ordStatus==='ALL'?'selected':''}>全部状态</option>
               <option value="PAID" ${ordStatus==='PAID'?'selected':''}>已支付</option>
               <option value="REFUNDED" ${ordStatus==='REFUNDED'?'selected':''}>已退款</option>
-            </select>
-          </div>
-          <div class="filter-field" style="flex: 1;">
-            <span class="field-label">套餐类型</span>
-            <select class="input-control" onchange="ordKindFilter=this.value; resetPage('orders-user'); renderOrdersView(document.getElementById('main-view-container'))">
-              <option value="ALL" ${ordKindFilter==='ALL'?'selected':''}>全部套餐</option>
-              <option value="MONTH" ${ordKindFilter==='MONTH'?'selected':''}>月卡</option>
-              <option value="YEAR" ${ordKindFilter==='YEAR'?'selected':''}>年卡</option>
-              <option value="PACK" ${ordKindFilter==='PACK'?'selected':''}>加油包</option>
-              <option value="LUMP" ${ordKindFilter==='LUMP'?'selected':''}>升级补差</option>
             </select>
           </div>
         </div>
@@ -2778,8 +2660,8 @@ function renderOrdersView(container) {
       <div>${headerBtn}</div>
     </div>
     <div class="segmented-tabs">
-      ${tabBtn('user', '用户订单', userOrders.length)}
-      ${tabBtn('org', '机构订单', orgOrders.length)}
+      ${tabBtn('user', '用户订单')}
+      ${tabBtn('org', '机构订单')}
     </div>
     ${body}
   `;
