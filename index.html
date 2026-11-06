@@ -1,18 +1,3469 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=./Demo/立理%20S1%20合伙人端%20Demo.html">
-  <title>正在进入 立理 S1 合伙人端 Demo...</title>
-  <script>
-    var target = './Demo/' + encodeURIComponent('立理 S1 合伙人端 Demo.html') + window.location.hash;
-    window.location.replace(target);
-  </script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>立理 S1 平台管理后台 — 合伙人管理</title>
+<style>
+/* 
+ * 立理 S1 官方统一设计规范 (Tailwind CSS v4 + shadcn/ui 官方逆向提取版)
+ * 来源: https://ali-dev.s1.liliai.cn/admin/
+ */
+:root {
+  --background: #FFFFFF;
+  --foreground: #09090B;
+  --muted: #F4F4F5;
+  --muted-foreground: #71717A;
+  --card: #FFFFFF;
+  --card-foreground: #09090B;
+  --popover: #FFFFFF;
+  --popover-foreground: #09090B;
+  --border: #E4E4E7;
+  --input: #E4E4E7;
+  --primary: #09090B;
+  --primary-hover: #27272A;
+  --primary-foreground: #FAFAFA;
+  --secondary: #F4F4F5;
+  --secondary-foreground: #18181B;
+  --accent: #F4F4F5;
+  --accent-foreground: #18181B;
+  --destructive: #E11D48;
+  --destructive-hover: #BE123C;
+  --destructive-foreground: #FFFFFF;
+  --ring: #71717A;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 9999px;
+  --sidebar-w: 256px;
+  --header-h: 56px;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background-color: #FAFAFA;
+  color: var(--foreground);
+  line-height: 1.5;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 等宽数字排版 */
+.num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
+/* 页面总布局 */
+#app-layout { display: flex; min-height: 100vh; }
+
+/* 左侧侧边栏 (1:1 复刻官方) */
+aside#app-sidebar {
+  width: var(--sidebar-w);
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  z-index: 50;
+}
+.sidebar-brand {
+  padding: 18px 20px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.brand-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 19px;
+  font-weight: 800;
+  color: #09090B;
+  letter-spacing: -0.02em;
+}
+.brand-badge {
+  font-size: 11px;
+  font-weight: 700;
+  border: 1.5px solid #09090B;
+  padding: 1px 5px;
+  border-radius: 4px;
+  line-height: 1.2;
+}
+.brand-sub {
+  font-size: 11px;
+  color: var(--muted-foreground);
+  margin-top: 2px;
+  font-weight: 400;
+}
+
+.sidebar-menu-wrap {
+  padding: 12px 12px;
+  flex: 1;
+  overflow-y: auto;
+}
+.menu-group-header {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  padding: 8px 10px 4px;
+}
+.sidebar-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  color: var(--foreground);
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 400;
+  margin-bottom: 2px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.sidebar-menu-item:hover { background-color: var(--muted); }
+.sidebar-menu-item.active {
+  background-color: var(--muted);
+  font-weight: 600;
+  color: var(--foreground);
+}
+.sidebar-menu-item svg {
+  width: 16px; height: 16px;
+  stroke: var(--foreground);
+  flex-shrink: 0;
+}
+.sidebar-menu-item .menu-badge {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  background: var(--destructive);
+  color: #fff;
+}
+.sidebar-menu-item .menu-tag-pill {
+  margin-left: auto;
+  font-size: 10.5px;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: #E4E4E7;
+  color: #52525B;
+}
+
+/* 侧边栏底部用户信息 (1:1 复刻官方张博文) */
+.sidebar-footer {
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.user-profile-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.user-avatar-circle {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-pill);
+  background: #E4E4E7;
+  color: #18181B;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 600; font-size: 13px;
+}
+.user-meta-texts { min-width: 0; }
+.user-meta-name { font-size: 13px; font-weight: 600; color: var(--foreground); line-height: 1.2; }
+.user-meta-role { font-size: 11.5px; color: var(--muted-foreground); margin-top: 1px; }
+
+/* 页面内容承载容器 */
+main#app-main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* 官方顶栏 (1:1 复刻) */
+header#app-header {
+  height: var(--header-h);
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.btn-icon-square {
+  width: 32px; height: 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--foreground);
+}
+.btn-icon-square:hover { background: var(--muted); }
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.search-pill-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(244, 244, 245, 0.6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0 10px;
+  height: 32px;
+  width: 200px;
+  color: var(--muted-foreground);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.search-pill-box:hover { background: #fff; border-color: #A1A1AA; }
+.kbd-badge {
+  font-size: 10px;
+  border: 1px solid #D4D4D8;
+  border-radius: 4px;
+  padding: 1px 4px;
+  margin-left: auto;
+  font-family: inherit;
+  color: var(--muted-foreground);
+}
+.btn-round-icon {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-pill);
+  border: 1px solid transparent;
+  background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--muted-foreground);
+}
+.btn-round-icon:hover { background: var(--muted); color: var(--foreground); }
+
+/* 主体容器 */
+#main-view-container {
+  padding: 24px 28px 48px;
+  flex: 1;
+}
+
+/* 官方按钮组件规范 (Buttons) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  text-decoration: none;
+  font-family: inherit;
+}
+.btn-sm { height: 28px; padding: 0 10px; font-size: 12px; border-radius: var(--radius-sm); }
+/* 纯黑主按钮 (通过、新增、导出) */
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-xs);
+}
+.btn-primary:hover { background: var(--primary-hover); }
+
+/* 白底细灰轮廓按钮 (详情、改比例、重置) */
+.btn-outline {
+  background: #FFFFFF;
+  color: var(--foreground);
+  border-color: var(--border);
+  box-shadow: var(--shadow-xs);
+}
+.btn-outline:hover { background: var(--muted); border-color: #D4D4D8; }
+
+/* 危险红底按钮 (拒绝、删除) */
+.btn-destructive {
+  background: var(--destructive);
+  color: #FFFFFF;
+  border-color: var(--destructive);
+  box-shadow: var(--shadow-xs);
+}
+.btn-destructive:hover { background: var(--destructive-hover); }
+
+/* 幽灵无框按钮 */
+.btn-ghost {
+  background: transparent;
+  color: var(--muted-foreground);
+  border-color: transparent;
+}
+.btn-ghost:hover { background: var(--muted); color: var(--foreground); }
+
+/* 状态 Badge 标签 (1:1 官方规范) */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1.5px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+.badge-success { background: #F0FDF4; color: #15803D; border-color: #DCFCE7; }
+.badge-warning { background: #FEFCE8; color: #A16207; border-color: #FEF08A; }
+.badge-danger { background: #FEF2F2; color: #B91C1C; border-color: #FECACA; }
+.badge-neutral { background: #FFFFFF; color: #3F3F46; border-color: var(--border); }
+.badge-blue { background: #EFF6FF; color: #1D4ED8; border-color: #DBEAFE; }
+
+/* 官方卡片容器 (Cards) */
+.content-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xs);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.card-header-bar {
+  padding: 16px 20px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.card-header-title {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--foreground);
+}
+.card-body-padding { padding: 18px 20px; }
+
+/* 筛选表单网格 (Filter Box) */
+.filter-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xs);
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+.filter-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.filter-title { font-size: 14px; font-weight: 600; color: var(--foreground); }
+.filter-inputs-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 140px;
+}
+.field-label { font-size: 11.5px; font-weight: 500; color: var(--muted-foreground); }
+.input-control {
+  height: 34px;
+  background: #FFFFFF;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-md);
+  padding: 0 10px;
+  font-size: 13px;
+  color: var(--foreground);
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.input-control:focus {
+  border-color: #09090B;
+  box-shadow: 0 0 0 1px #09090B;
+}
+
+/* 官方数据表格 (Data Table) */
+.table-container {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xs);
+  overflow-x: auto;
+}
+.table-toolbar {
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.table-summary-text { color: var(--muted-foreground); }
+.table-summary-text strong { color: var(--foreground); }
+
+/* 表格底部翻页器 */
+.table-pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  font-size: 12.5px;
+  background: var(--card);
+}
+.pager-total { color: var(--muted-foreground); }
+.pager-actions { display: flex; align-items: center; gap: 8px; }
+.pager-size {
+  height: 28px;
+  font-size: 12px;
+  padding: 0 8px;
+  border-radius: var(--radius-md);
+  width: auto;
+}
+.pager-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--card);
+  color: var(--foreground);
+  cursor: pointer;
+}
+.pager-arrow:hover:not(:disabled) { background: var(--accent); }
+.pager-arrow:disabled { color: var(--muted-foreground); opacity: .55; cursor: not-allowed; }
+
+/* 日期区间选择器（shadcn/ui 风格） */
+.date-range-trigger { display: flex; align-items: center; gap: 8px; cursor: pointer; text-align: left; }
+.date-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  left: auto;
+  z-index: 60;
+  max-width: calc(100vw - 32px);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .14);
+  padding: 12px;
+}
+.cal-wrap { display: flex; gap: 16px; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; padding: 0 2px 6px; }
+.cal-head span { font-size: 12.5px; font-weight: 600; color: var(--foreground); }
+.cal-nav {
+  width: 24px; height: 24px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: transparent; border-radius: 6px;
+  color: var(--muted-foreground); cursor: pointer;
+}
+.cal-nav:hover { background: var(--accent); color: var(--foreground); }
+.cal-weekdays, .cal-grid { display: grid; grid-template-columns: repeat(7, 30px); }
+.cal-weekdays div { text-align: center; font-size: 11px; color: var(--muted-foreground); padding: 4px 0; }
+.cal-day {
+  height: 30px; width: 30px;
+  border: none; background: transparent; border-radius: 6px;
+  font-size: 12.5px; color: var(--foreground); cursor: pointer;
+}
+.cal-day:hover { background: var(--accent); }
+.cal-day.muted { color: var(--muted-foreground); opacity: .5; }
+.cal-day.in-range { background: var(--accent); border-radius: 0; }
+.cal-day.edge { background: var(--primary); color: var(--primary-foreground); border-radius: 6px; }
+.cal-day.edge:hover { background: var(--primary); }
+.cal-day.today { box-shadow: inset 0 0 0 1px var(--border); }
+.cal-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  border-top: 1px solid var(--border); margin-top: 10px; padding-top: 10px;
+}
+.cal-presets { display: flex; gap: 2px; }
+.cal-preset {
+  border: none; background: transparent; cursor: pointer;
+  font-size: 12px; color: var(--muted-foreground); padding: 4px 8px; border-radius: 6px;
+}
+.cal-preset:hover { background: var(--accent); color: var(--foreground); }
+
+table.official-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+table.official-table th {
+  padding: 10px 16px;
+  color: var(--muted-foreground);
+  font-weight: 500;
+  font-size: 12px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+table.official-table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+table.official-table tr:last-child td { border-bottom: none; }
+table.official-table tbody tr:hover { background: #FAFAFA; }
+
+/* 黏性固定右侧操作列 */
+th.col-sticky, td.col-sticky {
+  position: sticky;
+  right: 0;
+  background: var(--card);
+  box-shadow: -4px 0 8px rgba(0, 0, 0, 0.02);
+  z-index: 2;
+}
+tbody tr:hover td.col-sticky { background: #FAFAFA; }
+
+.code-badge {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  background: #F4F4F5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  color: #18181B;
+}
+
+/* 分段选项卡 (Segmented Tabs，如计费/扣费页面) */
+.segmented-tabs {
+  display: inline-flex;
+  background: #F4F4F5;
+  padding: 3px;
+  border-radius: var(--radius-md);
+  gap: 2px;
+  margin-bottom: 18px;
+}
+.seg-tab-btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+  background: transparent;
+}
+.seg-tab-btn:hover { color: var(--foreground); }
+.seg-tab-btn.active {
+  background: #FFFFFF;
+  color: var(--foreground);
+  font-weight: 600;
+  box-shadow: var(--shadow-xs);
+}
+
+/* 官方模态弹窗 (Modal) */
+.modal-mask {
+  position: fixed; inset: 0;
+  background: rgba(9, 9, 11, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.modal-mask.show { opacity: 1; pointer-events: auto; }
+.modal-dialog {
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  width: 100%; max-width: 520px;
+  overflow: hidden;
+  transform: translateY(10px) scale(0.98);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.modal-mask.show .modal-dialog { transform: translateY(0) scale(1); }
+.modal-dialog-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-dialog-header h3 { font-size: 15.5px; font-weight: 600; color: var(--foreground); }
+.modal-dialog-body { padding: 20px; max-height: calc(85vh - 120px); overflow-y: auto; }
+.modal-dialog-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  background: #FAFAFA;
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 10px;
+}
+
+/* 官方右侧抽屉 (Drawer) */
+.drawer-mask {
+  position: fixed; inset: 0;
+  background: rgba(9, 9, 11, 0.35);
+  backdrop-filter: blur(2px);
+  z-index: 100;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.drawer-mask.show { opacity: 1; pointer-events: auto; }
+.drawer-panel {
+  position: fixed; top: 0; bottom: 0; right: 0;
+  width: 560px; max-width: 90vw;
+  background: #FFFFFF;
+  border-left: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  z-index: 101;
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.drawer-mask.show .drawer-panel { transform: translateX(0); }
+.drawer-header {
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.drawer-body { padding: 22px; flex: 1; overflow-y: auto; }
+.drawer-footer {
+  padding: 14px 22px;
+  border-top: 1px solid var(--border);
+  background: #FAFAFA;
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 10px;
+}
+
+/* 表单控件通用 */
+.form-group { margin-bottom: 16px; }
+.form-group-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--foreground);
+  margin-bottom: 6px;
+}
+.form-group-label span.req { color: var(--destructive); margin-left: 2px; }
+.form-input-full {
+  width: 100%;
+  height: 36px;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-md);
+  padding: 0 12px;
+  font-size: 13px;
+  color: var(--foreground);
+  background: #fff;
+  outline: none;
+  font-family: inherit;
+}
+.form-input-full:focus {
+  border-color: #09090B;
+  box-shadow: 0 0 0 1px #09090B;
+}
+.form-input-full:disabled {
+  background: #F4F4F5;
+  color: var(--muted-foreground);
+  cursor: not-allowed;
+}
+.form-textarea-full {
+  width: 100%;
+  min-height: 80px;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--foreground);
+  outline: none;
+  font-family: inherit;
+  resize: vertical;
+}
+.form-textarea-full:focus {
+  border-color: #09090B;
+  box-shadow: 0 0 0 1px #09090B;
+}
+.form-hint-note { font-size: 11.5px; color: var(--muted-foreground); margin-top: 4px; }
+
+/* 单选选项卡片 */
+.choice-cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.choice-card-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  height: 38px;
+  cursor: pointer;
+  background: #FAFAFA;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.choice-card-item:hover { border-color: #A1A1AA; }
+.choice-card-item.selected {
+  border-color: #09090B;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 1px #09090B;
+}
+.choice-card-item input { accent-color: #09090B; margin: 0; }
+.choice-title { font-weight: 500; font-size: 13px; }
+
+/* Toast 轻提示 */
+#app-toast {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  background: #09090B;
+  color: #FFFFFF;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  display: flex; align-items: center; gap: 8px;
+  z-index: 200;
+  opacity: 0; transform: translateY(8px);
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+#app-toast.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+</style>
 </head>
-<body style="font-family: system-ui, -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #F6F7FA; color: #111827;">
-  <div style="text-align: center;">
-    <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">正在进入立理 S1 合伙人端 Demo...</h2>
-    <p style="font-size: 13px; color: #64748B;">若浏览器未自动跳转，请 <a href="./Demo/立理%20S1%20合伙人端%20Demo.html" style="color: #FF5C28; font-weight: 600; text-decoration: none;">点击此处直接打开</a></p>
-  </div>
+<body>
+
+<div id="app-layout">
+  <!-- 官方侧边栏 (1:1 复刻) -->
+  <aside id="app-sidebar">
+    <div class="sidebar-brand">
+      <div>
+        <div class="brand-title">
+          立理 <span class="brand-badge">S1</span>
+        </div>
+        <div class="brand-sub">平台管理后台</div>
+      </div>
+    </div>
+
+    <div class="sidebar-menu-wrap">
+      <div class="menu-group-header">管理后台</div>
+      <a class="sidebar-menu-item" onclick="navigate('applications')" id="nav-applications">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        申请审核
+      </a>
+      <a class="sidebar-menu-item" onclick="navigate('list')" id="nav-list">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        合伙人管理
+      </a>
+      <a class="sidebar-menu-item" onclick="navigate('orders')" id="nav-orders">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        订单管理
+      </a>
+      <a class="sidebar-menu-item" onclick="navigate('settlements')" id="nav-settlements">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="14" x2="6.01" y2="14"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        结算管理
+      </a>
+      <a class="sidebar-menu-item" onclick="navigate('reports')" id="nav-reports">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        数据报表
+        <span class="menu-tag-pill">第二批</span>
+      </a>
+      <a class="sidebar-menu-item" onclick="navigate('settings')" id="nav-settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        系统设置
+      </a>
+    </div>
+
+    <!-- 用户信息卡片 (完全对应官方张博文) -->
+    <div class="sidebar-footer">
+      <div class="user-profile-summary">
+        <div class="user-avatar-circle">张</div>
+        <div class="user-meta-texts">
+          <div class="user-meta-name">张博文</div>
+          <div class="user-meta-role">zby</div>
+        </div>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--muted-foreground);"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </aside>
+
+  <!-- 主体工作区 -->
+  <main id="app-main">
+    <!-- 官方顶栏 -->
+    <header id="app-header">
+      <div class="header-left">
+        <button class="btn-icon-square" title="Toggle Sidebar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+        </button>
+      </div>
+      <div class="header-right">
+        <div class="search-pill-box" onclick="toast('搜索合伙人或订单 (快捷键 ⌘ K)')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>搜索</span>
+          <span class="kbd-badge">⌘ K</span>
+        </div>
+        <button class="btn-round-icon" title="Toggle theme">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <button class="btn-round-icon" onclick="navigate('settings')" title="系统设置">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <div class="user-avatar-circle" style="width:28px; height:28px; font-size:12px; cursor:pointer;" onclick="toast('当前管理员: 张博文')">张</div>
+      </div>
+    </header>
+
+    <!-- 动态视图区域 -->
+    <div id="main-view-container"></div>
+  </main>
+</div>
+
+<!-- Toast 组件 -->
+<div id="app-toast">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-text">操作已完成</span>
+</div>
+
+<!-- 弹窗容器 -->
+<div id="modal-root"></div>
+
+<!-- 抽屉容器 -->
+<div id="drawer-root"></div>
+
+<script>
+// ==========================================
+// 数据状态 (Data State)
+// ==========================================
+const GLOBAL_CONFIG = {
+  internal_first_rate: 15.0,
+  internal_renew_rate: 10.0,
+  external_first_rate: 30.0,
+  external_renew_rate: 20.0,
+  unfreeze_days: 7,
+  rebuy_cool_days: 90
+};
+
+const CONFIG_LOGS = [
+  { time: '2026-10-15 10:00', operator: '张博文', text: '初始化基准分成比例：内部 首购 15.0% / 续购 10.0%，外部 首购 30.0% / 续购 20.0%' }
+];
+
+let APPLICATIONS = [
+  {
+    id: 'APP-1001',
+    name: '沈亦舟',
+    org: '中国科学院自动化研究所',
+    role: '副研究员 / 博士生导师',
+    phone: '13811223344',
+    wx: 'shen_yz_dr',
+    apply_time: '2026-11-04 14:20',
+    status: 'PENDING',
+    approve_time: '', approve_by: '',
+    reject_time: '', reject_by: '',
+    reject_reason: '',
+    logs: [
+      { time: '2026-11-04 14:20', operator: '申请人', action: '提交入驻申请', detail: '自主注册并提交导师资质' }
+    ]
+  },
+  {
+    id: 'APP-1002',
+    name: '陈晓萌',
+    org: '清华大学交叉信息研究院',
+    role: '在读博士研究生',
+    phone: '13900112233',
+    wx: 'momo_academic',
+    apply_time: '2026-11-04 11:05',
+    status: 'PENDING',
+    approve_time: '', approve_by: '',
+    reject_time: '', reject_by: '',
+    reject_reason: '',
+    logs: [
+      { time: '2026-11-04 11:05', operator: '申请人', action: '提交入驻申请', detail: '自主注册提交材料' }
+    ]
+  },
+  {
+    id: 'APP-1003',
+    name: '张宇轩',
+    org: '智见 AI 科技自媒体',
+    role: '主理人 / 科技博主',
+    phone: '13688997766',
+    wx: 'zhijian_ai',
+    apply_time: '2026-11-02 09:30',
+    status: 'REJECTED',
+    approve_time: '', approve_by: '',
+    reject_time: '2026-11-02 16:10', reject_by: '张博文',
+    reject_reason: '申请材料未提供有效的学术媒体主页或高校凭证，暂不符合本期合伙人准入要求。',
+    logs: [
+      { time: '2026-11-02 09:30', operator: '申请人', action: '提交入驻申请', detail: '自主注册提交材料' },
+      { time: '2026-11-02 16:10', operator: '张博文', action: '拒绝申请', detail: '原因：申请材料未提供有效的学术媒体主页或高校凭证' }
+    ]
+  },
+  {
+    id: 'APP-1004',
+    name: '李维国',
+    org: '北京航空航天大学计算机学院',
+    role: '教授 / 实验室负责人',
+    phone: '13700001111',
+    wx: 'prof_li_buaa',
+    apply_time: '2026-10-18 10:15',
+    status: 'APPROVED',
+    approve_time: '2026-10-18 14:22', approve_by: '张博文',
+    reject_time: '', reject_by: '',
+    reject_reason: '',
+    logs: [
+      { time: '2026-10-18 10:15', operator: '申请人', action: '提交入驻申请', detail: '申请材料通过初筛' },
+      { time: '2026-10-18 14:22', operator: '张博文', action: '审核通过', detail: '设为外部渠道，初始比例 30.0%，指定专属推荐码 8866' }
+    ]
+  }
+];
+
+let PARTNERS = [
+  {
+    id: 'PT-8866',
+    name: '李维国',
+    org: '北京航空航天大学计算机学院',
+    role: '教授 / 实验室负责人',
+    phone: '13700001111',
+    wx: 'prof_li_buaa',
+    channel_type: 'EXTERNAL',
+    code: '8866',
+    first_rate: 30.0,
+    renew_rate: 20.0,
+    customers_count: 18,
+    paying_count: 7,
+    points: { total: 7322, withdrawable: 3909, frozen: 1413, settled: 2000, unrecovered: 0 },
+    status: 'NORMAL',
+    freeze_reason: '',
+    join_time: '2026-10-18 14:22',
+    orders: [
+      { id: 'ORD-20260218-0301', customer_phone: '13812345678', product: 'Pro 月卡 (首购)', pay_amount: 299.00, rate: 30.0, points: 89.70, status: 'UNFROZEN', unfreeze_at: '2026-03-25', created_at: '2026-02-18 09:30', is_upgrade: false, is_cool: false },
+      { id: 'ORD-20261103-0921', customer_phone: '13812345678', product: 'Pro 月卡 (续购)', pay_amount: 369.00, rate: 20.0, points: 73.80, status: 'FROZEN', unfreeze_at: '2026-12-10', created_at: '2026-11-03 14:20', is_upgrade: false, is_cool: false },
+      { id: 'ORD-20261025-0811', customer_phone: '13599887766', product: 'Max 年卡', pay_amount: 1200.00, rate: 20.0, points: 240, status: 'FROZEN', unfreeze_at: '2027-11-01', created_at: '2026-10-25 16:40', is_upgrade: true, is_cool: false },
+      { id: 'ORD-20261012-0455', customer_phone: '15011223344', product: 'Pro 年卡', pay_amount: 2999.00, rate: 30.0, points: 899.70, status: 'FROZEN', unfreeze_at: '2027-10-19', created_at: '2026-10-12 09:41', is_upgrade: false, is_cool: false },
+      { id: 'ORD-20260925-0102', customer_phone: '18600112233', product: 'Pro 月卡 (首购)', pay_amount: 299.00, rate: 30.0, points: 89.70, status: 'UNFROZEN', unfreeze_at: '2026-11-01', created_at: '2026-09-25 18:05', is_upgrade: false, is_cool: false },
+      { id: 'ORD-20260920-0088', customer_phone: '13966554433', product: 'Lite 年卡', pay_amount: 999.00, rate: 30.0, points: 299.70, status: 'UNFROZEN', unfreeze_at: '2026-10-20', created_at: '2026-09-20 11:30', is_upgrade: false, is_cool: false },
+      { id: 'ORD-20260915-0012', customer_phone: '13344556677', product: 'Pro 月卡', pay_amount: 299.00, rate: 30.0, points: 89.70, status: 'UNFROZEN', unfreeze_at: '-', created_at: '2026-09-15 10:11', is_upgrade: false, is_cool: false },
+      { id: 'ORD-20260820-0066', customer_phone: '17722334455', product: 'Pro 年卡 (首购)', pay_amount: 2999.00, rate: 30.0, points: 899.70, status: 'PAID', unfreeze_at: '2026-09-27', created_at: '2026-08-20 11:30', is_upgrade: false, is_cool: false, refunds: [{ amount: 2374.20, date: '2026-11-06', reason: '第 3 期已使用一半按半退，第 4 期起未使用全额退', voucher: 'TK-20261106-001' }] },
+      { id: 'ORG-20260810-001', customer_phone: '', org_name: '北京航空航天大学人工智能研究院', contract_no: 'HT-2026-0810-A', kind: 'ORG', product: '机构版年度合同（线下签约）', pay_amount: 40000.00, rate: 30.0, points: 12000, status: 'ORG', unfreeze_at: '按月分期', created_at: '2026-08-10 10:00', start: '2026-08-10', months: 12, paid_out: 0, remark: '', is_upgrade: false, is_cool: false },
+      { id: 'ORD-20260525-0042', customer_phone: '13422334455', product: 'Max 年卡', pay_amount: 9999.00, rate: 30.0, points: 2999.70, status: 'FROZEN', unfreeze_at: '-', created_at: '2026-05-25 14:10', is_upgrade: false, is_cool: false }
+    ],
+    flow: [
+      { time: '2026-03-25 01:00', order_id: 'ORD-20260218-0301', type: '解冻计入', points: '+89.70', status: '已划入可结算金额' },
+      { time: '2026-11-03 14:20', order_id: 'ORD-20261103-0921', type: '冻结计入 (续购)', points: '+73.80', status: '冻结中 (预计 2026-12-10 解冻)' },
+      { time: '2026-10-28 15:00', order_id: 'SETTLE-202610-008', type: '线下结算核销', points: '-2,074.98', status: '财务已打款 (流水 BCM202610288892)' },
+      { time: '2026-10-25 16:40', order_id: 'ORD-20261025-0811', type: '冻结计入 (升级补差·续购)', points: '+240.00', status: '冻结中 (预计 2027-11-01 解冻)' },
+      { time: '2026-10-27 01:00', order_id: 'ORD-20260920-0088', type: '年卡分期解冻 (第 1/12 期)', points: '+24.98', status: '划入可结算金额' },
+      { time: '2026-11-06 10:30', order_id: 'ORD-20260820-0066', type: '退款扣除', points: '-712.26', status: '退款 ¥2,374.20（第 3 期半退，第 4 期起全退）' }
+    ],
+    settlements: [
+      { batch_no: 'SETTLE-202610-008', points: 2074.98, voucher: 'BCM202610288892', operator: '财务王敏', time: '2026-10-28 15:00', remark: '2026年9-10月度推广服务费，招商银行公对私打款付清' }
+    ],
+    customers: [
+      { phone: '13812345678', bind_time: '2026-10-02 10:20', reg_time: '2026-10-02 10:25', plan: 'Pro 月卡', plan_status: 'ACTIVE_MONTH', expire_at: '2026-12-02', orders_cnt: 2, gmv: 668.00 },
+      { phone: '13599887766', bind_time: '2026-09-15 21:03', reg_time: '2026-09-15 21:05', plan: 'Max 年卡', plan_status: 'ACTIVE_YEAR', expire_at: '2027-10-25', orders_cnt: 2, gmv: 4199.00 },
+      { phone: '15011223344', bind_time: '2026-10-11 12:30', reg_time: '2026-10-11 12:40', plan: 'Pro 年卡', plan_status: 'ACTIVE_YEAR', expire_at: '2027-10-12', orders_cnt: 1, gmv: 2999.00 },
+      { phone: '13966554433', bind_time: '2026-09-18 14:11', reg_time: '2026-09-18 14:15', plan: 'Lite 年卡', plan_status: 'ACTIVE_YEAR', expire_at: '2027-09-20', orders_cnt: 1, gmv: 999.00 },
+      { phone: '18600112233', bind_time: '2026-10-01 09:00', reg_time: '2026-10-01 09:12', plan: 'Pro 月卡', plan_status: 'EXPIRED', expire_at: '2026-11-01', orders_cnt: 1, gmv: 299.00 }
+    ],
+    logs: [
+      { time: '2026-10-18 14:22', operator: '张博文', action: '入驻审核通过', before: '申请审核中', after: '正式合伙人 (首购 30.0% / 续购 20.0%)', reason: '符合高校博主与学者准入标准' },
+      { time: '2026-10-28 15:00', operator: '财务王敏', action: '线下结算核销', before: '可结算 ¥5,820', after: '可结算 ¥3,820', reason: '核销 ¥2,000，流水 BCM202610288892' }
+    ]
+  },
+  {
+    id: 'PT-6601',
+    name: '宋建华',
+    org: '立理科技 (战略创新部)',
+    role: '解决方案专家',
+    phone: '13800002222',
+    wx: 'song_lili',
+    channel_type: 'INTERNAL',
+    code: '6601',
+    first_rate: 15.0,
+    renew_rate: 10.0,
+    customers_count: 42,
+    paying_count: 16,
+    points: { total: 5120, withdrawable: 2120, frozen: 3000, settled: 0, unrecovered: 0 },
+    status: 'NORMAL',
+    freeze_reason: '',
+    join_time: '2026-10-20 09:30',
+    orders: [
+      { id: 'ORD-20261102-0199', customer_phone: '13611229988', product: 'Max 年卡', pay_amount: 3999.00, rate: 15.0, points: 599.85, status: 'FROZEN', unfreeze_at: '2027-11-09', created_at: '2026-11-02 10:15', is_upgrade: false, is_cool: false },
+      { id: 'ORD-20260520-0031', customer_phone: '13955667788', product: 'Max 年卡', pay_amount: 9999.00, rate: 15.0, points: 1499.85, status: 'FROZEN', unfreeze_at: '-', created_at: '2026-05-20 09:30', is_upgrade: false, is_cool: false }
+    ],
+    flow: [
+      { time: '2026-11-02 10:15', order_id: 'ORD-20261102-0199', type: '冻结计入', points: '+599.85', status: '冻结中 (预计 2027-11-09 解冻)' }
+    ],
+    settlements: [],
+    customers: [
+      { phone: '13611229988', bind_time: '2026-10-28 09:12', reg_time: '2026-10-28 09:20', plan: 'Max 年卡', plan_status: 'ACTIVE_YEAR', expire_at: '2027-11-02', orders_cnt: 1, gmv: 3999.00 }
+    ],
+    logs: [
+      { time: '2026-10-20 09:30', operator: '张博文', action: '入驻审核通过', before: '待审核', after: '正式合伙人 (首购 15.0% / 续购 10.0%)', reason: '内部员工推广渠道' }
+    ]
+  },
+  {
+    id: 'PT-9902',
+    name: '韩磊',
+    org: '南京大学人工智能学院',
+    role: '博士后研究员',
+    phone: '13911118888',
+    wx: 'hanlei_nju',
+    channel_type: 'EXTERNAL',
+    code: '9902',
+    first_rate: 28.0,
+    renew_rate: 18.0,
+    customers_count: 11,
+    paying_count: 4,
+    points: { total: 1650, withdrawable: 1650, frozen: 0, settled: 0, unrecovered: 0 },
+    status: 'FROZEN',
+    freeze_reason: '合伙人存在异地高校社群虚假刷单争议，暂时冻结拉新分润，保留历史结算金额待查。',
+    join_time: '2026-10-22 16:00',
+    orders: [
+      { id: 'ORG-20260315-001', customer_phone: '', org_name: '南京大学人工智能学院', contract_no: 'HT-2026-0315-B', kind: 'ORG', product: '机构版年度合同（线下签约）', pay_amount: 25000.00, rate: 28.0, points: 7000, status: 'ORG', unfreeze_at: '按月分期', created_at: '2026-03-15 11:00', start: '2026-03-15', months: 12, paid_out: 0, remark: '', is_upgrade: false, is_cool: false }
+    ],
+    flow: [],
+    settlements: [],
+    customers: [
+      { phone: '18800998877', bind_time: '2026-10-23 11:00', reg_time: '2026-10-23 11:05', plan: 'Pro 月卡', plan_status: 'ACTIVE_MONTH', expire_at: '2026-11-23', orders_cnt: 1, gmv: 299.00 }
+    ],
+    logs: [
+      { time: '2026-10-22 16:00', operator: '张博文', action: '入驻审核通过', before: '待审核', after: '外部渠道 (首购 28.0% / 续购 18.0%)', reason: '外部特邀合作' },
+      { time: '2026-11-01 18:20', operator: '张博文', action: '冻结账号', before: '正常', after: '已冻结', reason: '合伙人存在异地高校社群虚假刷单争议，暂时冻结' }
+    ]
+  },
+  {
+    id: 'PT-7711',
+    name: '赵子豪',
+    org: '极客代码技术社区',
+    role: '运营总监',
+    phone: '13500003333',
+    wx: 'geek_zhao',
+    channel_type: 'EXTERNAL',
+    code: '7711',
+    first_rate: 30.0,
+    renew_rate: 20.0,
+    customers_count: 5,
+    paying_count: 1,
+    points: { total: 450, withdrawable: 0, frozen: 0, settled: 450, unrecovered: 0 },
+    status: 'FROZEN',
+    freeze_reason: '长期未产生有效推广，暂停合作，推荐码已失效。',
+    join_time: '2026-09-01 10:00',
+    orders: [
+      { id: 'ORD-20260410-0155', customer_phone: '15566778899', product: 'Pro 年卡', pay_amount: 2999.00, rate: 30.0, points: 899.70, status: 'FROZEN', unfreeze_at: '-', created_at: '2026-04-10 16:20', is_upgrade: false, is_cool: false }
+    ],
+    flow: [],
+    settlements: [
+      { batch_no: 'SETTLE-202609-002', points: 374.90, voucher: 'ALI2026093000881', operator: '财务王敏', time: '2026-09-30 11:20', remark: '历史推广币结清' }
+    ],
+    customers: [],
+    logs: [
+      { time: '2026-09-01 10:00', operator: '张博文', action: '入驻审核通过', before: '待审核', after: '外部渠道 (30.0%)', reason: '初始合作' },
+      { time: '2026-10-15 17:00', operator: '张博文', action: '冻结账号', before: '正常', after: '已冻结', reason: '长期未产生有效推广' }
+    ]
+  }
+];
+
+let SETTLEMENT_HISTORY = [
+  {
+    settle_id: 'SETTLE-202610-008',
+    partner_id: 'PT-8866',
+    partner_name: '李维国',
+    partner_phone: '13700001111',
+    channel_type: 'EXTERNAL',
+    points: 2074.98,
+    voucher: 'BCM202610288892',
+    operator: '财务王敏',
+    settle_time: '2026-10-28 15:00',
+    remark: '2026年9-10月度推广服务费，招商银行公对私打款付清'
+  },
+  {
+    settle_id: 'SETTLE-202609-002',
+    partner_id: 'PT-7711',
+    partner_name: '赵子豪',
+    partner_phone: '13500003333',
+    channel_type: 'EXTERNAL',
+    points: 374.90,
+    voucher: 'ALI2026093000881',
+    operator: '财务王敏',
+    settle_time: '2026-09-30 11:20',
+    remark: '合作终止全额结清'
+  }
+];
+
+// ==========================================
+// 佣金明细引擎：订单 → 分期明细 → 解冻 → 结算
+// 月卡 1 期；年卡 12 期；机构订单按合同周期（月）分期；每期在服务月结束 +7 天解冻
+// ==========================================
+const REF_DATE = '2026-11-06';
+const LINE_SETTLED = {};     // 明细 key -> 已结算金额
+const LINE_SETTLE_ID = {};   // 明细 key -> 最近一次结算单号
+
+function addMonthsDate(dateStr, m, extraDays) {
+  const p = dateStr.slice(0, 10).split('-');
+  return new Date(Date.UTC(+p[0], +p[1] - 1 + m, +p[2] + extraDays)).toISOString().slice(0, 10);
+}
+function orderKind(o) {
+  if (o.kind) return o.kind;
+  if (o.status === 'VOID_REFUND' || !(o.points > 0)) return 'NONE';
+  if (o.is_upgrade) return 'LUMP';
+  if (/年卡/.test(o.product)) return 'YEAR';
+  return 'MONTH';
+}
+function orderStart(o) { return o.start || (o.created_at || '').slice(0, 10); }
+
+function rawKind(o) {
+  if (o.kind) return o.kind;
+  if (o.is_upgrade) return 'LUMP';
+  if (/年卡/.test(o.product)) return 'YEAR';
+  return 'MONTH';
+}
+function orderLines(o, p) {
+  o._recover = 0; o._refundShort = 0;
+  const voided = o.status === 'VOID_REFUND';
+  const kind = voided ? rawKind(o) : orderKind(o);
+  if (kind === 'NONE') return [];
+  const n = kind === 'YEAR' ? 12 : (kind === 'ORG' ? o.months : 1);
+  const total = voided ? Math.abs(o.points) : o.points, start = orderStart(o);
+  const totalC = Math.round(total * 100);
+  const baseC = Math.round(totalC / n);
+  const lines = [];
+  for (let k = 1; k <= n; k++) {
+    const amt = (n === 1 ? totalC : (k < n ? baseC : totalC - baseC * (n - 1))) / 100;
+    const unlock = kind === 'LUMP' ? o.unfreeze_at : addMonthsDate(start, k, GLOBAL_CONFIG.unfreeze_days);
+    const key = o.id + '#' + k;
+    const settled = voided ? 0 : Math.min(LINE_SETTLED[key] || 0, amt);
+    const remaining = voided ? 0 : amt - settled;
+    let state;
+    if (voided) state = 'REFUND';
+    else if (remaining === 0) state = 'SETTLED';
+    else if (unlock <= REF_DATE) state = 'UNLOCKED';
+    else state = 'FROZEN';
+    lines.push({
+      key, order_id: o.id, kind, k, n, amt, settled, remaining, unlock, state,
+      source: kind === 'ORG' ? o.org_name : o.product,
+      customer: kind === 'ORG' ? o.org_name : o.customer_phone,
+      pay: o.pay_amount, rate: o.rate, order_total: total,
+      period: addMonthsDate(start, k - 1, 0) + ' ~ ' + addMonthsDate(start, k, -1)
+    });
+  }
+  // 退款登记：按退款后的实付重算应收佣金，从最后一期往前抵扣尚未解冻的期次；不足部分计入待追回
+  const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
+  if (refunded > 0 && total > 0) {
+    const recover = Math.max(0, round2(total - round2((o.pay_amount - refunded) * o.rate / 100)));
+    let left = recover;
+    for (let i = lines.length - 1; i >= 0 && left > 0; i--) {
+      const l = lines[i];
+      if (l.state !== 'FROZEN') continue;
+      const cut = Math.min(left, l.remaining);
+      const cutC = Math.round(cut * 100) / 100;
+      l.remaining = Math.round((l.remaining - cutC) * 100) / 100;
+      l.cut = cutC;
+      left = Math.round((left - cutC) * 100) / 100;
+      if (l.remaining <= 0) { l.remaining = 0; l.state = 'REFUND'; }
+    }
+    o._recover = recover;
+    o._refundShort = left;
+  }
+  return lines;
+}
+function partnerLines(p) {
+  let all = [];
+  p.orders.forEach(o => { all = all.concat(orderLines(o, p)); });
+  return all;
+}
+function recalcPartner(p) {
+  let w = 0, f = 0, s = 0, short = 0;
+  partnerLines(p).forEach(l => {
+    s += l.settled;
+    if (l.state === 'UNLOCKED') w += l.remaining;
+    else if (l.state === 'FROZEN') f += l.remaining;
+  });
+  // 退款差额中已解冻/已结算、无法从期次扣回的部分，进入待追回，下次打款扣减
+  p.orders.forEach(o => { short += (o._refundShort || 0); });
+  p.points = { total: round2(w + f + s), withdrawable: round2(w), frozen: round2(f), settled: round2(s), unrecovered: Math.max(0, round2(short - (p._offsetPaid || 0))) };
+}
+function recalcAll() { PARTNERS.forEach(recalcPartner); }
+
+// 总销售额：该合伙人所带订单的实付合计，扣除已登记退款
+function partnerSales(p) {
+  let gmv = 0;
+  p.orders.forEach(o => {
+    const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
+    gmv += Math.max(0, (o.pay_amount || 0) - refunded);
+  });
+  return gmv;
+}
+
+function allocSettled(settleId, keys) {
+  const rec = SETTLEMENT_HISTORY.find(x => x.settle_id === settleId);
+  const p = PARTNERS.find(x => x.id === rec.partner_id);
+  rec.lines = [];
+  keys.forEach(key => {
+    const l = partnerLines(p).find(x => x.key === key);
+    LINE_SETTLED[key] = l.amt;
+    LINE_SETTLE_ID[key] = settleId;
+    rec.lines.push({ key, order_id: l.order_id, k: l.k, n: l.n, kind: l.kind, source: l.source, amt: l.amt, unlock: l.unlock });
+  });
+}
+function seqKeys(orderId, from, to) { const r = []; for (let k = from; k <= to; k++) r.push(orderId + '#' + k); return r; }
+
+allocSettled('SETTLE-202610-008', seqKeys('ORG-20260810-001', 1, 2).concat(seqKeys('ORD-20260820-0066', 1, 1)));
+allocSettled('SETTLE-202609-002', seqKeys('ORD-20260410-0155', 1, 5));
+recalcAll();
+
+const KIND_LABEL = { MONTH: '月卡', YEAR: '年卡', ORG: '机构订单', LUMP: '升级补差' };
+function kindBadge(k) {
+  const cls = k === 'ORG' ? 'badge-blue' : (k === 'YEAR' ? 'badge-success' : 'badge-neutral');
+  return `<span class="badge ${cls}" style="font-size:10.5px;">${KIND_LABEL[k] || k}</span>`;
+}
+// 套餐名：去掉数据里携带的 (首购)/(续购)/(补差价) 等括号后缀
+function productName(o) {
+  if (orderKind(o) === 'ORG') return '机构版年度合同';
+  return o.product.replace(/\s*[（(][^）)]*[）)]\s*/g, '').trim();
+}
+// 首购 / 续购 以该客户最早一笔订单为准
+function isFirstPurchase(o) {
+  if (!o.customer_phone) return false;
+  let first = o;
+  PARTNERS.forEach(p => p.orders.forEach(x => {
+    if (x.customer_phone !== o.customer_phone) return;
+    if (x.created_at < first.created_at) first = x;
+  }));
+  return first.id === o.id;
+}
+function productTags(o) {
+  if (orderKind(o) === 'ORG') return [{ t: '机构', cls: 'badge-blue' }];
+  if (o.is_upgrade) return [{ t: '升级补差', cls: 'badge-blue' }];
+  return isFirstPurchase(o) ? [{ t: '首购', cls: 'badge-blue' }] : [{ t: '续购', cls: 'badge-neutral' }];
+}
+function productTagHtml(o, extra) {
+  return productTags(o).map(x => `<span class="badge ${x.cls}" style="font-size:10.5px;">${x.t}</span>`).join(' ') + (extra || '');
+}
+function lineStateBadge(l) {
+  if (l.state === 'SETTLED') return `<span class="badge badge-neutral">已结算</span>${LINE_SETTLE_ID[l.key] ? `<div style="font-size:10px; color:var(--muted-foreground); margin-top:2px;">${LINE_SETTLE_ID[l.key]}</div>` : ''}`;
+  if (l.state === 'UNLOCKED') return '<span class="badge badge-success">可结算</span>';
+  if (l.state === 'FROZEN') return '<span class="badge badge-warning">冻结中</span>';
+  if (l.state === 'REFUND') return '<span class="badge badge-danger">退款扣除</span>';
+  return '';
+}
+
+function findOrder(orderId) {
+  for (const p of PARTNERS) { const o = p.orders.find(x => x.id === orderId); if (o) return { p, o }; }
+  return null;
+}
+function showOrderLines(orderId) {
+  const f = findOrder(orderId); if (!f) return;
+  const { p, o } = f;
+  const ls = orderLines(o, p);
+  const sum = st => ls.filter(l => l.state === st).reduce((a, l) => a + l.remaining, 0);
+  const settled = ls.reduce((a, l) => a + l.settled, 0);
+  const netPts = Math.max(0, o.points - (o._recover || 0));
+  const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
+  document.getElementById('drawer-root').innerHTML = `
+    <div class="drawer-mask show" id="drawer-lines" onclick="if(event.target===this)closeDrawer('drawer-lines')">
+      <div class="drawer-panel" style="width:680px;">
+        <div class="drawer-header">
+          <div><h3 style="font-size:15px; font-weight:600;">分期明细 · ${o.id}</h3>
+            <div style="font-size:12px; color:var(--muted-foreground); margin-top:2px;">${p.name} · ${o.kind === 'ORG' ? o.org_name : o.product} · 总佣金 ¥${fmtC(Math.abs(o.points))}</div></div>
+          <button class="btn-ghost" style="padding:4px;" onclick="closeDrawer('drawer-lines')">✕</button>
+        </div>
+        <div class="drawer-body">
+          <div class="content-card" style="margin:0 0 12px; padding:12px 16px;">
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+              <div><div style="font-size:11.5px; color:var(--muted-foreground);">订单金额</div><strong class="num">¥${formatNum(o.pay_amount)}</strong></div>
+              <div><div style="font-size:11.5px; color:var(--muted-foreground);">分成比例</div><div><strong class="num">${o.rate.toFixed(1)}%</strong><span style="margin-left:6px;">${productTagHtml(o)}</span></div></div>
+              <div><div style="font-size:11.5px; color:var(--muted-foreground);">本单佣金${refunded > 0 ? '（退款后）' : ''}</div><div><strong class="num" style="color:${netPts > 0 ? '#15803D' : 'var(--muted-foreground)'};">¥${fmtC(netPts)}</strong>${o._recover > 0 ? `<span style="font-size:11px; color:var(--destructive); margin-left:6px;">原 ¥${fmtC(o.points)} · 扣回 ¥${fmtC(o._recover)}</span>` : ''}</div></div>
+            </div>
+            ${refunded > 0 ? `<div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border); font-size:12px; color:var(--destructive);">
+              <strong>${(o.refunds || []).map(r => r.date).filter(Boolean).join('、')}${(o.refunds || []).some(r => r.date) ? ' · ' : ''}${refunded >= o.pay_amount ? '已全额退款' : '部分退款'} ¥${formatNum(refunded)}</strong>
+            </div>` : ''}
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px;">
+            <div class="content-card" style="margin:0; padding:10px 14px;"><div style="font-size:11.5px; color:var(--muted-foreground);">可结算（已解冻未结算）</div><strong class="num" style="color:#15803D;">¥${fmtC(sum('UNLOCKED'))}</strong></div>
+            <div class="content-card" style="margin:0; padding:10px 14px;"><div style="font-size:11.5px; color:var(--muted-foreground);">冻结中</div><strong class="num" style="color:#A16207;">¥${fmtC(sum('FROZEN'))}</strong></div>
+            <div class="content-card" style="margin:0; padding:10px 14px;"><div style="font-size:11.5px; color:var(--muted-foreground);">已结算</div><strong class="num">¥${fmtC(settled)}</strong></div>
+          </div>
+          <div class="table-container"><table class="official-table">
+            <thead><tr><th>期次</th><th>服务期间</th><th>解冻日</th><th>金额</th><th>状态</th></tr></thead>
+            <tbody>${ls.map(l => `<tr><td>第 ${l.k}/${l.n} 期</td><td style="font-size:12px; color:var(--muted-foreground);">${l.period}</td><td>${l.unlock}</td><td class="num">${l.cut > 0 && l.remaining > 0 ? `¥${fmtC(l.remaining)}<div style="font-size:10.5px; color:var(--destructive); margin-top:2px;">已扣 ¥${fmtC(l.cut)}</div>` : `¥${fmtC(l.amt)}`}</td><td>${lineStateBadge(l)}</td></tr>`).join('')}</tbody>
+          </table></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ==========================================
+// 退款登记（当前无退款接口，由运营手工登记并扣回佣金）
+// ==========================================
+let REFUND_ORDER_ID = null;
+
+function openRefundDrawer(orderId) {
+  const hit = findOrder(orderId); if (!hit) return;
+  const { p, o } = hit;
+  const kind = orderKind(o);
+  const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
+  REFUND_ORDER_ID = orderId;
+  document.getElementById('drawer-root').innerHTML = `
+    <div class="drawer-mask show" id="drawer-refund" onclick="if(event.target===this)closeDrawer('drawer-refund')">
+      <div class="drawer-panel" style="width:860px;">
+        <div class="drawer-header">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <h3 style="font-size:15px; font-weight:600;">退款登记 · ${o.id}</h3>
+            ${kindBadge(kind)}
+            ${refunded > 0 ? `<span class="badge badge-danger">已退 ¥${formatNum(refunded)}</span>` : ''}
+          </div>
+          <button class="btn-ghost" style="padding:4px;" onclick="closeDrawer('drawer-refund')">✕</button>
+        </div>
+        <div class="drawer-body">
+          <div style="background:#FAFAFA; border:1px solid var(--border); border-radius:8px; padding:10px 14px; font-size:12.5px; line-height:1.7; margin-bottom:14px;">
+            当前无退款接口，退款需在此<strong>手工登记</strong>：按「退款后实付 × 分成比例」重算本单佣金，从<strong>最后一期往前抵扣尚未解冻的期次</strong>；已解冻或已结算、无法扣回的差额计入该合伙人<strong>待追回金额</strong>，下次打款时扣减。
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 14px;">
+            <div class="form-group"><label class="form-group-label">归属合伙人</label><div class="form-input-full" style="background:#FAFAFA;">${p.name} · ${p.channel_type === 'INTERNAL' ? '内部' : '外部'}渠道</div></div>
+            <div class="form-group"><label class="form-group-label">订单实付 / 剩余可退</label><div class="form-input-full num" style="background:#FAFAFA;">¥${formatNum(o.pay_amount)} / ¥${formatNum(o.pay_amount - refunded)}</div></div>
+            <div class="form-group"><label class="form-group-label">本次退款金额（元）<span class="req">*</span></label><input class="form-input-full num" type="number" id="rf-amount" min="0" max="${o.pay_amount - refunded}" placeholder="如 ${formatNum(o.pay_amount - refunded)}" oninput="refreshRefundPreview()"></div>
+            <div class="form-group"><label class="form-group-label">退款日期 <span class="req">*</span></label><input class="form-input-full" type="date" id="rf-date" value="${REF_DATE}" max="${REF_DATE}"></div>
+            <div class="form-group"><label class="form-group-label">退款凭证号</label><input class="form-input-full" id="rf-voucher" placeholder="财务退款流水号 / 商户退款单号（选填）"></div>
+            <div class="form-group"><label class="form-group-label">退款原因 <span class="req">*</span></label><input class="form-input-full" id="rf-reason" placeholder="如：客户申请退费、机构合同变更"></div>
+          </div>
+          <div id="rf-preview"></div>
+          ${refunded > 0 ? `<div style="margin-top:14px; font-size:12.5px; color:var(--muted-foreground);">历史退款登记：${(o.refunds || []).map(r => `${r.date} · ¥${formatNum(r.amount)}${r.voucher ? ' · 凭证 ' + r.voucher : ''}`).join('；')}</div>` : ''}
+        </div>
+        <div class="drawer-footer" style="justify-content:space-between;">
+          <div>${refunded > 0 ? `<button class="btn btn-outline" onclick="undoRefund('${o.id}')">撤销全部退款登记</button>` : '<span></span>'}</div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-outline" onclick="closeDrawer('drawer-refund')">取消</button>
+            <button class="btn btn-primary" style="background:#DC2626; border-color:#DC2626;" onclick="confirmRefund()">确认退款登记</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  refreshRefundPreview();
+}
+
+function refreshRefundPreview() {
+  const hit = findOrder(REFUND_ORDER_ID); if (!hit) return;
+  const { p, o } = hit;
+  const box = document.getElementById('rf-preview'); if (!box) return;
+  const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
+  const amount = parseFloat(document.getElementById('rf-amount').value) || 0;
+  const max = o.pay_amount - refunded;
+  if (!(amount > 0)) { box.innerHTML = '<div style="margin-top:14px; font-size:12.5px; color:var(--muted-foreground);">填写退款金额后，这里会预览佣金扣回结果。</div>'; return; }
+  if (amount > max) { box.innerHTML = `<div style="margin-top:14px; font-size:12.5px; color:#DC2626;">退款金额不能超过剩余可退金额 ¥${formatNum(max)}。</div>`; return; }
+  const preview = Object.assign({}, o);
+  preview.refunds = (o.refunds || []).concat([{ amount }]);
+  const lines = orderLines(preview, p);
+  const cuts = lines.filter(l => l.cut > 0);
+  const applied = cuts.reduce((a, l) => a + l.cut, 0);
+  const short = preview._refundShort || 0;
+  box.innerHTML = `
+    <div style="margin-top:14px; background:#FFF7ED; border:1px solid #FDBA74; border-radius:8px; padding:12px 14px; font-size:12.5px; line-height:1.9;">
+      应扣回佣金 <strong class="num">¥${fmtC(preview._recover)}</strong>
+      · 可从未解冻期次扣回 <strong class="num" style="color:#15803D;">¥${fmtC(applied)}</strong>
+      · 计入待追回 <strong class="num" style="color:#DC2626;">¥${fmtC(short)}</strong>
+      ${cuts.length ? `<div style="margin-top:6px; color:var(--muted-foreground);">扣回期次：${cuts.map(l => `第 ${l.k}/${l.n} 期 −¥${fmtC(l.cut)}`).join('、')}</div>` : ''}
+      ${short > 0 ? '<div style="margin-top:6px; color:#B45309;">该差额涉及已解冻或已结算佣金，将挂入该合伙人的待追回金额，下次打款时扣减。</div>' : ''}
+      <div style="margin-top:6px; color:var(--muted-foreground);">退款后本单佣金：¥${fmtC(Math.max(0, o.points - preview._recover))}（原 ¥${fmtC(o.points)}）</div>
+    </div>`;
+}
+
+function confirmRefund() {
+  const hit = findOrder(REFUND_ORDER_ID); if (!hit) return;
+  const { p, o } = hit;
+  const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
+  const amount = parseFloat(document.getElementById('rf-amount').value) || 0;
+  const date = document.getElementById('rf-date').value;
+  const voucher = document.getElementById('rf-voucher').value.trim();
+  const reason = document.getElementById('rf-reason').value.trim();
+  if (!(amount > 0)) { toast('请填写本次退款金额'); return; }
+  if (amount > o.pay_amount - refunded) { toast('退款金额不能超过剩余可退金额 ¥' + formatNum(o.pay_amount - refunded)); return; }
+  if (!date) { toast('请选择退款日期'); return; }
+  if (!reason) { toast('请填写退款原因'); return; }
+  const beforeRecover = o._recover || 0;
+  if (!o.refunds) o.refunds = [];
+  o.refunds.push({ amount, date, voucher, reason, operator: '运营', time: nowTime() });
+  orderLines(o, p);
+  recalcPartner(p);
+  const delta = o._recover - beforeRecover;
+  const vcText = voucher ? ' · 凭证 ' + voucher : '';
+  const shortMsg = o._refundShort > 0 ? ' · 差额 ¥' + fmtC(o._refundShort) + ' 计入待追回' : '';
+  p.flow.unshift({ time: nowTime(), order_id: o.id, type: '退款扣除', points: delta > 0 ? '-¥' + fmtC(delta) : '¥0', status: `退款 ¥${formatNum(amount)}${vcText}${shortMsg}` });
+  p.logs.unshift({ time: nowTime(), operator: '运营', action: '手工退款登记', before: `本单佣金 ¥${fmtC(Math.max(0, o.points - beforeRecover))}`, after: `本单佣金 ¥${fmtC(Math.max(0, o.points - o._recover))}`, reason: `退款 ¥${formatNum(amount)}${vcText}，扣回 ¥${fmtC(delta)}${shortMsg}` });
+  recalcAll();
+  closeDrawer('drawer-refund');
+  toast(`退款登记成功：扣回佣金 ¥${fmtC(delta)}，合伙人端佣金已同步`);
+  renderOrdersView(document.getElementById('main-view-container'));
+}
+
+function undoRefund(orderId) {
+  const hit = findOrder(orderId); if (!hit) return;
+  const { p, o } = hit;
+  if (!confirm('确定撤销该订单的全部退款登记？撤销后将恢复原佣金与可结算金额。')) return;
+  const before = o._recover || 0;
+  o.refunds = [];
+  orderLines(o, p);
+  recalcPartner(p);
+  p.flow.unshift({ time: nowTime(), order_id: o.id, type: '退款撤销', points: before > 0 ? '+¥' + fmtC(before) : '¥0', status: '撤销退款登记，恢复原订单佣金' });
+  p.logs.unshift({ time: nowTime(), operator: '运营', action: '撤销退款登记', before: `本单佣金 ¥${fmtC(o.points - before)}`, after: `本单佣金 ¥${fmtC(o.points)}`, reason: '撤销手工退款登记' });
+  recalcAll();
+  closeDrawer('drawer-refund');
+  toast('已撤销退款登记，佣金与可结算金额已恢复');
+  renderOrdersView(document.getElementById('main-view-container'));
+}
+
+// ==========================================
+// 结算核对单（按明细勾选结算）
+// ==========================================
+let SHEET = null;
+
+function prevMonthEnd(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(1); d.setMonth(d.getMonth() - 1);
+  const y = d.getFullYear(), m = d.getMonth();
+  const last = new Date(y, m + 1, 0).getDate();
+  return `${y}-${String(m + 1).padStart(2, '0')}-${String(last).padStart(2, '0')}`;
+}
+
+function openSettleSheet(pid) {
+  const p = PARTNERS.find(x => x.id === pid); if (!p) return;
+  if (p.status === 'FROZEN') { toast('该合伙人账号已冻结，请先在合伙人档案解冻账号后再进行结算核算'); return; }
+  const cutoff = prevMonthEnd(REF_DATE);
+  const all = partnerLines(p);
+  const lines = all.filter(l => l.state === 'UNLOCKED' && l.unlock <= cutoff).sort((a, b) => a.order_id.localeCompare(b.order_id) || a.k - b.k);
+  SHEET = { pid, lines, checked: new Set(lines.map(l => l.key)) };
+  const autoVoucher = 'BCM' + REF_DATE.replace(/-/g, '') + Math.floor(1000 + Math.random() * 8999);
+  const total = lines.reduce((a, l) => a + l.remaining, 0);
+  const dueOffset = Math.min(p.points.unrecovered || 0, total);
+  document.getElementById('drawer-root').innerHTML = `
+    <div class="drawer-mask show" id="drawer-settle" onclick="if(event.target===this)closeDrawer('drawer-settle')">
+      <div class="drawer-panel" style="width:1020px;">
+        <div class="drawer-header">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <h3 style="font-size:15px; font-weight:600;">结算核对单 · ${p.name}</h3>
+            ${p.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部渠道</span>' : '<span class="badge badge-neutral">外部渠道</span>'}
+            ${p.status === 'FROZEN' ? '<span class="badge badge-warning">账号已冻结</span>' : ''}
+          </div>
+          <button class="btn-ghost" style="padding:4px;" onclick="closeDrawer('drawer-settle')">✕</button>
+        </div>
+        <div class="drawer-body">
+          <div style="font-size:12.5px; color:var(--muted-foreground); margin-bottom:10px;">${p.org} · ${p.phone}${p.wx ? ' · 微信 ' + p.wx : ''}</div>
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; font-size:12.5px;">
+            <span>本期可结算范围：<strong>${cutoff}（含）</strong>之前解冻的佣金</span>
+            <span style="flex:1;"></span>
+            <button class="btn btn-outline btn-sm" onclick="sheetSelectAll(true)">全选</button>
+            <button class="btn btn-outline btn-sm" onclick="sheetSelectAll(false)">清空</button>
+          </div>
+          <div class="table-container"><table class="official-table">
+            <thead><tr><th style="width:36px;"></th><th>商品名称</th><th>订单号</th><th>客户 / 机构</th><th>期次 / 服务期间</th><th>解冻日</th><th style="text-align:right;">本次可结算</th></tr></thead>
+            <tbody>${lines.map(l => `
+              <tr>
+                <td><input type="checkbox" class="sheet-chk" data-key="${l.key}" data-unlock="${l.unlock}" checked onchange="toggleSheetLine(this)"></td>
+                <td>${kindBadge(l.kind)} ${l.kind === 'ORG' ? '机构版合同' : l.source}</td>
+                <td><span class="code-badge">${l.order_id}</span></td>
+                <td class="num">${l.customer || '-'}</td>
+                <td>${l.n > 1 ? '第 ' + l.k + '/' + l.n + ' 期' : '一次性'}<div style="font-size:11.5px; color:var(--muted-foreground);">${l.period}</div></td>
+                <td>${l.unlock}</td>
+                <td class="num" style="text-align:right;"><strong>¥${fmtC(l.remaining)}</strong>${l.settled > 0 ? `<div style="font-size:11px; color:var(--muted-foreground);">已结算 ¥${fmtC(l.settled)}（原 ¥${fmtC(l.amt)}）</div>` : ''}</td>
+              </tr>`).join('')}</tbody>
+          </table></div>
+          ${dueOffset > 0 ? `<div style="background:#FEF2F2; border:1px solid #FCA5A5; border-radius:8px; padding:8px 12px; font-size:12.5px; color:#B91C1C; margin-bottom:12px;">该合伙人存在退款待追回 <strong class="num">¥${fmtC(p.points.unrecovered)}</strong>，本次结算自动扣减 <strong class="num">¥${fmtC(dueOffset)}</strong>${p.points.unrecovered > total ? '，剩余 ¥' + fmtC(p.points.unrecovered - total) + ' 结转下次扣减' : ''}。</div>` : '<div style="margin-bottom:8px;"></div>'}
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-group"><label class="form-group-label">财务打款凭证流水单号 <span class="req">*</span></label><input class="form-input-full num" id="sheet-voucher" value="${autoVoucher}"></div>
+            <div class="form-group"><label class="form-group-label">结算经办人</label><input class="form-input-full" id="sheet-op" value="财务王敏"></div>
+          </div>
+          <div class="form-group"><label class="form-group-label">打款备注说明</label><input class="form-input-full" id="sheet-rem" value="2026年11月度推广服务费，公对私转账付清"></div>
+        </div>
+        <div class="drawer-footer" style="justify-content:space-between;">
+          <div style="font-size:13px;">本次实结 <strong id="sheet-total" class="num" style="font-size:20px; color:#15803D;">¥${fmtC(total - dueOffset)}</strong> <span id="sheet-count" style="color:var(--muted-foreground); font-size:12px;">（已选 ${lines.length}/${lines.length} 条明细）</span><div id="sheet-offset" style="font-size:11.5px; color:#B91C1C; margin-top:2px;">${dueOffset > 0 ? `明细合计 ¥${fmtC(total)} · 扣减待追回 ¥${fmtC(dueOffset)}` : ''}</div></div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-outline" onclick="closeDrawer('drawer-settle')">取消</button>
+            <button class="btn btn-primary" onclick="confirmSettleSheet()">确认结算并同步</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+function updateSheetTotal() {
+  const sel = SHEET.lines.filter(l => SHEET.checked.has(l.key));
+  const gross = sel.reduce((a, l) => a + l.remaining, 0);
+  const p = PARTNERS.find(x => x.id === SHEET.pid);
+  const offset = p ? Math.min(p.points.unrecovered || 0, gross) : 0;
+  document.getElementById('sheet-total').textContent = '¥' + fmtC(gross - offset);
+  document.getElementById('sheet-offset').textContent = offset > 0 ? `明细合计 ¥${fmtC(gross)} · 扣减待追回 ¥${fmtC(offset)}` : '';
+  document.getElementById('sheet-count').textContent = `（已选 ${sel.length}/${SHEET.lines.length} 条明细）`;
+}
+function toggleSheetLine(el) {
+  if (el.checked) SHEET.checked.add(el.dataset.key); else SHEET.checked.delete(el.dataset.key);
+  updateSheetTotal();
+}
+function sheetSelectAll(on) {
+  document.querySelectorAll('.sheet-chk').forEach(el => {
+    el.checked = on;
+    if (on) SHEET.checked.add(el.dataset.key); else SHEET.checked.delete(el.dataset.key);
+  });
+  updateSheetTotal();
+}
+function confirmSettleSheet() {
+  const p = PARTNERS.find(x => x.id === SHEET.pid); if (!p) return;
+  const sel = SHEET.lines.filter(l => SHEET.checked.has(l.key));
+  if (!sel.length) { toast('请至少勾选一条结算明细'); return; }
+  const voucher = document.getElementById('sheet-voucher').value.trim();
+  if (!voucher) { toast('请填写财务打款凭证流水号'); return; }
+  const op = document.getElementById('sheet-op').value.trim() || '财务';
+  const rem = document.getElementById('sheet-rem').value.trim();
+  const total = sel.reduce((a, l) => a + l.remaining, 0);
+  const offset = Math.min(p.points.unrecovered || 0, total);
+  const net = total - offset;
+  const before = p.points.withdrawable;
+  const bNo = 'SETTLE-' + REF_DATE.slice(0, 7).replace('-', '') + '-' + Math.floor(100 + Math.random() * 899);
+  sel.forEach(l => { LINE_SETTLED[l.key] = (LINE_SETTLED[l.key] || 0) + l.remaining; LINE_SETTLE_ID[l.key] = bNo; });
+  const rec = {
+    settle_id: bNo, partner_id: p.id, partner_name: p.name, partner_phone: p.phone, channel_type: p.channel_type,
+    points: net, gross: total, offset, voucher, operator: op, settle_time: nowTime(), remark: rem,
+    lines: sel.map(l => ({ key: l.key, order_id: l.order_id, k: l.k, n: l.n, kind: l.kind, source: l.source, amt: l.remaining, unlock: l.unlock }))
+  };
+  SETTLEMENT_HISTORY.unshift(rec);
+  p._offsetPaid = (p._offsetPaid || 0) + offset;
+  p.settlements.unshift({ batch_no: bNo, points: net, gross: total, offset, voucher, operator: op, time: rec.settle_time, remark: rem });
+  p.flow.unshift({ time: rec.settle_time, order_id: bNo, type: '线下结算核销', points: '-¥' + fmtC(net), status: `凭证 ${voucher} 已完成打款（${sel.length} 条明细）${offset > 0 ? ' · 扣减退款待追回 ¥' + fmtC(offset) : ''}` });
+  recalcPartner(p);
+  p.logs.unshift({ time: rec.settle_time, operator: op, action: '线下结算打款核销', before: `可结算 ¥${fmtC(before)}`, after: `可结算 ¥${fmtC(p.points.withdrawable)}`, reason: `结算 ${sel.length} 条明细合计 ¥${fmtC(total)}${offset > 0 ? '，扣减退款待追回 ¥' + fmtC(offset) : ''}，实结 ¥${fmtC(net)}，凭证 ${voucher}` });
+  closeDrawer('drawer-settle');
+  toast(`结算成功：${sel.length} 条明细，实结 ¥${fmtC(net)}${offset > 0 ? '（已扣减退款待追回 ¥' + fmtC(offset) + '）' : ''}，已同步合伙人端`);
+  renderSettlementsView(document.getElementById('main-view-container'));
+}
+
+function openSettleDetail(settleId) {
+  const s = SETTLEMENT_HISTORY.find(x => x.settle_id === settleId); if (!s) return;
+  const ls = s.lines || [];
+  document.getElementById('drawer-root').innerHTML = `
+    <div class="drawer-mask show" id="drawer-sd" onclick="if(event.target===this)closeDrawer('drawer-sd')">
+      <div class="drawer-panel" style="width:680px;">
+        <div class="drawer-header">
+          <div><h3 style="font-size:15px; font-weight:600;">结算明细 · ${s.settle_id}</h3>
+            <div style="font-size:12px; color:var(--muted-foreground); margin-top:2px;">${s.partner_name} · ${s.settle_time} · 凭证 ${s.voucher}</div></div>
+          <button class="btn-ghost" style="padding:4px;" onclick="closeDrawer('drawer-sd')">✕</button>
+        </div>
+        <div class="drawer-body">
+          <div class="table-container"><table class="official-table">
+            <thead><tr><th>来源订单</th><th>期次</th><th>解冻日</th><th style="text-align:right;">结算金额</th></tr></thead>
+            <tbody>${ls.map(l => `<tr><td>${kindBadge(l.kind)} <span class="code-badge">${l.order_id}</span><div style="font-size:11.5px; color:var(--muted-foreground);">${l.source}</div></td><td>${l.n > 1 ? '第 ' + l.k + '/' + l.n + ' 期' : '一次性'}</td><td>${l.unlock}</td><td class="num" style="text-align:right;">¥${fmtC(l.amt)}</td></tr>`).join('')}
+            <tr><td colspan="3" style="text-align:right; font-weight:600;">合计</td><td class="num" style="text-align:right; font-weight:700;">¥${fmtC(s.points)}</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+    </div>`;
+}
+function openEditVoucherModal(settleId) {
+  const s = SETTLEMENT_HISTORY.find(x => x.settle_id === settleId); if (!s) return;
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-mask show" id="modal-rem">
+      <div class="modal-dialog">
+        <div class="modal-dialog-header"><h3>修改打款备注 · ${s.settle_id}</h3><button class="btn-ghost" style="padding:4px;" onclick="closeModal('modal-rem')">✕</button></div>
+        <div class="modal-dialog-body">
+          <div class="form-group"><label class="form-group-label">打款备注说明</label><input class="form-input-full" id="in-rem-edit" value="${esc(s.remark)}"></div>
+          <div class="form-hint-note">仅可修改备注；金额、凭证号和结算明细不可修改。</div>
+        </div>
+        <div class="modal-dialog-footer"><button class="btn btn-outline" onclick="closeModal('modal-rem')">取消</button><button class="btn btn-primary" onclick="saveVoucherRemark('${s.settle_id}')">保存</button></div>
+      </div>
+    </div>`;
+}
+function saveVoucherRemark(settleId) {
+  const s = SETTLEMENT_HISTORY.find(x => x.settle_id === settleId); if (!s) return;
+  s.remark = document.getElementById('in-rem-edit').value.trim();
+  const p = PARTNERS.find(x => x.id === s.partner_id);
+  const r = p && p.settlements.find(x => x.batch_no === settleId); if (r) r.remark = s.remark;
+  closeModal('modal-rem'); toast('备注已更新');
+  renderSettlementsView(document.getElementById('main-view-container'));
+}
+function revokeSettlement(settleId) {
+  const s = SETTLEMENT_HISTORY.find(x => x.settle_id === settleId); if (!s) return;
+  if (s.imported) { toast('该结算单为机构订单录入时已发放，不支持撤销'); return; }
+  const p = PARTNERS.find(x => x.id === s.partner_id); if (!p) return;
+  const cnt = (s.lines || []).length;
+  if (!confirm(`确认撤销结算单 ${settleId}？\n撤销后所选 ${cnt} 条明细将恢复为「可结算」，合伙人端同步回滚该笔已结算记录。`)) return;
+  const before = p.points.withdrawable;
+  (s.lines || []).forEach(l => {
+    const rest = Math.max(0, (LINE_SETTLED[l.key] || 0) - l.amt);
+    if (rest > 0) LINE_SETTLED[l.key] = rest;
+    else { delete LINE_SETTLED[l.key]; delete LINE_SETTLE_ID[l.key]; }
+  });
+  SETTLEMENT_HISTORY.splice(SETTLEMENT_HISTORY.indexOf(s), 1);
+  if (s.offset) p._offsetPaid = Math.max(0, (p._offsetPaid || 0) - s.offset);
+  p.settlements = p.settlements.filter(x => x.batch_no !== settleId);
+  p.flow = p.flow.filter(x => x.order_id !== settleId);
+  recalcPartner(p);
+  p.logs.unshift({ time: nowTime(), operator: s.operator || '财务', action: '撤销线下结算', before: `可结算 ¥${fmtC(before)}`, after: `可结算 ¥${fmtC(p.points.withdrawable)}`, reason: `撤销结算单 ${settleId}，恢复 ${cnt} 条明细为可结算` });
+  toast(`已撤销结算单 ${settleId}：${cnt} 条明细恢复为可结算，合伙人端已同步回滚`);
+  renderSettlementsView(document.getElementById('main-view-container'));
+}
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+// ==========================================
+// 机构订单录入
+// ==========================================
+function allOrgOrders() {
+  const r = [];
+  PARTNERS.forEach(p => p.orders.forEach(o => { if (o.kind === 'ORG') r.push({ p, o, lines: orderLines(o, p) }); }));
+  return r.sort((a, b) => b.o.start.localeCompare(a.o.start));
+}
+function openOrgEntryDrawer() {
+  const cand = PARTNERS;
+  document.getElementById('drawer-root').innerHTML = `
+    <div class="drawer-mask show" id="drawer-org" onclick="if(event.target===this)closeDrawer('drawer-org')">
+      <div class="drawer-panel" style="width:700px;">
+        <div class="drawer-header"><h3 style="font-size:15px; font-weight:600;">录入机构订单</h3><button class="btn-ghost" style="padding:4px;" onclick="closeDrawer('drawer-org')">✕</button></div>
+        <div class="drawer-body">
+          <div style="background:#FAFAFA; border:1px solid var(--border); border-radius:8px; padding:10px 14px; font-size:12.5px; margin-bottom:14px;">
+            机构版为线下签合同，无法在线上自动打通，由运营按合同手动录入。解冻规则与年卡一致：<strong>按合同周期逐月分期，每期在服务月结束 +7 天后解冻</strong>；与年卡不同的是，金额、比例、周期均按合同填写。
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 14px;">
+            <div class="form-group" style="grid-column:1/3;"><label class="form-group-label">归属合伙人 <span class="req">*</span></label>
+              <select class="form-input-full" id="org-partner" onchange="onOrgPartnerChange()">${cand.map(p => `<option value="${p.id}">${p.name} · ${p.org} · ${p.channel_type === 'INTERNAL' ? '内部' : '外部'}渠道（续购比例 ${p.renew_rate.toFixed(1)}%）${p.status === 'FROZEN' ? ' · 已冻结' : ''}</option>`).join('')}</select></div>
+            <div class="form-group"><label class="form-group-label">机构名称 <span class="req">*</span></label><input class="form-input-full" id="org-name" placeholder="如：某某大学某某实验室" oninput="refreshOrgPreview()"></div>
+            <div class="form-group"><label class="form-group-label">合同编号 <span class="req">*</span></label><input class="form-input-full" id="org-contract" placeholder="线下合同编号"></div>
+            <div class="form-group"><label class="form-group-label">合同金额（元）<span class="req">*</span></label><input class="form-input-full num" type="number" id="org-amount" placeholder="如 40000" oninput="refreshOrgPreview()"></div>
+            <div class="form-group"><label class="form-group-label">分成比例（%）<span class="req">*</span></label><input class="form-input-full num" type="number" step="0.1" id="org-rate" value="${cand[0].renew_rate}" oninput="refreshOrgPreview()"><div class="form-hint-note">默认带出合伙人续购比例，可按合同调整；录入后锁定，不随后续比例调整变化。</div></div>
+            <div class="form-group"><label class="form-group-label">服务起始日 <span class="req">*</span></label><input class="form-input-full" type="date" id="org-start" value="${REF_DATE}" oninput="refreshOrgPreview()"></div>
+            <div class="form-group"><label class="form-group-label">服务周期（月）<span class="req">*</span></label><input class="form-input-full num" type="number" id="org-months" value="12" min="1" max="60" oninput="refreshOrgPreview()"><div class="form-hint-note" id="org-end-hint"></div></div>
+            <div class="form-group"><label class="form-group-label">已发放金额（元）</label><input class="form-input-full num" type="number" id="org-paid" value="0" min="0" oninput="refreshOrgPreview()"><div class="form-hint-note">录入前已线下发给合伙人的佣金，系统按期次从前往后抵扣，并生成一条「录入时已发放」结算记录。</div></div>
+            <div class="form-group"><label class="form-group-label">备注</label><input class="form-input-full" id="org-remark" placeholder="选填"></div>
+          </div>
+          <div id="org-preview"></div>
+        </div>
+        <div class="drawer-footer">
+          <button class="btn btn-outline" onclick="closeDrawer('drawer-org')">取消</button>
+          <button class="btn btn-primary" onclick="confirmOrgEntry()">确认录入</button>
+        </div>
+      </div>
+    </div>`;
+  refreshOrgPreview();
+}
+function onOrgPartnerChange() {
+  const p = PARTNERS.find(x => x.id === document.getElementById('org-partner').value);
+  if (p) document.getElementById('org-rate').value = p.renew_rate;
+  refreshOrgPreview();
+}
+function readOrgForm() {
+  const g = id => document.getElementById(id).value;
+  return { pid: g('org-partner'), name: g('org-name').trim(), contract: g('org-contract').trim(), amount: parseFloat(g('org-amount')),
+    rate: parseFloat(g('org-rate')), start: g('org-start'), months: parseInt(g('org-months'), 10), paid: parseFloat(g('org-paid')) || 0, remark: g('org-remark').trim() };
+}
+function computeOrgPreview(f) {
+  const res = { ok: false, msg: '', lines: [], total: 0, alloc: [] };
+  if (!(f.amount > 0) || isNaN(f.rate) || f.rate < 0 || f.rate > 100 || !f.start || !(f.months >= 1 && f.months <= 60)) { res.msg = '填写合同金额、分成比例、服务起始日和周期后，这里会预览分期明细'; return res; }
+  const total = round2(f.amount * f.rate / 100);
+  const n = f.months;
+  const totalC = Math.round(total * 100), baseC = Math.round(totalC / n);
+  res.total = total;
+  let left = f.paid, unlockedSum = 0;
+  for (let k = 1; k <= n; k++) {
+    const amt = (k < n ? baseC : totalC - baseC * (n - 1)) / 100;
+    const unlock = addMonthsDate(f.start, k, GLOBAL_CONFIG.unfreeze_days);
+    const done = unlock <= REF_DATE;
+    if (done) unlockedSum += amt;
+    let a = 0;
+    if (left > 0) { a = Math.min(left, amt); left -= a; }
+    res.lines.push({ k, n, amt, unlock, done, alloc: a, period: addMonthsDate(f.start, k - 1, 0) + ' ~ ' + addMonthsDate(f.start, k, -1) });
+  }
+  res.unlockedSum = unlockedSum;
+  if (f.paid > total) res.msg = `已发放金额不能超过应分佣金总额 ¥${fmtC(total)}`;
+  else if (f.paid > unlockedSum) res.msg = `已发放金额不能超过截至今日已解冻金额 ¥${fmtC(unlockedSum)}`;
+  else res.ok = true;
+  return res;
+}
+function refreshOrgPreview() {
+  const f = readOrgForm();
+  const el = document.getElementById('org-preview'); if (!el) return;
+  const end = (f.start && f.months >= 1) ? addMonthsDate(f.start, f.months, -1) : '';
+  const hint = document.getElementById('org-end-hint'); if (hint) hint.textContent = end ? `服务期间：${f.start} ~ ${end}` : '';
+  const r = computeOrgPreview(f);
+  if (!r.lines.length) { el.innerHTML = `<div style="font-size:12.5px; color:var(--muted-foreground); border:1px dashed var(--border); border-radius:8px; padding:14px; text-align:center;">${r.msg}</div>`; return; }
+  const unlockedUnsettled = r.unlockedSum - Math.min(f.paid, r.unlockedSum);
+  const frozen = r.total - r.unlockedSum;
+  el.innerHTML = `
+    <div style="font-size:13px; font-weight:600; margin:4px 0 8px;">分期预览</div>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:10px;">
+      <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">应分佣金总额</div><strong class="num">¥${fmtC(r.total)}</strong></div>
+      <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">已发放</div><strong class="num">¥${fmtC(Math.min(f.paid, r.total))}</strong></div>
+      <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">可结算（已解冻未结算）</div><strong class="num" style="color:#15803D;">¥${fmtC(Math.max(unlockedUnsettled, 0))}</strong></div>
+      <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">冻结中</div><strong class="num" style="color:#A16207;">¥${fmtC(frozen)}</strong></div>
+    </div>
+    ${r.msg && !r.ok ? `<div style="background:#FEF2F2; border:1px solid #FECACA; color:#B91C1C; border-radius:8px; padding:8px 12px; font-size:12.5px; margin-bottom:10px;">${r.msg}</div>` : ''}
+    <div class="table-container" style="max-height:260px; overflow-y:auto;"><table class="official-table">
+      <thead><tr><th>期次</th><th>服务期间</th><th>解冻日</th><th style="text-align:right;">金额</th><th>状态</th></tr></thead>
+      <tbody>${r.lines.map(l => `<tr><td>第 ${l.k}/${l.n} 期</td><td style="font-size:12px; color:var(--muted-foreground);">${l.period}</td><td>${l.unlock}</td><td class="num" style="text-align:right;">¥${fmtC(l.amt)}</td><td>${
+        l.alloc >= l.amt ? '<span class="badge badge-neutral">已发放</span>' : (l.alloc > 0 ? `<span class="badge badge-neutral">已发放 ¥${fmtC(l.alloc)}，剩余 ¥${fmtC(l.amt - l.alloc)}</span>` : (l.done ? '<span class="badge badge-success">可结算</span>' : '<span class="badge badge-warning">冻结中</span>'))}</td></tr>`).join('')}</tbody>
+    </table></div>`;
+}
+function confirmOrgEntry() {
+  const f = readOrgForm();
+  const p = PARTNERS.find(x => x.id === f.pid);
+  if (!p) { toast('请选择归属合伙人'); return; }
+  if (!f.name) { toast('请填写机构名称'); return; }
+  if (!f.contract) { toast('请填写合同编号'); return; }
+  if (allOrgOrders().some(x => x.o.contract_no === f.contract)) { toast('该合同编号已录入，请勿重复'); return; }
+  const r = computeOrgPreview(f);
+  if (!r.lines.length) { toast('请完整填写合同金额、比例、起始日和周期'); return; }
+  if (!r.ok) { toast(r.msg); return; }
+  const seq = allOrgOrders().length + 1;
+  const id = 'ORG-' + f.start.replace(/-/g, '') + '-' + String(seq).padStart(3, '0');
+  const now = nowTime();
+  p.orders.unshift({ id, customer_phone: '', org_name: f.name, contract_no: f.contract, kind: 'ORG', product: '机构版年度合同（线下签约）',
+    pay_amount: f.amount, rate: f.rate, points: r.total, status: 'ORG', unfreeze_at: '按月分期', created_at: now, start: f.start, months: f.months,
+    paid_out: f.paid, remark: f.remark, is_upgrade: false, is_cool: false });
+  p.flow.unshift({ time: now, order_id: id, type: '机构订单录入', points: '+¥' + fmtC(r.total), status: `合同 ${f.contract}，${f.months} 期分期解冻` });
+  p.logs.unshift({ time: now, operator: '张博文', action: '录入机构订单', before: '-', after: `${f.name} · ¥${formatNum(f.amount)} × ${f.rate}%`, reason: `应分佣金 ¥${fmtC(r.total)}，周期 ${f.months} 个月，已发放 ¥${fmtC(f.paid)}` });
+  if (f.paid > 0) {
+    const sid = 'IMPORT-' + REF_DATE.slice(0, 7).replace('-', '') + '-' + Math.floor(100 + Math.random() * 899);
+    const lines = [];
+    r.lines.forEach(l => { if (l.alloc > 0) { const key = id + '#' + l.k; LINE_SETTLED[key] = l.alloc; LINE_SETTLE_ID[key] = sid; lines.push({ key, order_id: id, k: l.k, n: l.n, kind: 'ORG', source: f.name, amt: l.alloc, unlock: l.unlock }); } });
+    SETTLEMENT_HISTORY.unshift({ settle_id: sid, partner_id: p.id, partner_name: p.name, partner_phone: p.phone, channel_type: p.channel_type, points: f.paid,
+      voucher: '录入时登记', operator: '张博文', settle_time: now, remark: `机构订单录入时登记的已发放金额（合同 ${f.contract}）`, lines, imported: true });
+    p.settlements.unshift({ batch_no: sid, points: f.paid, voucher: '录入时登记', operator: '张博文', time: now, remark: `机构订单录入时登记的已发放金额（合同 ${f.contract}）` });
+  }
+  recalcAll();
+  closeDrawer('drawer-org');
+  toast(`机构订单已录入：应分佣金 ¥${fmtC(r.total)}，共 ${f.months} 期`);
+  orderSubTab = 'org';
+  if (currentRoute === 'orders') renderOrdersView(document.getElementById('main-view-container'));
+  else navigate('orders');
+}
+
+// ==========================================
+// 路由控制器 (Router)
+// ==========================================
+let currentRoute = 'applications';
+let routeParams = {};
+
+function initRouter() {
+  window.addEventListener('hashchange', parseRoute);
+  parseRoute();
+}
+
+function parseRoute() {
+  const hash = location.hash.replace(/^#/, '') || 'applications';
+  const parts = hash.split('/');
+  currentRoute = parts[0];
+  if (parts[0] === 'partner' && parts[1]) {
+    routeParams = { partnerId: parts[1], tab: parts[2] || 'orders' };
+  } else {
+    routeParams = {};
+  }
+  updateSidebarMenu();
+  renderActiveView();
+}
+
+function navigate(path) {
+  location.hash = path;
+}
+
+function updateSidebarMenu() {
+  document.querySelectorAll('.sidebar-menu-item').forEach(el => el.classList.remove('active'));
+  const activeItem = document.getElementById('nav-' + currentRoute);
+  if (activeItem) activeItem.classList.add('active');
+}
+
+// 通用列表翻页器
+let pageState = {};
+function pageMeta(key, total) {
+  const st = pageState[key] || (pageState[key] = { page: 1, size: 20 });
+  const pages = Math.max(1, Math.ceil(total / st.size));
+  if (st.page > pages) st.page = pages;
+  return { st, pages, start: (st.page - 1) * st.size };
+}
+function pagedList(key, arr) {
+  const m = pageMeta(key, arr.length);
+  return arr.slice(m.start, m.start + m.st.size);
+}
+function resetPage(key) {
+  if (pageState[key]) pageState[key].page = 1;
+}
+function goPage(key, page) {
+  const st = pageState[key] || (pageState[key] = { page: 1, size: 20 });
+  st.page = Math.max(1, page);
+  renderActiveView();
+}
+function setPageSize(key, size) {
+  pageState[key] = { page: 1, size: parseInt(size, 10) || 20 };
+  renderActiveView();
+}
+function pagerBar(key, total) {
+  const { st, pages } = pageMeta(key, total);
+  return `
+    <div class="table-pager">
+      <div class="pager-total">共 ${total} 条 · 第 ${st.page}/${pages} 页</div>
+      <div class="pager-actions">
+        <select class="input-control pager-size" onchange="setPageSize('${key}', this.value)">
+          <option value="20" ${st.size === 20 ? 'selected' : ''}>20 条/页</option>
+          <option value="50" ${st.size === 50 ? 'selected' : ''}>50 条/页</option>
+        </select>
+        <button class="pager-arrow" ${st.page <= 1 ? 'disabled' : ''} onclick="goPage('${key}', ${st.page - 1})">‹ 上一页</button>
+        <button class="pager-arrow" ${st.page >= pages ? 'disabled' : ''} onclick="goPage('${key}', ${st.page + 1})">下一页 ›</button>
+      </div>
+    </div>`;
+}
+
+function renderActiveView() {
+  const container = document.getElementById('main-view-container');
+  if (currentRoute === 'applications') renderApplicationsView(container);
+  else if (currentRoute === 'list') renderPartnerListView(container);
+  else if (currentRoute === 'partner') {
+    const p = PARTNERS.find(item => item.id === routeParams.partnerId) || PARTNERS[0];
+    renderPartnerDetailView(container, p, routeParams.tab);
+  } else if (currentRoute === 'orders') renderOrdersView(container);
+  else if (currentRoute === 'settlements') renderSettlementsView(container);
+  else if (currentRoute === 'reports') renderReportsView(container);
+  else if (currentRoute === 'settings') renderSettingsView(container);
+}
+
+// ==========================================
+// 1. 页面：申请审核 (APPLICATIONS)
+// ==========================================
+let appStatusTab = 'PENDING';
+let appKw = '';
+let appFrom = '';
+let appTo = '';
+let appPickerOpen = false;
+let appTmpFrom = '';
+let appTmpTo = '';
+let appCalMonth = '2026-11';
+
+function renderApplicationsView(container) {
+  let filtered = APPLICATIONS.filter(a => {
+    if (appStatusTab !== 'ALL' && a.status !== appStatusTab) return false;
+    const applyDate = a.apply_time.slice(0, 10);
+    if (appFrom && applyDate < appFrom) return false;
+    if (appTo && applyDate > appTo) return false;
+    if (appKw) {
+      const kw = appKw.toLowerCase();
+      return a.name.toLowerCase().includes(kw) || a.phone.includes(kw) || a.org.toLowerCase().includes(kw);
+    }
+    return true;
+  });
+
+  const showTimeCol = appStatusTab === 'APPROVED' || appStatusTab === 'REJECTED';
+  const timeColLabel = appStatusTab === 'APPROVED' ? '入驻时间' : '拒绝时间';
+  const showOperatorCol = appStatusTab !== 'PENDING';
+  const colCount = 7 + (showTimeCol ? 1 : 0) + (showOperatorCol ? 1 : 0);
+  const pagedRows = pagedList('apps', filtered);
+
+  container.innerHTML = `
+    <!-- 页面标题区 (1:1 官方规范) -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px;">
+      <div>
+        <h1 style="font-size: 24px; font-weight: 700; color: var(--foreground); letter-spacing: -0.02em;">申请审核</h1>
+      </div>
+    </div>
+
+    <!-- 筛选卡片 (1:1 官方筛选用户样式) -->
+    <div class="filter-card">
+      <div class="filter-title-row">
+        <span class="filter-title">筛选申请</span>
+        <button class="btn btn-outline btn-sm" onclick="appKw=''; renderApplicationsView(document.getElementById('main-view-container'))">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          重置
+        </button>
+      </div>
+      <div class="filter-inputs-grid">
+        <div class="filter-field" style="flex: 2; min-width: 260px;">
+          <span class="field-label">关键词</span>
+          <input class="input-control" type="text" placeholder="申请 ID、姓名、完整手机号、机构单位" value="${appKw}" oninput="appKw=this.value; resetPage('apps'); renderApplicationsView(document.getElementById('main-view-container'))">
+        </div>
+        <div class="filter-field" style="flex: 1;">
+          <span class="field-label">审核状态</span>
+          <select class="input-control" onchange="appStatusTab=this.value; resetPage('apps'); renderApplicationsView(document.getElementById('main-view-container'))">
+            <option value="PENDING" ${appStatusTab==='PENDING'?'selected':''}>待审核 (默认)</option>
+            <option value="APPROVED" ${appStatusTab==='APPROVED'?'selected':''}>已通过</option>
+            <option value="REJECTED" ${appStatusTab==='REJECTED'?'selected':''}>已拒绝</option>
+            <option value="ALL" ${appStatusTab==='ALL'?'selected':''}>全部状态</option>
+          </select>
+        </div>
+        <div class="filter-field" style="flex: 1; min-width: 230px; position: relative;">
+          <span class="field-label">申请时间</span>
+          <button type="button" class="input-control date-range-trigger" onclick="toggleAppDatePicker()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--muted-foreground); flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4"></path><path d="M8 2v4"></path><path d="M3 10h18"></path></svg>
+            <span style="flex:1; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; ${appFrom || appTo ? '' : 'color: var(--muted-foreground);'}">
+              ${appFrom || appTo ? `${appFrom || '不限'} — ${appTo || '不限'}` : '选择日期区间'}
+            </span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--muted-foreground); flex-shrink:0;"><path d="m6 9 6 6 6-6"></path></svg>
+          </button>
+          ${appPickerOpen ? dateRangePickerHtml() : ''}
+        </div>
+      </div>
+    </div>
+
+    <!-- 分段标签页 (Segmented Controls) -->
+    <div class="segmented-tabs">
+      <button class="seg-tab-btn ${appStatusTab==='PENDING'?'active':''}" onclick="appStatusTab='PENDING'; resetPage('apps'); renderApplicationsView(document.getElementById('main-view-container'))">
+        待审核
+      </button>
+      <button class="seg-tab-btn ${appStatusTab==='APPROVED'?'active':''}" onclick="appStatusTab='APPROVED'; resetPage('apps'); renderApplicationsView(document.getElementById('main-view-container'))">
+        已通过
+      </button>
+      <button class="seg-tab-btn ${appStatusTab==='REJECTED'?'active':''}" onclick="appStatusTab='REJECTED'; resetPage('apps'); renderApplicationsView(document.getElementById('main-view-container'))">
+        已拒绝
+      </button>
+      <button class="seg-tab-btn ${appStatusTab==='ALL'?'active':''}" onclick="appStatusTab='ALL'; resetPage('apps'); renderApplicationsView(document.getElementById('main-view-container'))">
+        全部申请
+      </button>
+    </div>
+
+    <!-- 数据表格卡片 (1:1 官方表格规范) -->
+    <div class="table-container">
+      <table class="official-table">
+        <thead>
+          <tr>
+            <th>申请人</th>
+            <th>手机号</th>
+            <th>所属单位 / 学术机构</th>
+            <th>微信号</th>
+            <th>申请时间</th>
+            ${showTimeCol ? `<th>${timeColLabel}</th>` : ''}
+            <th>审核状态</th>
+            ${showOperatorCol ? '<th>操作人</th>' : ''}
+            <th class="col-sticky" style="text-align: right;">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filtered.length === 0 ? `
+            <tr><td colspan="${colCount}" style="text-align:center; padding:48px; color:var(--muted-foreground);">暂无符合筛选条件的申请记录</td></tr>
+          ` : pagedRows.map(item => `
+            <tr>
+              <td style="font-weight: 600;">${item.name}</td>
+              <td class="num font-semibold" style="color: var(--foreground);">${item.phone}</td>
+              <td>
+                <div style="max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                  ${item.org}
+                </div>
+              </td>
+              <td style="color: var(--muted-foreground);">${item.wx || '-'}</td>
+              <td style="color: var(--muted-foreground); font-size: 12px;">${item.apply_time}</td>
+              ${showTimeCol ? `<td style="color: var(--muted-foreground); font-size: 12px;">${(appStatusTab === 'APPROVED' ? item.approve_time : item.reject_time) || '-'}</td>` : ''}
+              <td>
+                ${item.status === 'PENDING' ? '<span class="badge badge-warning">待审核</span>' : ''}
+                ${item.status === 'APPROVED' ? '<span class="badge badge-success">已通过</span>' : ''}
+                ${item.status === 'REJECTED' ? '<span class="badge badge-danger">已拒绝</span>' : ''}
+              </td>
+              ${showOperatorCol ? `<td>${item.status === 'APPROVED' ? (item.approve_by || '-') : item.status === 'REJECTED' ? (item.reject_by || '-') : ''}</td>` : ''}
+              <td class="col-sticky" style="text-align: right;">
+                <button class="btn btn-outline btn-sm" onclick="openAppDetailDrawer('${item.id}')">详情</button>
+                ${item.status === 'PENDING' ? `
+                  <button class="btn btn-primary btn-sm" onclick="openApproveModal('${item.id}')">通过</button>
+                  <button class="btn btn-destructive btn-sm" onclick="openRejectModal('${item.id}')">拒绝</button>
+                ` : ''}
+                ${item.status === 'REJECTED' ? `
+                  <button class="btn btn-primary btn-sm" onclick="openApproveModal('${item.id}', true)">改为通过</button>
+                ` : ''}
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      ${pagerBar('apps', filtered.length)}
+    </div>
+  `;
+}
+
+// ---------------- 申请时间区间选择器（shadcn/ui 风格） ----------------
+function pad2(n) { return String(n).padStart(2, '0'); }
+function ymAdd(ym, delta) {
+  const [y, m] = ym.split('-').map(Number);
+  const d = new Date(y, m - 1 + delta, 1);
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}`;
+}
+function ymLabel(ym) {
+  const [y, m] = ym.split('-').map(Number);
+  return `${y} 年 ${m} 月`;
+}
+function monthCells(ym) {
+  const [y, m] = ym.split('-').map(Number);
+  const firstDow = new Date(y, m - 1, 1).getDay();
+  const daysInMonth = new Date(y, m, 0).getDate();
+  const prevDays = new Date(y, m - 1, 0).getDate();
+  const prevYm = ymAdd(ym, -1);
+  const nextYm = ymAdd(ym, 1);
+  const cells = [];
+  for (let i = firstDow - 1; i >= 0; i--) {
+    cells.push({ date: `${prevYm}-${pad2(prevDays - i)}`, day: prevDays - i, muted: true });
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    cells.push({ date: `${ym}-${pad2(d)}`, day: d, muted: false });
+  }
+  let n = 1;
+  while (cells.length % 7 !== 0) {
+    cells.push({ date: `${nextYm}-${pad2(n)}`, day: n, muted: true });
+    n++;
+  }
+  return cells;
+}
+function calMonthHtml(ym) {
+  const chevronL = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>';
+  const chevronR = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>';
+  return `
+    <div>
+      <div class="cal-head">
+        <button type="button" class="cal-nav" onclick="shiftAppCal(-1)">${chevronL}</button>
+        <span>${ymLabel(ym)}</span>
+        <button type="button" class="cal-nav" onclick="shiftAppCal(1)">${chevronR}</button>
+      </div>
+      <div class="cal-weekdays">${['日', '一', '二', '三', '四', '五', '六'].map(w => `<div>${w}</div>`).join('')}</div>
+      <div class="cal-grid">
+        ${monthCells(ym).map(c => {
+          const isFrom = c.date === appTmpFrom;
+          const isTo = c.date === appTmpTo;
+          const inRange = appTmpFrom && appTmpTo && c.date > appTmpFrom && c.date < appTmpTo;
+          const cls = ['cal-day', c.muted ? 'muted' : '', (isFrom || isTo) ? 'edge' : '', inRange ? 'in-range' : '', c.date === REF_DATE ? 'today' : ''].filter(Boolean).join(' ');
+          return `<button type="button" class="${cls}" onclick="pickAppDate('${c.date}')">${c.day}</button>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+function dateRangePickerHtml() {
+  return `
+    <div class="date-popover" onclick="event.stopPropagation()">
+      <div class="cal-wrap">
+        ${calMonthHtml(appCalMonth)}
+        ${calMonthHtml(ymAdd(appCalMonth, 1))}
+      </div>
+      <div class="cal-footer">
+        <div class="cal-presets">
+          <button type="button" class="cal-preset" onclick="setAppRangePreset('7')">近 7 天</button>
+          <button type="button" class="cal-preset" onclick="setAppRangePreset('month')">本月</button>
+          <button type="button" class="cal-preset" onclick="clearAppDatePicker()">清空</button>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="closeAppDatePicker()">取消</button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="applyAppDatePicker()">确定</button>
+        </div>
+      </div>
+    </div>`;
+}
+function appDocClick() {
+  appPickerOpen = false;
+  document.removeEventListener('click', appDocClick);
+  renderActiveView();
+}
+function toggleAppDatePicker() {
+  appPickerOpen = !appPickerOpen;
+  if (appPickerOpen) {
+    appTmpFrom = appFrom;
+    appTmpTo = appTo;
+    setTimeout(() => document.addEventListener('click', appDocClick), 0);
+  } else {
+    document.removeEventListener('click', appDocClick);
+  }
+  renderActiveView();
+}
+function closeAppDatePicker() {
+  appPickerOpen = false;
+  document.removeEventListener('click', appDocClick);
+  renderActiveView();
+}
+function applyAppDatePicker() {
+  appFrom = appTmpFrom;
+  appTo = appTmpTo;
+  appPickerOpen = false;
+  document.removeEventListener('click', appDocClick);
+  resetPage('apps');
+  renderActiveView();
+}
+function clearAppDatePicker() {
+  appTmpFrom = '';
+  appTmpTo = '';
+  renderActiveView();
+}
+function shiftAppCal(delta) {
+  appCalMonth = ymAdd(appCalMonth, delta);
+  renderActiveView();
+}
+function pickAppDate(date) {
+  if (!appTmpFrom || appTmpTo) {
+    appTmpFrom = date;
+    appTmpTo = '';
+  } else if (date < appTmpFrom) {
+    appTmpTo = appTmpFrom;
+    appTmpFrom = date;
+  } else {
+    appTmpTo = date;
+  }
+  renderActiveView();
+}
+function setAppRangePreset(type) {
+  const shift = offset => {
+    const d = new Date(REF_DATE + 'T00:00:00');
+    d.setDate(d.getDate() + offset);
+    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  };
+  if (type === '7') {
+    appTmpFrom = shift(-6);
+    appTmpTo = REF_DATE;
+  } else if (type === 'month') {
+    appTmpFrom = REF_DATE.slice(0, 7) + '-01';
+    appTmpTo = REF_DATE;
+  }
+  renderActiveView();
+}
+
+// ==========================================
+// 2. 页面：合伙人管理 (PARTNER MANAGEMENT)
+// ==========================================
+let listKw = '';
+let listChannel = 'ALL';
+let listStatus = 'ALL';
+
+function renderPartnerListView(container) {
+  let list = PARTNERS.filter(p => {
+    if (listChannel !== 'ALL' && p.channel_type !== listChannel) return false;
+    if (listStatus !== 'ALL' && p.status !== listStatus) return false;
+    if (listKw) {
+      const kw = listKw.toLowerCase();
+      return p.name.toLowerCase().includes(kw) || p.phone.includes(kw) || p.code.includes(kw) || p.org.toLowerCase().includes(kw);
+    }
+    return true;
+  });
+
+  const pagedRows = pagedList('partners', list);
+
+  container.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px;">
+      <div>
+        <h1 style="font-size: 24px; font-weight: 700; color: var(--foreground); letter-spacing: -0.02em;">合伙人管理</h1>
+      </div>
+    </div>
+
+    <!-- 筛选卡片 -->
+    <div class="filter-card">
+      <div class="filter-title-row">
+        <span class="filter-title">筛选合伙人</span>
+        <button class="btn btn-outline btn-sm" onclick="listKw=''; listChannel='ALL'; listStatus='ALL'; resetPage('partners'); renderPartnerListView(document.getElementById('main-view-container'))">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          重置
+        </button>
+      </div>
+      <div class="filter-inputs-grid">
+        <div class="filter-field" style="flex: 2; min-width: 240px;">
+          <span class="field-label">关键词</span>
+          <input class="input-control" type="text" placeholder="合伙人姓名、完整手机号、4位推荐码、机构" value="${listKw}" oninput="listKw=this.value; resetPage('partners'); renderPartnerListView(document.getElementById('main-view-container'))">
+        </div>
+        <div class="filter-field" style="flex: 1;">
+          <span class="field-label">渠道类型</span>
+          <select class="input-control" onchange="listChannel=this.value; resetPage('partners'); renderPartnerListView(document.getElementById('main-view-container'))">
+            <option value="ALL" ${listChannel==='ALL'?'selected':''}>全部渠道</option>
+            <option value="INTERNAL" ${listChannel==='INTERNAL'?'selected':''}>内部渠道 (员工/顾问)</option>
+            <option value="EXTERNAL" ${listChannel==='EXTERNAL'?'selected':''}>外部渠道 (高校/博主)</option>
+          </select>
+        </div>
+        <div class="filter-field" style="flex: 1;">
+          <span class="field-label">账号状态</span>
+          <select class="input-control" onchange="listStatus=this.value; resetPage('partners'); renderPartnerListView(document.getElementById('main-view-container'))">
+            <option value="ALL" ${listStatus==='ALL'?'selected':''}>全部状态</option>
+            <option value="NORMAL" ${listStatus==='NORMAL'?'selected':''}>正常</option>
+            <option value="FROZEN" ${listStatus==='FROZEN'?'selected':''}>已冻结</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 数据表格 -->
+    <div class="table-container">
+      <table class="official-table">
+        <thead>
+          <tr>
+            <th>合伙人姓名</th>
+            <th>账号状态</th>
+            <th>单位</th>
+            <th>手机号 (完整展示)</th>
+            <th>渠道</th>
+            <th>推荐码</th>
+            <th>首购 / 续购比例</th>
+            <th>总销售额</th>
+            <th>累计总金额</th>
+            <th>加入时间</th>
+            <th class="col-sticky" style="text-align: right;">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${list.length === 0 ? `
+            <tr><td colspan="11" style="text-align:center; padding:48px; color:var(--muted-foreground);">暂无符合筛选条件的合伙人</td></tr>
+          ` : pagedRows.map(p => `
+            <tr>
+              <td><span style="font-weight: 600;">${p.name}</span></td>
+              <td>
+                ${p.status === 'NORMAL' ? '<span class="badge badge-success">正常</span>' : ''}
+                ${p.status === 'FROZEN' ? '<span class="badge badge-warning" title="'+p.freeze_reason+'">已冻结</span>' : ''}
+              </td>
+              <td><div style="font-size: 12px; color: var(--muted-foreground); max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.org}</div></td>
+              <td><strong class="num">${p.phone}</strong></td>
+              <td>
+                ${p.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部</span>' : '<span class="badge badge-neutral">外部</span>'}
+              </td>
+              <td><span class="code-badge">${p.code}</span>${p.status === 'FROZEN' ? '<div style="font-size:10.5px; color:var(--destructive); margin-top:2px;">已失效</div>' : ''}</td>
+              <td><strong class="num">${p.first_rate.toFixed(1)}%</strong> <span style="font-size:11px; color:var(--muted-foreground);">/ 续 ${p.renew_rate.toFixed(1)}%</span></td>
+              <td><strong class="num">¥${formatNum(partnerSales(p))}</strong></td>
+              <td><strong class="num">¥${fmtC(p.points.total)}</strong></td>
+              <td style="color: var(--muted-foreground); font-size: 12px;">${p.join_time.split(' ')[0]}</td>
+              <td class="col-sticky" style="text-align: right;">
+                <button class="btn btn-outline btn-sm" onclick="navigate('partner/${p.id}/orders')">详情</button>
+                <button class="btn btn-outline btn-sm" onclick="openModifyRateModal('${p.id}')">改比例</button>
+                ${p.status === 'FROZEN' ? `
+                  <button class="btn btn-outline btn-sm" style="color: #15803D;" onclick="unfreezePartner('${p.id}')">解冻</button>
+                ` : ''}
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      ${pagerBar('partners', list.length)}
+    </div>
+  `;
+}
+
+// ==========================================
+// 3. 页面：合伙人详情穿透页 (PARTNER DETAIL)
+// ==========================================
+function renderPartnerDetailView(container, p, activeTab = 'orders') {
+  if (!['orders', 'settlements'].includes(activeTab)) activeTab = 'orders';
+  container.innerHTML = `
+    <!-- 顶部导航 -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px;">
+      <div>
+        <div style="font-size: 12px; color: var(--muted-foreground); margin-bottom: 4px;">
+          <a onclick="navigate('list')" style="color: var(--muted-foreground); text-decoration:none; cursor:pointer;">合伙人管理</a>
+          <span style="margin: 0 4px">/</span>
+          <span>档案详情</span>
+        </div>
+        <h1 style="font-size: 24px; font-weight: 700; color: var(--foreground); display: flex; align-items: center; gap: 10px;">
+          ${p.name}
+          ${p.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部渠道</span>' : '<span class="badge badge-neutral">外部渠道</span>'}
+          ${p.status === 'NORMAL' ? '<span class="badge badge-success">正常</span>' : ''}
+          ${p.status === 'FROZEN' ? '<span class="badge badge-warning">已冻结</span>' : ''}
+        </h1>
+        <div style="font-size: 13px; color: var(--muted-foreground); margin-top: 4px;">
+          ${p.org} · ${p.role} · 加入时间: ${p.join_time}
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-outline btn-sm" onclick="openModifyRateModal('${p.id}')">修改分成比例</button>
+        ${p.status === 'NORMAL' ? `
+          <button class="btn btn-outline btn-sm" style="color:#A16207;" onclick="openFreezeModal('${p.id}')">冻结账号</button>
+        ` : `
+          <button class="btn btn-outline btn-sm" style="color:#15803D;" onclick="unfreezePartner('${p.id}')">解冻恢复</button>
+        `}
+      </div>
+    </div>
+
+    <!-- 核心数据汇总卡片 -->
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 22px;">
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">累计总金额 (扣除退款)</div>
+        <div style="font-size: 24px; font-weight: 700; margin-top: 4px;" class="num">¥${fmtC(p.points.total)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">历史净产生佣金总额</div>
+      </div>
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">当前可结算金额</div>
+        <div style="font-size: 24px; font-weight: 700; color: #15803D; margin-top: 4px;" class="num">¥${fmtC(p.points.withdrawable)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">随时可线下打款核销</div>
+      </div>
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">冻结中金额</div>
+        <div style="font-size: 24px; font-weight: 700; color: #A16207; margin-top: 4px;" class="num">¥${fmtC(p.points.frozen)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">到期 T+7 自动解冻</div>
+      </div>
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">累计已结算金额</div>
+        <div style="font-size: 24px; font-weight: 700; color: var(--foreground); margin-top: 4px;" class="num">¥${fmtC(p.points.settled)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">财务已转账核销履约</div>
+      </div>
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">待追回金额 (异常)</div>
+        <div style="font-size: 24px; font-weight: 700; color: ${p.points.unrecovered > 0 ? 'var(--destructive)' : 'var(--muted-foreground)'}; margin-top: 4px;" class="num">
+          ¥${fmtC(p.points.unrecovered)}
+        </div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">${p.points.unrecovered > 0 ? '需在下期打款中扣减' : '账目正常无欠款'}</div>
+      </div>
+    </div>
+
+    <!-- 档案基础 KV 卡片 -->
+    <div class="content-card" style="padding: 16px 20px; margin-bottom: 22px;">
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; font-size: 13px;">
+        <div>
+          <span style="color: var(--muted-foreground); font-size: 12px; display:block; margin-bottom:2px;">手机号码 (完整展示)</span>
+          <strong class="num">${p.phone}</strong>
+        </div>
+        <div>
+          <span style="color: var(--muted-foreground); font-size: 12px; display:block; margin-bottom:2px;">专属推荐码 (4位)</span>
+          <span class="code-badge">${p.code}</span>
+        </div>
+        <div>
+          <span style="color: var(--muted-foreground); font-size: 12px; display:block; margin-bottom:2px;">当前分成比例（首购 / 续购）</span>
+          <strong class="num">${p.first_rate.toFixed(1)}% / ${p.renew_rate.toFixed(1)}%</strong>
+        </div>
+        <div>
+          <span style="color: var(--muted-foreground); font-size: 12px; display:block; margin-bottom:2px;">微信号</span>
+          <span>${p.wx || '-'}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 分段明细选项卡 -->
+    <div class="segmented-tabs">
+      <button class="seg-tab-btn ${activeTab==='orders'?'active':''}" onclick="navigate('partner/${p.id}/orders')">
+        归属订单
+      </button>
+      <button class="seg-tab-btn ${activeTab==='settlements'?'active':''}" onclick="navigate('partner/${p.id}/settlements')">
+        线下结算历史
+      </button>
+    </div>
+
+    <!-- 表格内容 -->
+    <div class="table-container">
+      ${renderDetailTabTable(p, activeTab)}
+    </div>
+  `;
+}
+
+function renderDetailTabTable(p, tab) {
+  if (tab === 'orders') {
+    const key = 'det-orders-' + p.id;
+    const rows = pagedList(key, p.orders);
+    return `
+      <table class="official-table">
+        <thead>
+          <tr>
+            <th>订单编号</th>
+            <th>下单客户 / 机构</th>
+            <th>商品名称</th>
+            <th>订单状态</th>
+            <th>订单金额</th>
+            <th>分成比例</th>
+            <th>本单佣金</th>
+            <th>下单时间</th>
+            <th class="col-sticky" style="text-align:right;">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${p.orders.length === 0 ? '<tr><td colspan="9" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无归属订单</td></tr>' : rows.map(o => {
+            const lines = orderLines(o, p);
+            const netPoints = Math.max(0, o.points - (o._recover || 0));
+            const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
+            const pc = netPoints > 0 ? '#15803D' : 'var(--muted-foreground)';
+            const isRefund = refunded > 0 || o.status === 'VOID_REFUND';
+            const payBadge = isRefund
+              ? '<span class="badge badge-danger" style="font-size:10.5px;">已退款</span>'
+              : '<span class="badge badge-success" style="font-size:10.5px;">已支付</span>';
+            const isOrg = o.kind === 'ORG';
+            return `<tr>
+              <td>${isOrg ? `<span class="code-badge">${o.contract_no}</span><div style="font-size:11.5px; color:var(--muted-foreground); margin-top:2px;">${o.id}</div>` : `<span class="code-badge">${o.id}</span>`}</td>
+              <td>${isOrg ? `<strong>${o.org_name}</strong>` : `<strong class="num">${o.customer_phone}</strong>`}</td>
+              <td style="font-size:12.5px;">${productName(o)}<div style="margin-top:3px;">${productTagHtml(o)}${o.months ? ` <span class="badge badge-neutral" style="font-size:10px;">${o.months} 个月服务期</span>` : ''}</div></td>
+              <td>${payBadge}</td>
+              <td class="num">¥${formatNum(o.pay_amount)}</td>
+              <td class="num">${o.rate.toFixed(1)}%</td>
+              <td><strong class="num" style="color:${pc};">${netPoints > 0 ? '+' : ''}¥${fmtC(netPoints)}</strong>${o._recover > 0 ? `<div style="font-size:11px; color:var(--destructive);">原 +¥${fmtC(o.points)} · 扣回 ¥${fmtC(o._recover)}</div>` : ''}</td>
+              <td class="num" style="color:var(--muted-foreground); font-size:11.5px;">${o.created_at || o.start}</td>
+              <td class="col-sticky" style="text-align:right; white-space:nowrap;">
+                ${lines.length ? `<button class="btn btn-outline btn-sm" onclick="showOrderLines('${o.id}')">分期明细</button>` : ''}
+                ${o.points > 0 && refunded < o.pay_amount ? `<button class="btn btn-outline btn-sm" onclick="openRefundDrawer('${o.id}')">退款登记</button>` : ''}
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+      ${pagerBar(key, p.orders.length)}
+    `;
+  }
+
+  if (tab === 'settlements') {
+    const key = 'det-settle-' + p.id;
+    const rows = pagedList(key, p.settlements);
+    return `
+      <table class="official-table">
+        <thead>
+          <tr>
+            <th>结算单号</th>
+            <th>核销金额</th>
+            <th>财务打款凭证号</th>
+            <th>经办人</th>
+            <th>核销时间</th>
+            <th>打款备注说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${p.settlements.length === 0 ? '<tr><td colspan="6" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无核销记录</td></tr>' :
+          rows.map(s => `
+            <tr>
+              <td><span class="code-badge">${s.batch_no}</span></td>
+              <td><strong class="num" style="color: #15803D;">-¥${fmtC(s.points)}</strong></td>
+              <td><span class="code-badge">${s.voucher}</span></td>
+              <td>${s.operator}</td>
+              <td style="color: var(--muted-foreground); font-size:12px;">${s.time}</td>
+              <td style="color: var(--muted-foreground); font-size:12px;">${s.remark}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      ${pagerBar(key, p.settlements.length)}
+    `;
+  }
+
+  return '';
+}
+
+// ==========================================
+// 4. 页面：结算管理 (SETTLEMENTS)
+// ==========================================
+let settleSubTab = 'pending';
+let settleKw = '';
+
+function renderSettlementsView(container) {
+  const pendingPartners = PARTNERS.filter(p => p.points.withdrawable > 0);
+  const totalPending = pendingPartners.reduce((s, p) => s + p.points.withdrawable, 0);
+  const sumLines = (p, kind) => partnerLines(p).filter(l => l.state === 'UNLOCKED' && (kind === 'ORG' ? l.kind === 'ORG' : l.kind !== 'ORG')).reduce((a, l) => a + l.remaining, 0);
+  const orgPending = pendingPartners.reduce((s, p) => s + sumLines(p, 'ORG'), 0);
+  const tabBtn = (key, label) => `<button class="seg-tab-btn ${settleSubTab === key ? 'active' : ''}" onclick="settleSubTab='${key}'; renderSettlementsView(document.getElementById('main-view-container'))">${label}</button>`;
+  const headerBtn = '';
+
+  let body = '';
+  if (settleSubTab === 'pending') {
+    const pagedPending = pagedList('settle-pending', pendingPartners);
+    body = `
+      <div style="background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-xl); padding:14px 20px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-size:13.5px;">当前共有 <strong>${pendingPartners.length}</strong> 位合伙人有可结算明细，待打款合计 <strong class="num" style="font-size:17px; color:#15803D;">¥${fmtC(totalPending)}</strong>
+          <span style="color:var(--muted-foreground); font-size:12.5px;">（线上套餐 ¥${fmtC(totalPending - orgPending)} · 机构订单 ¥${fmtC(orgPending)}）</span></div>
+        <div style="font-size:12px; color:var(--muted-foreground);">结算周期：每月仅结算上月最后一日（含）前解冻的佣金</div>
+      </div>
+      <div class="table-container">
+        <table class="official-table">
+          <thead><tr>
+            <th>合伙人姓名</th><th>单位</th><th>手机号</th><th>渠道</th><th>账号状态</th><th>可结算金额</th><th>最早解冻日</th>
+            <th class="col-sticky" style="text-align:right;">操作</th>
+          </tr></thead>
+          <tbody>
+            ${pendingPartners.length === 0 ? '<tr><td colspan="8" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无可结算明细</td></tr>' : pagedPending.map(p => {
+              const ls = partnerLines(p).filter(l => l.state === 'UNLOCKED');
+              const earliest = ls.map(l => l.unlock).sort()[0];
+              return `<tr>
+                <td><strong>${p.name}</strong></td>
+                <td style="font-size:12px; color:var(--muted-foreground);">${p.org}</td>
+                <td><span class="num">${p.phone}</span></td>
+                <td>${p.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部</span>' : '<span class="badge badge-neutral">外部</span>'}</td>
+                <td>${p.status === 'NORMAL' ? '<span class="badge badge-success">正常</span>' : '<span class="badge badge-warning" title="账号已冻结，请审慎核销">已冻结</span>'}</td>
+                <td><strong class="num" style="color:#15803D; font-size:15px;">¥${fmtC(p.points.withdrawable)}</strong></td>
+                <td style="color:var(--muted-foreground); font-size:12px;">${earliest}</td>
+                <td class="col-sticky" style="text-align:right;">${p.status === 'FROZEN'
+                  ? `<button class="btn btn-outline btn-sm" disabled title="该合伙人账号已冻结，请先解冻账号">不可结算</button>`
+                  : `<button class="btn btn-primary btn-sm" onclick="openSettleSheet('${p.id}')">核对并结算</button>`}</td>
+              </tr>`; }).join('')}
+          </tbody>
+        </table>
+        ${pagerBar('settle-pending', pendingPartners.length)}
+      </div>`;
+  } else {
+    const pagedHistory = pagedList('settle-history', SETTLEMENT_HISTORY);
+    body = `
+      <div class="table-container">
+        <table class="official-table">
+          <thead><tr><th>结算单号</th><th>合伙人</th><th>渠道</th><th>结算金额</th><th>结算内容</th><th>财务打款凭证号</th><th>经办人</th><th>核销时间</th><th>打款备注</th><th class="col-sticky" style="text-align:right;">操作</th></tr></thead>
+          <tbody>${pagedHistory.map(s => {
+            const ls = s.lines || [];
+            const hasOrg = ls.some(l => l.kind === 'ORG'), hasOn = ls.some(l => l.kind !== 'ORG');
+            return `<tr>
+              <td><span class="code-badge">${s.settle_id}</span>${s.imported ? '<div><span class="badge badge-neutral" style="font-size:10.5px;">录入时已发放</span></div>' : ''}</td>
+              <td><strong>${s.partner_name}</strong><div class="num" style="font-size:11.5px; color:var(--muted-foreground);">${s.partner_phone}</div></td>
+              <td>${s.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部</span>' : '<span class="badge badge-neutral">外部</span>'}</td>
+              <td><strong class="num" style="color:#15803D;">-¥${fmtC(s.points)}</strong></td>
+              <td style="font-size:12.5px;">${ls.length} 期明细<div style="font-size:11.5px; color:var(--muted-foreground);">${[hasOn ? '线上套餐' : '', hasOrg ? '机构订单' : ''].filter(Boolean).join(' + ')}</div></td>
+              <td><span class="code-badge">${s.voucher}</span></td>
+              <td>${s.operator}</td>
+              <td style="color:var(--muted-foreground); font-size:12px;">${s.settle_time}</td>
+              <td style="color:var(--muted-foreground); font-size:12px; max-width:200px;" title="${esc(s.remark)}">${esc(s.remark)}</td>
+              <td class="col-sticky" style="text-align:right; white-space:nowrap;">
+                <button class="btn btn-outline btn-sm" onclick="openSettleDetail('${s.settle_id}')">查看明细</button>
+                <button class="btn btn-outline btn-sm" onclick="navigate('partner/${s.partner_id}/settlements')">合伙人详情</button>
+              </td></tr>`; }).join('')}
+          </tbody>
+        </table>
+        ${pagerBar('settle-history', SETTLEMENT_HISTORY.length)}
+      </div>`;
+  }
+
+  container.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:22px;">
+      <div>
+        <h1 style="font-size:24px; font-weight:700; color:var(--foreground); letter-spacing:-0.02em;">结算管理</h1>
+      </div>
+      <div>${headerBtn}</div>
+    </div>
+    <div class="segmented-tabs">
+      ${tabBtn('pending', '待结算')}
+      ${tabBtn('history', '结算历史')}
+    </div>
+    ${body}
+  `;
+}
+
+// ==========================================
+// 4.5 页面：订单管理 (ORDERS)
+// ==========================================
+let orderSubTab = 'user';
+let ordKw = '';
+let ordStatus = 'ALL';
+
+function ordIsRefunded(o) {
+  return (o.refunds || []).length > 0 || o.status === 'VOID_REFUND';
+}
+
+function allUserOrders() {
+  const r = [];
+  PARTNERS.forEach(p => p.orders.forEach(o => { if (orderKind(o) !== 'ORG') r.push({ p, o, lines: orderLines(o, p) }); }));
+  return r.sort((a, b) => (b.o.created_at || '').localeCompare(a.o.created_at || ''));
+}
+
+function renderOrdersView(container) {
+  const userOrders = allUserOrders();
+  const orgOrders = allOrgOrders();
+  const tabBtn = (key, label) => `<button class="seg-tab-btn ${orderSubTab === key ? 'active' : ''}" onclick="orderSubTab='${key}'; resetPage('orders-user'); resetPage('orders-org'); renderOrdersView(document.getElementById('main-view-container'))">${label}</button>`;
+  const headerBtn = orderSubTab === 'user'
+    ? ''
+    : `<button class="btn btn-primary" onclick="openOrgEntryDrawer()">＋ 录入机构订单</button>`;
+  let body = '';
+  if (orderSubTab === 'user') {
+    const kw = ordKw.trim().toLowerCase();
+    const filteredUserOrders = userOrders.filter(({ p, o }) => {
+      if (ordStatus === 'PAID' && ordIsRefunded(o)) return false;
+      if (ordStatus === 'REFUNDED' && !ordIsRefunded(o)) return false;
+      if (!kw) return true;
+      return o.id.toLowerCase().includes(kw)
+        || o.customer_phone.includes(kw)
+        || p.name.toLowerCase().includes(kw);
+    });
+    const filteredUserPay = filteredUserOrders.reduce((a, { o }) => {
+      const refunded = (o.refunds || []).reduce((s, r) => s + r.amount, 0);
+      return a + Math.max(0, o.status === 'VOID_REFUND' ? 0 : (o.pay_amount || 0) - refunded);
+    }, 0);
+    const filteredUserPoints = filteredUserOrders.reduce((a, { o }) => a + Math.max(0, (o.points || 0) - (o._recover || 0)), 0);
+    const pagedUserOrders = pagedList('orders-user', filteredUserOrders);
+    body = `
+      <div class="filter-card">
+        <div class="filter-title-row">
+          <span class="filter-title">筛选订单</span>
+          <button class="btn btn-outline btn-sm" onclick="ordKw=''; ordStatus='ALL'; resetPage('orders-user'); renderOrdersView(document.getElementById('main-view-container'))">重置</button>
+        </div>
+        <div class="filter-inputs-grid">
+          <div class="filter-field" style="flex: 2; min-width: 280px;">
+            <span class="field-label">关键词</span>
+            <input class="input-control" type="text" placeholder="订单编号、客户手机号、合伙人姓名" value="${ordKw}" oninput="ordKw=this.value; resetPage('orders-user'); renderOrdersView(document.getElementById('main-view-container'))">
+          </div>
+          <div class="filter-field" style="flex: 1;">
+            <span class="field-label">订单状态</span>
+            <select class="input-control" onchange="ordStatus=this.value; resetPage('orders-user'); renderOrdersView(document.getElementById('main-view-container'))">
+              <option value="ALL" ${ordStatus==='ALL'?'selected':''}>全部状态</option>
+              <option value="PAID" ${ordStatus==='PAID'?'selected':''}>已支付</option>
+              <option value="REFUNDED" ${ordStatus==='REFUNDED'?'selected':''}>已退款</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div style="background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-xl); padding:14px 20px; margin-bottom:16px; display:flex; flex-wrap:wrap; gap:28px; align-items:center; font-size:13px;">
+        <div>订单总数 <strong class="num">${filteredUserOrders.length}</strong> 笔</div>
+        <div>总销售金额 <strong class="num">¥${formatNum(filteredUserPay)}</strong></div>
+        <div>佣金合计 <strong class="num">${filteredUserPoints < 0 ? '-¥' + fmtC(Math.abs(filteredUserPoints)) : '¥' + fmtC(filteredUserPoints)}</strong></div>
+      </div>
+      <div class="table-container">
+        <table class="official-table">
+          <thead><tr><th>订单编号</th><th>下单客户</th><th>商品名称</th><th>归属合伙人</th><th>订单状态</th><th>订单金额</th><th>分成比例</th><th>本单佣金</th><th>下单时间</th><th class="col-sticky" style="text-align:right;">操作</th></tr></thead>
+          <tbody>${filteredUserOrders.length === 0 ? '<tr><td colspan="10" style="text-align:center; padding:32px; color:var(--muted-foreground);">没有符合条件的订单</td></tr>' : pagedUserOrders.map(({ p, o, lines }) => {
+            const netPoints = Math.max(0, o.points - (o._recover || 0));
+            const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
+            const pc = netPoints > 0 ? '#15803D' : 'var(--muted-foreground)';
+            const isRefund = refunded > 0 || o.status === 'VOID_REFUND';
+            const payBadge = isRefund
+              ? '<span class="badge badge-danger" style="font-size:10.5px;">已退款</span>'
+              : '<span class="badge badge-success" style="font-size:10.5px;">已支付</span>';
+            return `<tr>
+              <td><span class="code-badge">${o.id}</span></td>
+              <td><strong class="num">${o.customer_phone}</strong></td>
+              <td style="font-size:12.5px;">${productName(o)}<div style="margin-top:3px;">${productTagHtml(o)}</div></td>
+              <td><strong>${p.name}</strong><div style="font-size:11.5px; color:var(--muted-foreground);">${p.channel_type === 'INTERNAL' ? '内部' : '外部'}渠道</div></td>
+              <td>${payBadge}</td>
+              <td class="num">¥${formatNum(o.pay_amount)}</td>
+              <td class="num">${o.rate.toFixed(1)}%</td>
+              <td><strong class="num" style="color:${pc};">${netPoints > 0 ? '+' : ''}¥${fmtC(netPoints)}</strong>${o._recover > 0 ? `<div style="font-size:11px; color:var(--destructive);">原 +¥${fmtC(o.points)} · 扣回 ¥${fmtC(o._recover)}</div>` : ''}</td>
+              <td class="num" style="color:var(--muted-foreground); font-size:11.5px;">${o.created_at}</td>
+              <td class="col-sticky" style="text-align:right; white-space:nowrap;">
+                ${lines.length ? `<button class="btn btn-outline btn-sm" onclick="showOrderLines('${o.id}')">分期明细</button>` : ''}
+                ${o.points > 0 && refunded < o.pay_amount ? `<button class="btn btn-outline btn-sm" onclick="openRefundDrawer('${o.id}')">退款登记</button>` : ''}
+              </td></tr>`; }).join('')}
+          </tbody>
+        </table>
+        ${pagerBar('orders-user', userOrders.length)}
+      </div>`;
+  } else {
+    const pagedOrgOrders = pagedList('orders-org', orgOrders);
+    body = `
+      <div class="content-card" style="padding:14px 20px; margin-bottom:16px; font-size:12.5px; color:var(--muted-foreground); line-height:1.7;">
+        机构版为线下签合同，由运营<strong style="color:var(--foreground);">手动录入</strong>：合同金额、分成比例、服务周期、已发放金额。录入后与年卡规则一致，按月分期解冻（服务月结束 +7 天）；解冻后的明细在「结算管理 · 待结算」中统一核对结算。
+      </div>
+      <div class="table-container">
+        <table class="official-table">
+          <thead><tr><th>合同编号</th><th>机构名称</th><th>商品名称</th><th>合伙人</th><th>订单状态</th><th>订单金额</th><th>分成比例</th><th>本单佣金</th><th>下单时间</th><th class="col-sticky" style="text-align:right;">操作</th></tr></thead>
+          <tbody>${orgOrders.length === 0 ? '<tr><td colspan="10" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无机构订单，点击右上角「录入机构订单」</td></tr>' : pagedOrgOrders.map(({ p, o, lines }) => {
+            const netPoints = Math.max(0, o.points - (o._recover || 0));
+            const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
+            const payBadge = (refunded > 0 || o.status === 'VOID_REFUND')
+              ? '<span class="badge badge-danger" style="font-size:10.5px;">已退款</span>'
+              : '<span class="badge badge-success" style="font-size:10.5px;">已支付</span>';
+            return `<tr>
+              <td><span class="code-badge">${o.contract_no}</span><div style="font-size:11.5px; color:var(--muted-foreground); margin-top:2px;">${o.id}</div></td>
+              <td><strong>${o.org_name}</strong></td>
+              <td style="font-size:12.5px;">${productName(o)}<div style="margin-top:3px;">${productTagHtml(o)} <span class="badge badge-neutral" style="font-size:10px;">${o.months} 个月服务期</span></div></td>
+              <td><strong>${p.name}</strong><div style="font-size:11.5px; color:var(--muted-foreground);">${p.channel_type === 'INTERNAL' ? '内部' : '外部'}渠道</div></td>
+              <td>${payBadge}</td>
+              <td class="num">¥${formatNum(o.pay_amount)}</td>
+              <td class="num">${o.rate.toFixed(1)}%</td>
+              <td><strong class="num" style="color:${netPoints > 0 ? '#15803D' : 'var(--muted-foreground)'};">${netPoints > 0 ? '+¥' : '¥'}${fmtC(Math.abs(netPoints))}</strong>${o._recover > 0 ? `<div style="font-size:11px; color:var(--destructive);">原 +¥${fmtC(o.points)} · 扣回 ¥${fmtC(o._recover)}</div>` : ''}</td>
+              <td class="num" style="color:var(--muted-foreground); font-size:11.5px;">${o.created_at || o.start}</td>
+              <td class="col-sticky" style="text-align:right; white-space:nowrap;">
+                <button class="btn btn-outline btn-sm" onclick="showOrderLines('${o.id}')">分期明细</button>
+                ${o.points > 0 && refunded < o.pay_amount ? `<button class="btn btn-outline btn-sm" onclick="openRefundDrawer('${o.id}')">退款登记</button>` : ''}
+              </td></tr>`; }).join('')}
+          </tbody>
+        </table>
+        ${pagerBar('orders-org', orgOrders.length)}
+      </div>`;
+  }
+
+  container.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:22px;">
+      <div>
+        <h1 style="font-size:24px; font-weight:700; color:var(--foreground); letter-spacing:-0.02em;">订单管理</h1>
+      </div>
+      <div>${headerBtn}</div>
+    </div>
+    <div class="segmented-tabs">
+      ${tabBtn('user', '用户订单')}
+      ${tabBtn('org', '机构订单')}
+    </div>
+    ${body}
+  `;
+}
+
+// ==========================================
+// 5. 页面：数据报表 (REPORTS - 第二批)
+// ==========================================
+let reportPeriod = 'MONTH';
+
+function renderReportsView(container) {
+  container.innerHTML = `
+    <!-- 标题区 -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px;">
+      <div>
+        <div style="font-size: 12px; color: var(--muted-foreground); margin-bottom: 4px;">管理后台 · 渠道经营质量对比与激励风云榜</div>
+        <h1 style="font-size: 24px; font-weight: 700; color: var(--foreground); letter-spacing: -0.02em;">数据报表中心</h1>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <select class="input-control" onchange="reportPeriod=this.value; renderReportsView(document.getElementById('main-view-container'))">
+          <option value="MONTH" ${reportPeriod==='MONTH'?'selected':''}>本月度 (2026年11月)</option>
+          <option value="QUARTER" ${reportPeriod==='QUARTER'?'selected':''}>本季度 (2026 Q4)</option>
+          <option value="YEAR" ${reportPeriod==='YEAR'?'selected':''}>本年度 (2026 全年)</option>
+        </select>
+        <button class="btn btn-outline" onclick="toast('渠道月度报表已成功导出')">导出月度报表</button>
+      </div>
+    </div>
+
+    <!-- 宏观渠道对比大盘 (1:1 官方双卡片排布) -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+      <!-- 内部渠道 -->
+      <div class="content-card" style="margin-bottom:0;">
+        <div class="card-header-bar">
+          <span class="card-header-title">内部渠道大盘 (员工/顾问)</span>
+          <span class="badge badge-blue">基准 15.0%</span>
+        </div>
+        <div class="card-body-padding">
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            <div>
+              <div style="font-size:12px; color:var(--muted-foreground);">在册合伙人</div>
+              <div style="font-size:20px; font-weight:700; margin-top:2px;" class="num">1 <span style="font-size:12px; font-weight:normal; color:var(--muted-foreground);">人</span></div>
+            </div>
+            <div>
+              <div style="font-size:12px; color:var(--muted-foreground);">发展客户总数</div>
+              <div style="font-size:20px; font-weight:700; margin-top:2px;" class="num">42 <span style="font-size:12px; font-weight:normal; color:var(--muted-foreground);">人</span></div>
+            </div>
+            <div>
+              <div style="font-size:12px; color:var(--muted-foreground);">带单成交 GMV</div>
+              <div style="font-size:20px; font-weight:700; margin-top:2px;" class="num">¥34,130</div>
+            </div>
+            <div>
+              <div style="font-size:12px; color:var(--muted-foreground);">产生佣金总额</div>
+              <div style="font-size:20px; font-weight:700; margin-top:2px;" class="num">¥5,120</div>
+            </div>
+            <div>
+              <div style="font-size:12px; color:var(--muted-foreground);">单客客单价</div>
+              <div style="font-size:20px; font-weight:700; margin-top:2px;" class="num">¥2,133</div>
+            </div>
+            <div>
+              <div style="font-size:12px; color:var(--muted-foreground);">年卡转化率</div>
+              <div style="font-size:20px; font-weight:700; color:#15803D; margin-top:2px;" class="num">38.1%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 外部渠道 -->
+      <div class="content-card" style="margin-bottom:0;">
+        <div class="card-header-bar">
+          <span class="card-header-title">外部渠道大盘 (高校/博主)</span>
+          <span class="badge badge-neutral">基准 30.0%</span>
+        </div>
+        <div class="card-body-padding">
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            <div>
+              <div style="font-size:12px; color:var(--muted-foreground);">在册合伙人</div>
+              <div style="font-size:20px; font-weight:700; margin-top:2px;" class="num">3 <span style="font-size:12px; font-weight:normal; color:var(--muted-foreground);">人</span></div>
+            </div>
+            <div>
+              <div style="font-size:12px; color:var(--muted-foreground);">发展客户总数</div>
+              <div style="font-size:20px; font-weight:700; margin-top:2px;" class="num">34 <span style="font-size:12px; font-weight:normal; color:var(--muted-foreground);">人</span></div>
+            </div>
+            <div>
+              <div style="font-size:12px; color:var(--muted-foreground);">带单成交 GMV</div>
+              <div style="font-size:20px; font-weight:700; margin-top:2px;" class="num">¥41,800</div>
+            </div>
+            <div>
+              <div style="font-size:12px; color:var(--muted-foreground);">产生佣金总额</div>
+              <div style="font-size:20px; font-weight:700; margin-top:2px;" class="num">¥9,490</div>
+            </div>
+            <div>
+              <div style="font-size:12px; color:var(--muted-foreground);">单客客单价</div>
+              <div style="font-size:20px; font-weight:700; margin-top:2px;" class="num">¥3,483</div>
+            </div>
+            <div>
+              <div style="font-size:12px; color:var(--muted-foreground);">年卡转化率</div>
+              <div style="font-size:20px; font-weight:700; color:#15803D; margin-top:2px;" class="num">44.1%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 合伙人业绩风云榜 -->
+    <div class="table-container">
+      <div class="table-toolbar">
+        <div class="table-summary-text"><strong>合伙人业绩风云榜 (TOP 带单榜)</strong></div>
+      </div>
+      <table class="official-table">
+        <thead>
+          <tr>
+            <th style="width: 70px;">排名</th>
+            <th>合伙人姓名 / 单位</th>
+            <th>手机号码 (完整展示)</th>
+            <th>渠道分类</th>
+            <th>分成比例</th>
+            <th>带单有效订单数</th>
+            <th>带单成交金额 (GMV)</th>
+            <th>贡献总金额 (元)</th>
+            <th class="col-sticky" style="text-align: right;">档案穿透</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-warning" style="font-weight:700;">TOP 1</span></td>
+            <td><strong>李维国</strong> (北京航空航天大学计算机学院)</td>
+            <td><strong class="num">13700001111</strong></td>
+            <td><span class="badge badge-neutral">外部渠道</span></td>
+            <td><span class="num">30.0%</span></td>
+            <td><span class="num">7</span> 单</td>
+            <td><strong class="num">¥24,630.00</strong></td>
+            <td><strong class="num" style="color: #15803D;">¥7,390</strong></td>
+            <td class="col-sticky" style="text-align: right;">
+              <button class="btn btn-outline btn-sm" onclick="navigate('partner/PT-8866/orders')">查看明细 →</button>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-blue" style="font-weight:700;">TOP 2</span></td>
+            <td><strong>宋建华</strong> (立理科技战略创新部)</td>
+            <td><strong class="num">13800002222</strong></td>
+            <td><span class="badge badge-blue">内部渠道</span></td>
+            <td><span class="num">15.0%</span></td>
+            <td><span class="num">16</span> 单</td>
+            <td><strong class="num">¥34,130.00</strong></td>
+            <td><strong class="num" style="color: #15803D;">¥5,120</strong></td>
+            <td class="col-sticky" style="text-align: right;">
+              <button class="btn btn-outline btn-sm" onclick="navigate('partner/PT-6601/orders')">查看明细 →</button>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-neutral" style="font-weight:700;">TOP 3</span></td>
+            <td><strong>韩磊</strong> (南京大学人工智能学院)</td>
+            <td><strong class="num">13911118888</strong></td>
+            <td><span class="badge badge-neutral">外部渠道</span></td>
+            <td><span class="num">28.0%</span></td>
+            <td><span class="num">4</span> 单</td>
+            <td><strong class="num">¥5,890.00</strong></td>
+            <td><strong class="num" style="color: #15803D;">¥1,650</strong></td>
+            <td class="col-sticky" style="text-align: right;">
+              <button class="btn btn-outline btn-sm" onclick="navigate('partner/PT-9902/orders')">查看明细 →</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ==========================================
+// 弹窗与抽屉交互 (Modals & Drawer)
+// ==========================================
+
+// 1. 审核通过弹窗
+function openApproveModal(appId, isReapprove = false) {
+  const app = APPLICATIONS.find(a => a.id === appId);
+  if (!app) return;
+
+  const autoCode = Math.floor(1000 + Math.random() * 8999).toString().replace(/4/g, '8');
+
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+    <div class="modal-mask show" id="modal-approve">
+      <div class="modal-dialog">
+        <div class="modal-dialog-header">
+          <h3>${isReapprove ? '修改审核状态为：已通过' : '合伙人申请审核通过'}</h3>
+          <button class="btn-ghost" style="padding:4px;" onclick="closeModal('modal-approve')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-dialog-body">
+          <div style="background: #FAFAFA; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 18px; font-size: 13px;">
+            <div style="display:flex; justify-content:space-between;">
+              <span>申请人：<strong>${app.name}</strong> (${app.role})</span>
+              <strong class="num">${app.phone}</strong>
+            </div>
+            <div style="color: var(--muted-foreground); margin-top: 4px;">所属单位：${app.org}</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-group-label">渠道类型 <span class="req">*</span></label>
+            <div class="choice-cards-grid">
+              <div class="choice-card-item selected" id="opt-ext" onclick="pickChannelType('EXTERNAL')">
+                <input type="radio" name="ch" value="EXTERNAL" checked>
+                <span class="choice-title">外部渠道</span>
+              </div>
+              <div class="choice-card-item" id="opt-int" onclick="pickChannelType('INTERNAL')">
+                <input type="radio" name="ch" value="INTERNAL">
+                <span class="choice-title">内部渠道</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label class="form-group-label" style="margin-bottom:0;">分成比例（首购 / 续购）<span class="req">*</span></label>
+              <span style="font-size: 11.5px; color: var(--muted-foreground);" id="rate-source-hint">带出默认值 (首购 ${GLOBAL_CONFIG.external_first_rate}% / 续购 ${GLOBAL_CONFIG.external_renew_rate}%)</span>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <input class="form-input-full num" type="number" step="0.1" min="0" max="100" id="in-approve-first-rate" value="${GLOBAL_CONFIG.external_first_rate}" placeholder="首购比例">
+              <input class="form-input-full num" type="number" step="0.1" min="0" max="100" id="in-approve-renew-rate" value="${GLOBAL_CONFIG.external_renew_rate}" placeholder="续购比例">
+            </div>
+            <div class="form-hint-note">左：首购（客户首次付费）；右：续购（后续复购）。支持 0.0% ~ 100.0%，允许一位小数，仅对后续新订单生效。</div>
+          </div>
+
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label class="form-group-label" style="margin-bottom:0;">专属推荐码 (4位纯数字) <span class="req">*</span></label>
+              <button class="btn btn-ghost btn-sm" style="height:22px; padding:0 6px;" onclick="document.getElementById('in-approve-code').value=Math.floor(1000+Math.random()*8999).toString().replace(/4/g,'6')">重新生成</button>
+            </div>
+            <input class="form-input-full num" type="text" maxlength="4" id="in-approve-code" value="${autoCode}" style="letter-spacing: 4px; font-weight: 700; text-align: center; font-size:16px;">
+            <div class="form-hint-note">下单结算页输入或短链带入的 4 位唯一代码。</div>
+          </div>
+
+          <div style="background: #FAFAFA; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; font-size: 12px; color: var(--muted-foreground);">
+            确认通过后，系统将自动在合伙人管理中创建档案并激活前台账号。
+          </div>
+        </div>
+        <div class="modal-dialog-footer">
+          <button class="btn btn-outline" onclick="closeModal('modal-approve')">取消</button>
+          <button class="btn btn-primary" onclick="confirmApprovePartner('${app.id}')">确认通过</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function pickChannelType(type) {
+  const optExt = document.getElementById('opt-ext');
+  const optInt = document.getElementById('opt-int');
+  const firstIn = document.getElementById('in-approve-first-rate');
+  const renewIn = document.getElementById('in-approve-renew-rate');
+  const hint = document.getElementById('rate-source-hint');
+
+  if (type === 'EXTERNAL') {
+    optExt.classList.add('selected');
+    optInt.classList.remove('selected');
+    optExt.querySelector('input').checked = true;
+    firstIn.value = GLOBAL_CONFIG.external_first_rate;
+    renewIn.value = GLOBAL_CONFIG.external_renew_rate;
+    hint.textContent = `带出默认值 (首购 ${GLOBAL_CONFIG.external_first_rate}% / 续购 ${GLOBAL_CONFIG.external_renew_rate}%)`;
+  } else {
+    optInt.classList.add('selected');
+    optExt.classList.remove('selected');
+    optInt.querySelector('input').checked = true;
+    firstIn.value = GLOBAL_CONFIG.internal_first_rate;
+    renewIn.value = GLOBAL_CONFIG.internal_renew_rate;
+    hint.textContent = `带出默认值 (首购 ${GLOBAL_CONFIG.internal_first_rate}% / 续购 ${GLOBAL_CONFIG.internal_renew_rate}%)`;
+  }
+}
+
+function confirmApprovePartner(appId) {
+  const app = APPLICATIONS.find(a => a.id === appId);
+  if (!app) return;
+
+  const isInt = document.getElementById('opt-int').classList.contains('selected');
+  const channel = isInt ? 'INTERNAL' : 'EXTERNAL';
+  const firstRate = parseFloat(document.getElementById('in-approve-first-rate').value);
+  const renewRate = parseFloat(document.getElementById('in-approve-renew-rate').value);
+  const code = document.getElementById('in-approve-code').value.trim();
+
+  if (isNaN(firstRate) || firstRate < 0 || firstRate > 100 || isNaN(renewRate) || renewRate < 0 || renewRate > 100) { alert('请输入有效的首购与续购比例 (0~100%)'); return; }
+  if (!/^\d{4}$/.test(code)) { alert('专属推荐码必须为 4 位纯数字'); return; }
+  if (PARTNERS.some(p => p.code === code)) { alert('该推荐码已被其他合伙人占用'); return; }
+
+  const opTime = nowTime();
+  app.status = 'APPROVED';
+  app.approve_time = opTime;
+  app.approve_by = '张博文';
+  app.logs.unshift({
+    time: opTime,
+    operator: '张博文',
+    action: '审核通过',
+    detail: `设为${channel==='INTERNAL'?'内部渠道':'外部渠道'}，首购 ${firstRate.toFixed(1)}% / 续购 ${renewRate.toFixed(1)}%，推荐码 ${code}`
+  });
+
+  PARTNERS.unshift({
+    id: 'PT-' + code,
+    name: app.name,
+    org: app.org,
+    role: app.role,
+    phone: app.phone,
+    wx: app.wx,
+    channel_type: channel,
+    code: code,
+    first_rate: firstRate,
+    renew_rate: renewRate,
+    customers_count: 0,
+    paying_count: 0,
+    points: { total: 0, withdrawable: 0, frozen: 0, settled: 0, unrecovered: 0 },
+    status: 'NORMAL',
+    freeze_reason: '',
+    join_time: opTime,
+    orders: [], flow: [], settlements: [], customers: [],
+    logs: [
+      { time: opTime, operator: '张博文', action: '入驻建档', before: '待审核', after: '正常', reason: '资质审核通过' }
+    ]
+  });
+
+  closeModal('modal-approve');
+  toast(`合伙人【${app.name}】审核通过！推荐码：${code}`);
+  updateSidebarMenu();
+  renderApplicationsView(document.getElementById('main-view-container'));
+}
+
+// 2. 拒绝申请弹窗
+function openRejectModal(appId) {
+  const app = APPLICATIONS.find(a => a.id === appId);
+  if (!app) return;
+
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+    <div class="modal-mask show" id="modal-reject">
+      <div class="modal-dialog">
+        <div class="modal-dialog-header">
+          <h3>拒绝合伙人申请</h3>
+          <button class="btn-ghost" style="padding:4px;" onclick="closeModal('modal-reject')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-dialog-body">
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 14px;">
+            正在拒绝 <strong>${app.name}</strong> (${app.phone}) 的申请。确认后该申请标记为「已拒绝」，申请人状态页不再显示该申请可办理。
+          </p>
+
+        </div>
+        <div class="modal-dialog-footer">
+          <button class="btn btn-outline" onclick="closeModal('modal-reject')">取消</button>
+          <button class="btn btn-destructive" onclick="confirmRejectPartner('${app.id}')">确认拒绝</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function confirmRejectPartner(appId) {
+  const app = APPLICATIONS.find(a => a.id === appId);
+  if (!app) return;
+
+  const opTime = nowTime();
+  app.status = 'REJECTED';
+  app.reject_time = opTime;
+  app.reject_by = '张博文';
+  app.logs.unshift({
+    time: opTime,
+    operator: '张博文',
+    action: '拒绝申请',
+    detail: '操作人直接拒绝，未填写原因'
+  });
+
+  closeModal('modal-reject');
+  toast(`已拒绝【${app.name}】的申请`);
+  updateSidebarMenu();
+  renderApplicationsView(document.getElementById('main-view-container'));
+}
+
+// 3. 申请详情抽屉
+function openAppDetailDrawer(appId) {
+  const app = APPLICATIONS.find(a => a.id === appId);
+  if (!app) return;
+
+  const root = document.getElementById('drawer-root');
+  root.innerHTML = `
+    <div class="drawer-mask show" id="drawer-app" onclick="if(event.target===this)closeDrawer('drawer-app')">
+      <div class="drawer-panel">
+        <div class="drawer-header">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <h3 style="font-size: 15px; font-weight: 600;">申请档案详情</h3>
+            ${app.status==='PENDING'?'<span class="badge badge-warning">待审核</span>':''}
+            ${app.status==='APPROVED'?'<span class="badge badge-success">已通过</span>':''}
+            ${app.status==='REJECTED'?'<span class="badge badge-danger">已拒绝</span>':''}
+          </div>
+          <button class="btn-ghost" style="padding:4px;" onclick="closeDrawer('drawer-app')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <div class="drawer-body">
+          <div class="form-group">
+            <label class="form-group-label">真实姓名 <span class="req">*</span></label>
+            <input class="form-input-full" id="dr-in-name" value="${app.name}">
+          </div>
+
+          <div class="form-group">
+            <label class="form-group-label">所属单位 / 机构 <span class="req">*</span></label>
+            <input class="form-input-full" id="dr-in-org" value="${app.org}">
+          </div>
+
+          <div class="form-group">
+            <label class="form-group-label">身份属性 <span class="req">*</span></label>
+            <input class="form-input-full" id="dr-in-role" value="${app.role}">
+          </div>
+
+          <div class="form-group">
+            <label class="form-group-label">申请手机号 (账号标识，只读完整展示)</label>
+            <input class="form-input-full num" value="${app.phone}" disabled>
+            <div class="form-hint-note">合伙人前台登录凭据，不可更改。</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-group-label">微信号</label>
+            <input class="form-input-full" id="dr-in-wx" value="${app.wx || ''}" placeholder="未填写">
+          </div>
+
+          ${app.status === 'REJECTED' && app.reject_reason ? `
+            <div style="background: #FEF2F2; border: 1px solid #FECACA; border-radius: var(--radius-md); padding: 10px 12px; margin-bottom: 16px; font-size: 12.5px; color: #991B1B;">
+              <strong>历史拒绝原因：</strong>${app.reject_reason}
+            </div>
+          ` : ''}
+        </div>
+
+        <div class="drawer-footer">
+          <button class="btn btn-outline" onclick="closeDrawer('drawer-app')">取消</button>
+          <button class="btn btn-primary" onclick="saveAppInfo('${app.id}')">保存修改</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function saveAppInfo(appId) {
+  const app = APPLICATIONS.find(a => a.id === appId);
+  if (!app) return;
+  const name = document.getElementById('dr-in-name').value.trim();
+  const org = document.getElementById('dr-in-org').value.trim();
+  const role = document.getElementById('dr-in-role').value.trim();
+  const wx = document.getElementById('dr-in-wx').value.trim();
+
+  if (!name || !org || !role) { alert('姓名、单位与身份属性必填'); return; }
+
+  app.name = name; app.org = org; app.role = role; app.wx = wx;
+  app.logs.unshift({
+    time: nowTime(),
+    operator: '张博文',
+    action: '资料信息维护',
+    detail: `修改为: ${name} / ${org}`
+  });
+
+  closeDrawer('drawer-app');
+  toast('资料已成功更新');
+  renderApplicationsView(document.getElementById('main-view-container'));
+}
+
+// 4. 修改比例弹窗
+function openModifyRateModal(partnerId) {
+  const p = PARTNERS.find(item => item.id === partnerId);
+  if (!p) return;
+
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+    <div class="modal-mask show" id="modal-rate">
+      <div class="modal-dialog">
+        <div class="modal-dialog-header">
+          <h3>修改分成比例</h3>
+          <button class="btn-ghost" style="padding:4px;" onclick="closeModal('modal-rate')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-dialog-body">
+          <div style="background: #FAFAFA; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 16px; font-size: 13px;">
+            合伙人：<strong>${p.name}</strong> (${p.phone} · 推荐码: ${p.code})
+          </div>
+
+          <div class="form-group">
+            <label class="form-group-label">当前比例（首购 / 续购）</label>
+            <input class="form-input-full num" value="${p.first_rate.toFixed(1)}% / ${p.renew_rate.toFixed(1)}%" disabled>
+          </div>
+
+          <div class="form-group">
+            <label class="form-group-label">新分成比例（首购 / 续购） <span class="req">*</span></label>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <input class="form-input-full num" type="number" step="0.1" min="0" max="100" id="in-new-first-rate" value="${p.first_rate.toFixed(1)}" placeholder="首购比例">
+              <input class="form-input-full num" type="number" step="0.1" min="0" max="100" id="in-new-renew-rate" value="${p.renew_rate.toFixed(1)}" placeholder="续购比例">
+            </div>
+            <div class="form-hint-note" style="color: #A16207;">
+              ⚠️ 仅对修改后新产生订单生效，历史已带单分成不追溯重算。
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-group-label">修改原因与审计备注 <span class="req">*</span></label>
+            <textarea class="form-textarea-full" id="txt-rate-reason" placeholder="如：重点自媒体签约合作，特批上调分成比例..."></textarea>
+          </div>
+        </div>
+        <div class="modal-dialog-footer">
+          <button class="btn btn-outline" onclick="closeModal('modal-rate')">取消</button>
+          <button class="btn btn-primary" onclick="confirmModifyRate('${p.id}')">确认修改</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function confirmModifyRate(partnerId) {
+  const p = PARTNERS.find(item => item.id === partnerId);
+  if (!p) return;
+  const firstRate = parseFloat(document.getElementById('in-new-first-rate').value);
+  const renewRate = parseFloat(document.getElementById('in-new-renew-rate').value);
+  const reason = document.getElementById('txt-rate-reason').value.trim();
+
+  if (isNaN(firstRate) || firstRate < 0 || firstRate > 100 || isNaN(renewRate) || renewRate < 0 || renewRate > 100) { alert('请输入有效的首购与续购比例'); return; }
+  if (!reason) { alert('请填写修改原因'); return; }
+
+  const oldFirst = p.first_rate, oldRenew = p.renew_rate;
+  p.first_rate = firstRate;
+  p.renew_rate = renewRate;
+  p.logs.unshift({
+    time: nowTime(),
+    operator: '张博文',
+    action: '分成比例调整',
+    before: `首购 ${oldFirst.toFixed(1)}% / 续购 ${oldRenew.toFixed(1)}%`,
+    after: `首购 ${firstRate.toFixed(1)}% / 续购 ${renewRate.toFixed(1)}%`,
+    reason: reason
+  });
+
+  closeModal('modal-rate');
+  toast(`分成比例已调整为 首购 ${firstRate.toFixed(1)}% / 续购 ${renewRate.toFixed(1)}%`);
+  renderActiveView();
+}
+
+// 5. 冻结 / 解冻
+function openFreezeModal(partnerId) {
+  const p = PARTNERS.find(item => item.id === partnerId);
+  if (!p) return;
+
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+    <div class="modal-mask show" id="modal-freeze">
+      <div class="modal-dialog">
+        <div class="modal-dialog-header">
+          <h3>冻结合伙人账号</h3>
+          <button class="btn-ghost" style="padding:4px;" onclick="closeModal('modal-freeze')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-dialog-body">
+          <div style="background: #FEFCE8; border: 1px solid #FEF08A; border-radius: var(--radius-md); padding: 10px 12px; font-size: 12.5px; color: #A16207; margin-bottom: 14px;">
+            冻结后该合伙人<strong>立即无法登录前台</strong>，推荐码 (${p.code}) 与专属推广链接同步失效，下单不再产生归属与佣金；解冻后恢复。历史可结算金额保留。
+          </div>
+          <div class="form-group">
+            <label class="form-group-label">冻结原因 <span class="req">*</span></label>
+            <textarea class="form-textarea-full" id="txt-freeze-reason" placeholder="请输入冻结原因..."></textarea>
+          </div>
+        </div>
+        <div class="modal-dialog-footer">
+          <button class="btn btn-outline" onclick="closeModal('modal-freeze')">取消</button>
+          <button class="btn btn-primary" onclick="confirmFreeze('${p.id}')">确认冻结</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function confirmFreeze(partnerId) {
+  const p = PARTNERS.find(item => item.id === partnerId);
+  if (!p) return;
+  const reason = document.getElementById('txt-freeze-reason').value.trim();
+  if (!reason) { alert('请填写冻结原因'); return; }
+
+  p.status = 'FROZEN';
+  p.freeze_reason = reason;
+  p.logs.unshift({
+    time: nowTime(),
+    operator: '张博文',
+    action: '冻结账号',
+    before: '正常',
+    after: '已冻结',
+    reason: reason
+  });
+
+  closeModal('modal-freeze');
+  toast(`合伙人【${p.name}】已冻结`);
+  renderActiveView();
+}
+
+function unfreezePartner(partnerId) {
+  const p = PARTNERS.find(item => item.id === partnerId);
+  if (!p) return;
+  if (!confirm(`确认解冻合伙人【${p.name}】吗？`)) return;
+
+  p.status = 'NORMAL';
+  p.freeze_reason = '';
+  p.logs.unshift({
+    time: nowTime(),
+    operator: '张博文',
+    action: '解冻账号',
+    before: '已冻结',
+    after: '正常',
+    reason: '合规核实完毕恢复正常合作'
+  });
+
+  toast(`合伙人【${p.name}】已成功解冻`);
+  renderActiveView();
+}
+
+// 6. 确认结算核销弹窗
+// 7. 页面：系统设置 (SETTINGS)
+let settingsEditing = { rates: false, freeze: false };
+let pendingSettings = null;
+
+function renderSettingsView(container) {
+  const onR = settingsEditing.rates, onF = settingsEditing.freeze;
+  const boxStyle = on => `display: flex; align-items: center; height: 36px; border: 1px solid ${on ? 'var(--input)' : 'var(--border)'}; border-radius: var(--radius-md); background: ${on ? '#fff' : '#F4F4F5'}; padding: 0 12px; gap: 8px;`;
+  const numInput = (id, label, value, on) => `
+    <div style="${boxStyle(on)}">
+      <span style="flex: none; font-size: 12px; color: var(--muted-foreground);">${label}</span>
+      <input class="num" type="number" step="0.1" min="0" max="100" id="${id}" value="${value}" ${on ? '' : 'disabled'} style="flex: 1; min-width: 0; height: 100%; border: none; outline: none; background: transparent; font-family: inherit; font-size: 13px; text-align: right; color: ${on ? 'var(--foreground)' : 'var(--muted-foreground)'};">
+    </div>`;
+  const editActions = (key, saveFn) => `
+    <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+      <button class="btn btn-outline" onclick="cancelSettingsEdit('${key}')">取消</button>
+      <button class="btn btn-primary" onclick="${saveFn}">保存</button>
+    </div>`;
+
+  container.innerHTML = `
+    <div style="margin-bottom: 22px;">
+      <h1 style="font-size: 24px; font-weight: 700; color: var(--foreground); letter-spacing: -0.02em;">系统设置</h1>
+    </div>
+
+    <div class="content-card" style="padding: 20px 22px; margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 14px; font-weight: 600;">默认分成比例</div>
+        ${onR ? '' : `<button class="btn btn-outline btn-sm" onclick="startSettingsEdit('rates')">修改</button>`}
+      </div>
+      <div class="form-hint-note" style="margin: 4px 0 16px;">保存后同步为全系统所有管理者审核、建档时带出的默认比例；仅对后续新合伙人生效，已有合伙人比例保持不变。</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-group-label">内部渠道默认比例（%）</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            ${numInput('set-in-first', '首购', GLOBAL_CONFIG.internal_first_rate, onR)}
+            ${numInput('set-in-renew', '续购', GLOBAL_CONFIG.internal_renew_rate, onR)}
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-group-label">外部渠道默认比例（%）</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            ${numInput('set-ext-first', '首购', GLOBAL_CONFIG.external_first_rate, onR)}
+            ${numInput('set-ext-renew', '续购', GLOBAL_CONFIG.external_renew_rate, onR)}
+          </div>
+        </div>
+      </div>
+      ${onR ? editActions('rates', 'requestSaveRates()') : ''}
+    </div>
+
+    <div class="content-card" style="padding: 20px 22px; margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 14px; font-weight: 600;">冻结规则</div>
+        ${onF ? '' : `<button class="btn btn-outline btn-sm" onclick="startSettingsEdit('freeze')">修改</button>`}
+      </div>
+      <div class="form-hint-note" style="margin: 4px 0 16px;">推广币解冻日 = 服务期结束日 + N 天（防退款观察期）。修改并保存后，全系统按新规则重算解冻日与冻结中金额。</div>
+      <div class="form-group" style="max-width: 280px; margin-bottom: 0;">
+        <label class="form-group-label">冻结观察期 T+N（天）</label>
+        <input class="form-input-full num" type="number" step="1" min="0" max="60" id="set-unfreeze-days" value="${GLOBAL_CONFIG.unfreeze_days}" ${onF ? '' : 'disabled'}>
+        <div class="form-hint-note">当前规则：T+${GLOBAL_CONFIG.unfreeze_days} 天。默认 7 天，可调整 0-60 天。</div>
+      </div>
+      ${onF ? editActions('freeze', 'requestSaveFreeze()') : ''}
+    </div>
+  `;
+}
+
+function startSettingsEdit(key) {
+  settingsEditing[key] = true;
+  renderActiveView();
+}
+
+function cancelSettingsEdit(key) {
+  settingsEditing[key] = false;
+  pendingSettings = null;
+  renderActiveView();
+}
+
+function requestSaveRates() {
+  const iF = parseFloat(document.getElementById('set-in-first').value);
+  const iR = parseFloat(document.getElementById('set-in-renew').value);
+  const eF = parseFloat(document.getElementById('set-ext-first').value);
+  const eR = parseFloat(document.getElementById('set-ext-renew').value);
+  if ([iF, iR, eF, eR].some(v => isNaN(v) || v < 0 || v > 100)) { alert('请输入有效的首购与续购比例 (0~100%)'); return; }
+
+  const diffs = [];
+  if (iF !== GLOBAL_CONFIG.internal_first_rate) diffs.push(`内部 首购 ${GLOBAL_CONFIG.internal_first_rate}% → ${iF}%`);
+  if (iR !== GLOBAL_CONFIG.internal_renew_rate) diffs.push(`内部 续购 ${GLOBAL_CONFIG.internal_renew_rate}% → ${iR}%`);
+  if (eF !== GLOBAL_CONFIG.external_first_rate) diffs.push(`外部 首购 ${GLOBAL_CONFIG.external_first_rate}% → ${eF}%`);
+  if (eR !== GLOBAL_CONFIG.external_renew_rate) diffs.push(`外部 续购 ${GLOBAL_CONFIG.external_renew_rate}% → ${eR}%`);
+  if (!diffs.length) { settingsEditing.rates = false; toast('未修改任何配置'); renderActiveView(); return; }
+
+  pendingSettings = { type: 'rates', values: { iF, iR, eF, eR }, diffs };
+  openSettingsConfirm('默认分成比例', diffs);
+}
+
+function requestSaveFreeze() {
+  const days = parseInt(document.getElementById('set-unfreeze-days').value, 10);
+  if (isNaN(days) || days < 0 || days > 60) { alert('请输入有效的冻结观察期天数 (0~60 天)'); return; }
+
+  const diffs = [];
+  if (days !== GLOBAL_CONFIG.unfreeze_days) diffs.push(`冻结观察期 T+${GLOBAL_CONFIG.unfreeze_days} → T+${days}`);
+  if (!diffs.length) { settingsEditing.freeze = false; toast('未修改任何配置'); renderActiveView(); return; }
+
+  pendingSettings = { type: 'freeze', values: { days }, oldDays: GLOBAL_CONFIG.unfreeze_days, diffs };
+  openSettingsConfirm('冻结规则', diffs);
+}
+
+function openSettingsConfirm(title, diffs) {
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-mask show" id="modal-set-confirm">
+      <div class="modal-dialog" style="max-width: 440px;">
+        <div class="modal-dialog-header">
+          <h3>确认修改 · ${title}</h3>
+          <button class="btn-ghost" style="padding: 4px;" onclick="closeModal('modal-set-confirm')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-dialog-body">
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 12px;">以下配置将被变更，请确认无误后保存：</p>
+          ${diffs.map(d => `<div style="font-size: 13px; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 8px;">${d}</div>`).join('')}
+        </div>
+        <div class="modal-dialog-footer">
+          <button class="btn btn-outline" onclick="closeModal('modal-set-confirm')">取消</button>
+          <button class="btn btn-primary" onclick="applySettingsChanges()">确认保存</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function applySettingsChanges() {
+  const p = pendingSettings;
+  if (!p) return;
+  if (p.type === 'rates') {
+    const { iF, iR, eF, eR } = p.values;
+    GLOBAL_CONFIG.internal_first_rate = iF;
+    GLOBAL_CONFIG.internal_renew_rate = iR;
+    GLOBAL_CONFIG.external_first_rate = eF;
+    GLOBAL_CONFIG.external_renew_rate = eR;
+    CONFIG_LOGS.unshift({ time: nowTime(), operator: '张博文', text: `调整默认比例：${p.diffs.join('；')}` });
+    toast(`默认比例已更新：内部 ${iF}% / ${iR}%，外部 ${eF}% / ${eR}%`);
+  } else {
+    GLOBAL_CONFIG.unfreeze_days = p.values.days;
+    CONFIG_LOGS.unshift({ time: nowTime(), operator: '张博文', text: `调整冻结规则：T+${p.oldDays} → T+${p.values.days}` });
+    toast(`冻结规则已更新：T+${p.values.days} 天`);
+  }
+  settingsEditing[p.type] = false;
+  pendingSettings = null;
+  closeModal('modal-set-confirm');
+  recalcAll();
+  renderActiveView();
+}
+
+// 通用助手函数
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+}
+function closeDrawer(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+}
+function toast(msg) {
+  const el = document.getElementById('app-toast');
+  const txt = document.getElementById('toast-text');
+  if (!el || !txt) return;
+  txt.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+function nowTime() {
+  const d = new Date();
+  const pad = n => n < 10 ? '0' + n : n;
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+function formatNum(n) {
+  if (n === null || n === undefined) return '0';
+  const v = Math.round(n * 100) / 100;
+  return v.toLocaleString(undefined, Number.isInteger(v) ? { maximumFractionDigits: 0 } : { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+// 佣金一律按分取整（保留两位小数）
+function round2(n) { return Math.round((n + Number.EPSILON) * 100) / 100; }
+function fmtC(n) {
+  if (n === null || n === undefined) return '0.00';
+  return round2(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+window.onload = function() {
+  initRouter();
+};
+</script>
 </body>
 </html>
