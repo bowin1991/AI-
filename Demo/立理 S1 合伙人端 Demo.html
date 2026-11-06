@@ -356,11 +356,12 @@ var ORDERS = [
 ];
 
 var SETTLE = [
-  ['SETTLE-202610-008', '-2,000', '2026-10-28 15:00', '已结算', '招行对公转账流水尾号 8892，款项已结清']
+  ['SETTLE-202610-008', '-2,000.00', '2026-10-28 15:00', '已结算', '招行对公转账流水尾号 8892，款项已结清']
 ];
 
 function fmt(n) { return Number(n).toLocaleString('en-US'); }
 function fmt2(n) { return Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function round2(n) { return Math.round((n + Number.EPSILON) * 100) / 100; }
 function addMonthsDate(dateStr, m, extraDays) {
   var p = dateStr.slice(0, 10).split('-');
   return new Date(Date.UTC(+p[0], +p[1] - 1 + m, +p[2] + extraDays)).toISOString().slice(0, 10);
@@ -368,12 +369,12 @@ function addMonthsDate(dateStr, m, extraDays) {
 
 // 以订单为维度核算：月卡一期，年卡按 12 个月分期；每期在服务月结束 + 7 天后解冻；退款先扣除退款时尚未解冻的分期（从最后一期往前扣）
 function calcOrder(o) {
-  var pts = function(amt) { return Math.floor(amt * o.rate / 100 + 1e-9); };
-  var total0 = pts(o.paid), eff = pts(o.paid - o.refund), deduct = total0 - eff;
+  var pts = function(amt) { return round2(amt * o.rate / 100); };
+  var total0 = pts(o.paid), eff = pts(o.paid - o.refund), deduct = round2(total0 - eff);
   var n = o.kind === 'year' ? 12 : 1, ins = [], k;
-  var base = n === 1 ? total0 : Math.floor(total0 / 12);
+  var base = n === 1 ? total0 : round2(total0 / n);
   for (k = 1; k <= n; k++) {
-    var amt = n === 1 ? total0 : (k < n ? base : total0 - base * (n - 1));
+    var amt = n === 1 ? total0 : (k < n ? base : round2(total0 - base * (n - 1)));
     var ud = addMonthsDate(o.time, k, 7);
     ins.push({ k: k, orig: amt, amt: amt, unlock: ud, done: ud <= REF_DATE });
   }
@@ -381,14 +382,14 @@ function calcOrder(o) {
   for (var j = n - 1; j >= 0 && left > 0; j--) {
     if (ins[j].unlock > (o.refundAt || '')) {
       var cut = Math.min(left, ins[j].amt);
-      ins[j].amt -= cut;
-      left -= cut;
+      ins[j].amt = round2(ins[j].amt - cut);
+      left = round2(left - cut);
     }
   }
   var unlocked = 0, frozen = 0, doneCnt = 0;
   ins.forEach(function(x) {
-    if (x.done) { unlocked += x.amt; if (x.amt > 0) doneCnt++; }
-    else frozen += x.amt;
+    if (x.done) { unlocked = round2(unlocked + x.amt); if (x.amt > 0) doneCnt++; }
+    else frozen = round2(frozen + x.amt);
   });
   return { o: o, total0: total0, eff: eff, deduct: deduct, ins: ins, unlocked: unlocked, frozen: frozen, doneCnt: doneCnt, n: n,
            full: o.refund >= o.paid, part: o.refund > 0 && o.refund < o.paid };
@@ -397,8 +398,9 @@ function calcOrder(o) {
 function getSum() {
   var u = 0, f = 0;
   ORDERS.forEach(function(o) { var c = calcOrder(o); u += c.unlocked; f += c.frozen; });
-  var st = SETTLE.reduce(function(a, r) { return a + Math.abs(parseInt(r[1].replace(/[^0-9]/g, ''), 10)); }, 0);
-  return { total: u + f, settleable: u - st, frozen: f, settled: st };
+  var st = SETTLE.reduce(function(a, r) { return a + Math.abs(parseFloat(r[1].replace(/[^0-9.]/g, ''))); }, 0);
+  u = round2(u); f = round2(f); st = round2(st);
+  return { total: round2(u + f), settleable: round2(u - st), frozen: f, settled: st };
 }
 
 var BADGE = {
