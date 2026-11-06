@@ -2415,7 +2415,7 @@ function renderDetailTabTable(p, tab) {
               <td><span class="num">${o.rate.toFixed(1)}%</span></td>
               <td>
                 <strong class="num" style="color: ${o.points > 0 ? '#15803D' : (o.points < 0 ? 'var(--destructive)' : 'var(--muted-foreground)')};">
-                  ${o.points > 0 ? '+¥' : (o.points < 0 ? '-¥' : '¥')}${Math.abs(o.points)}
+                  ${o.points > 0 ? '+¥' : (o.points < 0 ? '-¥' : '¥')}${fmtC(Math.abs(o.points))}
                 </strong>
               </td>
               <td>${orderStatusHtml(o, p)}</td>
