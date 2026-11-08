@@ -588,7 +588,7 @@ tbody tr:hover td.col-sticky { background: #FAFAFA; }
   position: fixed; inset: 0;
   background: rgba(9, 9, 11, 0.4);
   backdrop-filter: blur(2px);
-  z-index: 100;
+  z-index: 120;
   display: flex; align-items: center; justify-content: center;
   padding: 20px;
   opacity: 0; pointer-events: none;
@@ -954,12 +954,13 @@ let PARTNERS = [
     orders: [
       { id: 'ORD-20260218-0301', customer_phone: '13812345678', product: 'Pro 月卡 (首购)', pay_amount: 299.00, rate: 30.0, points: 89.70, status: 'UNFROZEN', unfreeze_at: '2026-03-25', created_at: '2026-02-18 09:30', is_upgrade: false, is_cool: false },
       { id: 'ORD-20261103-0921', customer_phone: '13812345678', product: 'Pro 月卡 (续购)', pay_amount: 369.00, rate: 20.0, points: 73.80, status: 'FROZEN', unfreeze_at: '2026-12-10', created_at: '2026-11-03 14:20', is_upgrade: false, is_cool: false },
-      { id: 'ORD-20261025-0811', customer_phone: '13599887766', product: 'Max 年卡', pay_amount: 1200.00, rate: 20.0, points: 240, status: 'FROZEN', unfreeze_at: '2027-11-01', created_at: '2026-10-25 16:40', is_upgrade: true, is_cool: false },
+      { id: 'ORD-20261025-0811', customer_phone: '15011223344', product: 'Max 年卡', pay_amount: 1000.00, rate: 20.0, points: 200, status: 'FROZEN', unfreeze_at: '2027-11-01', created_at: '2026-10-25 16:40', is_upgrade: true, upgrade_from: 'ORD-20261012-0455', is_cool: false },
       { id: 'ORD-20261012-0455', customer_phone: '15011223344', product: 'Pro 年卡', pay_amount: 2999.00, rate: 30.0, points: 899.70, status: 'FROZEN', unfreeze_at: '2027-10-19', created_at: '2026-10-12 09:41', is_upgrade: false, is_cool: false },
       { id: 'ORD-20260925-0102', customer_phone: '18600112233', product: 'Pro 月卡 (首购)', pay_amount: 299.00, rate: 30.0, points: 89.70, status: 'UNFROZEN', unfreeze_at: '2026-11-01', created_at: '2026-09-25 18:05', is_upgrade: false, is_cool: false },
       { id: 'ORD-20260920-0088', customer_phone: '13966554433', product: 'Lite 年卡', pay_amount: 999.00, rate: 30.0, points: 299.70, status: 'UNFROZEN', unfreeze_at: '2026-10-20', created_at: '2026-09-20 11:30', is_upgrade: false, is_cool: false },
       { id: 'ORD-20260915-0012', customer_phone: '13344556677', product: 'Pro 月卡', pay_amount: 299.00, rate: 30.0, points: 89.70, status: 'UNFROZEN', unfreeze_at: '-', created_at: '2026-09-15 10:11', is_upgrade: false, is_cool: false },
       { id: 'ORD-20260820-0066', customer_phone: '17722334455', product: 'Pro 年卡 (首购)', pay_amount: 2999.00, rate: 30.0, points: 899.70, status: 'PAID', unfreeze_at: '2026-09-27', created_at: '2026-08-20 11:30', is_upgrade: false, is_cool: false, refunds: [{ amount: 2374.20, date: '2026-11-06', reason: '第 3 期已使用一半按半退，第 4 期起未使用全额退', voucher: 'TK-20261106-001' }] },
+      { id: 'ORD-20260820-0201', customer_phone: '15533556677', product: 'Max 年卡 (首购)', pay_amount: 2999.00, rate: 30.0, points: 899.70, status: 'PAID', unfreeze_at: '2026-09-27', start: '2026-08-20', created_at: '2026-08-20 15:10', is_upgrade: false, is_cool: false, refunds: [{ amount: 2999.00, date: '2026-11-06', reason: '客户使用 2 个月后反馈效果不佳，要求全额退款', voucher: 'TK-20261106-002' }] },
       { id: 'ORG-20260810-001', customer_phone: '', org_name: '北京航空航天大学人工智能研究院', contract_no: 'HT-2026-0810-A', kind: 'ORG', product: '机构版年度合同（线下签约）', pay_amount: 40000.00, rate: 30.0, points: 12000, status: 'ORG', unfreeze_at: '按月分期', created_at: '2026-08-10 10:00', start: '2026-08-10', months: 12, paid_out: 0, remark: '', is_upgrade: false, is_cool: false },
       { id: 'ORD-20260525-0042', customer_phone: '13422334455', product: 'Max 年卡', pay_amount: 9999.00, rate: 30.0, points: 2999.70, status: 'FROZEN', unfreeze_at: '-', created_at: '2026-05-25 14:10', is_upgrade: false, is_cool: false }
     ],
@@ -967,11 +968,12 @@ let PARTNERS = [
       { time: '2026-03-25 01:00', order_id: 'ORD-20260218-0301', type: '解冻计入', points: '+89.70', status: '已划入可结算金额' },
       { time: '2026-11-03 14:20', order_id: 'ORD-20261103-0921', type: '冻结计入 (续购)', points: '+73.80', status: '冻结中 (预计 2026-12-10 解冻)' },
       { time: '2026-10-28 15:00', order_id: 'SETTLE-202610-008', type: '线下结算核销', points: '-2,074.98', status: '财务已打款 (流水 BCM202610288892)' },
-      { time: '2026-10-25 16:40', order_id: 'ORD-20261025-0811', type: '冻结计入 (升级补差·续购)', points: '+240.00', status: '冻结中 (预计 2027-11-01 解冻)' },
+      { time: '2026-10-25 16:40', order_id: 'ORD-20261025-0811', type: '冻结计入 (升级补差·续购)', points: '+200.00', status: '冻结中 (预计 2027-11-01 解冻)' },
       { time: '2026-10-27 01:00', order_id: 'ORD-20260920-0088', type: '年卡分期解冻 (第 1/12 期)', points: '+24.98', status: '划入可结算金额' },
       { time: '2026-11-06 10:30', order_id: 'ORD-20260820-0066', type: '退款扣除', points: '-712.26', status: '退款 ¥2,374.20（第 3 期半退，第 4 期起全退）' }
     ],
     settlements: [
+      { batch_no: 'SETTLE-202609-009', points: 74.98, voucher: 'BCM202609308871', operator: '财务王敏', time: '2026-09-30 11:20', remark: 'Max 年卡第 1 期推广佣金' },
       { batch_no: 'SETTLE-202610-008', points: 2074.98, voucher: 'BCM202610288892', operator: '财务王敏', time: '2026-10-28 15:00', remark: '2026年9-10月度推广服务费，招商银行公对私打款付清' }
     ],
     customers: [
@@ -1082,6 +1084,19 @@ let PARTNERS = [
 
 let SETTLEMENT_HISTORY = [
   {
+    settle_id: 'SETTLE-202609-009',
+    partner_id: 'PT-8866',
+    partner_name: '李维国',
+    partner_phone: '13700001111',
+    channel_type: 'EXTERNAL',
+    points: 74.98,
+    voucher: 'BCM202609308871',
+    operator: '财务王敏',
+    settle_time: '2026-09-30 11:20',
+    remark: 'Max 年卡第 1 期推广佣金',
+    lines: [{ key: 'ORD-20260820-0201#1', order_id: 'ORD-20260820-0201', k: 1, n: 12, kind: 'YEAR', source: 'Max 年卡 (首购)', amt: 74.98, unlock: '2026-09-27' }]
+  },
+  {
     settle_id: 'SETTLE-202610-008',
     partner_id: 'PT-8866',
     partner_name: '李维国',
@@ -1112,8 +1127,8 @@ let SETTLEMENT_HISTORY = [
 // 月卡 1 期；年卡 12 期；机构订单按合同周期（月）分期；每期在服务月结束 +7 天解冻
 // ==========================================
 const REF_DATE = '2026-11-06';
-const LINE_SETTLED = {};     // 明细 key -> 已结算金额
-const LINE_SETTLE_ID = {};   // 明细 key -> 最近一次结算单号
+const LINE_SETTLED = { 'ORD-20260820-0201#1': 74.98 };      // 明细 key -> 已结算金额（该年卡第 1 期已打款）
+const LINE_SETTLE_ID = { 'ORD-20260820-0201#1': 'SETTLE-202609-009' };  // 明细 key -> 最近一次结算单号
 
 function addMonthsDate(dateStr, m, extraDays) {
   const p = dateStr.slice(0, 10).split('-');
@@ -1168,6 +1183,7 @@ function orderLines(o, p) {
   if (refunded > 0 && total > 0) {
     const recover = Math.max(0, round2(total - round2((o.pay_amount - refunded) * o.rate / 100)));
     let left = recover;
+    // 1) 未解冻期次从最后一期往前扣回
     for (let i = lines.length - 1; i >= 0 && left > 0; i--) {
       const l = lines[i];
       if (l.state !== 'FROZEN') continue;
@@ -1178,8 +1194,30 @@ function orderLines(o, p) {
       left = Math.round((left - cutC) * 100) / 100;
       if (l.remaining <= 0) { l.remaining = 0; l.state = 'REFUND'; }
     }
+    // 2) 已解冻未结算期次从可结算余额抵扣
+    for (let i = lines.length - 1; i >= 0 && left > 0; i--) {
+      const l = lines[i];
+      if (l.state !== 'UNLOCKED') continue;
+      const cut = Math.min(left, l.remaining);
+      const cutC = Math.round(cut * 100) / 100;
+      l.remaining = Math.round((l.remaining - cutC) * 100) / 100;
+      l.cut = (l.cut || 0) + cutC;
+      left = Math.round((left - cutC) * 100) / 100;
+      if (l.remaining <= 0) { l.remaining = 0; l.state = 'REFUND'; }
+    }
+    // 3) 已结算打款部分无法扣回，逐期计入待追回
+    let short = 0;
+    for (let i = lines.length - 1; i >= 0 && left > 0; i--) {
+      const l = lines[i];
+      if (l.state !== 'SETTLED') continue;
+      const cut = Math.min(left, l.amt);
+      l.short = Math.round(cut * 100) / 100;
+      short = Math.round((short + l.short) * 100) / 100;
+      left = Math.round((left - l.short) * 100) / 100;
+      l.state = 'SHORT';
+    }
     o._recover = recover;
-    o._refundShort = left;
+    o._refundShort = short;
   }
   return lines;
 }
@@ -1257,7 +1295,8 @@ function productTagHtml(o, extra) {
   return productTags(o).map(x => `<span class="badge ${x.cls}" style="font-size:10.5px;">${x.t}</span>`).join(' ') + (extra || '');
 }
 function lineStateBadge(l) {
-  if (l.state === 'SETTLED') return `<span class="badge badge-neutral">已结算</span>${LINE_SETTLE_ID[l.key] ? `<div style="font-size:10px; color:var(--muted-foreground); margin-top:2px;">${LINE_SETTLE_ID[l.key]}</div>` : ''}`;
+  if (l.state === 'SETTLED') return '<span class="badge badge-neutral">已结算</span>';
+  if (l.state === 'SHORT') return `<span class="badge badge-danger">待追回</span>${l.short ? `<div style="font-size:10px; color:var(--destructive); margin-top:2px;">¥${fmtC(l.short)}</div>` : ''}`;
   if (l.state === 'UNLOCKED') return '<span class="badge badge-success">可结算</span>';
   if (l.state === 'FROZEN') return '<span class="badge badge-warning">冻结中</span>';
   if (l.state === 'REFUND') return '<span class="badge badge-danger">退款扣除</span>';
@@ -1286,10 +1325,13 @@ function showOrderLines(orderId) {
         </div>
         <div class="drawer-body">
           <div class="content-card" style="margin:0 0 12px; padding:12px 16px;">
+            ${o.kind === 'ORG' ? `<div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:10px; margin-bottom:10px; border-bottom:1px solid var(--border);">
+              <span style="font-size:12px; color:var(--muted-foreground);">合同编号</span><span class="code-badge">${o.contract_no}</span>
+            </div>` : ''}
             <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
-              <div><div style="font-size:11.5px; color:var(--muted-foreground);">订单金额</div><strong class="num">¥${formatNum(o.pay_amount)}</strong></div>
-              <div><div style="font-size:11.5px; color:var(--muted-foreground);">分成比例</div><div><strong class="num">${o.rate.toFixed(1)}%</strong><span style="margin-left:6px;">${productTagHtml(o)}</span></div></div>
-              <div><div style="font-size:11.5px; color:var(--muted-foreground);">本单佣金${refunded > 0 ? '（退款后）' : ''}</div><div><strong class="num" style="color:${netPts > 0 ? '#15803D' : 'var(--muted-foreground)'};">¥${fmtC(netPts)}</strong>${o._recover > 0 ? `<span style="font-size:11px; color:var(--destructive); margin-left:6px;">原 ¥${fmtC(o.points)} · 扣回 ¥${fmtC(o._recover)}</span>` : ''}</div></div>
+              <div><div style="font-size:11.5px; color:var(--muted-foreground);">订单金额</div><strong class="num">¥${formatNum(o.pay_amount - refunded)}</strong>${refunded > 0 ? `<div style="font-size:10.5px; color:var(--muted-foreground); margin-top:2px;">已退 ¥${formatNum(refunded)}</div>` : ''}</div>
+              <div><div style="font-size:11.5px; color:var(--muted-foreground);">分成比例</div><div><strong class="num">${o.rate}%</strong><span style="margin-left:6px;">${productTagHtml(o)}</span></div></div>
+              <div><div style="font-size:11.5px; color:var(--muted-foreground);">本单佣金${refunded > 0 ? '（退款后）' : ''}</div><div><strong class="num" style="color:${netPts > 0 ? '#15803D' : 'var(--muted-foreground)'};">¥${fmtC(netPts)}</strong></div></div>
             </div>
             ${refunded > 0 ? `<div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border); font-size:12px; color:var(--destructive);">
               <strong>${(o.refunds || []).map(r => r.date).filter(Boolean).join('、')}${(o.refunds || []).some(r => r.date) ? ' · ' : ''}${refunded >= o.pay_amount ? '已全额退款' : '部分退款'} ¥${formatNum(refunded)}</strong>
@@ -1376,11 +1418,11 @@ function refreshRefundPreview() {
   box.innerHTML = `
     <div style="margin-top:14px; background:#FFF7ED; border:1px solid #FDBA74; border-radius:8px; padding:12px 14px; font-size:12.5px; line-height:1.9;">
       应扣回佣金 <strong class="num">¥${fmtC(preview._recover)}</strong>
-      · 可从未解冻期次扣回 <strong class="num" style="color:#15803D;">¥${fmtC(applied)}</strong>
+      · 可从冻结 / 可结算期次扣回 <strong class="num" style="color:#15803D;">¥${fmtC(applied)}</strong>
       · 计入待追回 <strong class="num" style="color:#DC2626;">¥${fmtC(short)}</strong>
       ${cuts.length ? `<div style="margin-top:6px; color:var(--muted-foreground);">扣回期次：${cuts.map(l => `第 ${l.k}/${l.n} 期 −¥${fmtC(l.cut)}`).join('、')}</div>` : ''}
-      ${short > 0 ? '<div style="margin-top:6px; color:#B45309;">该差额涉及已解冻或已结算佣金，将挂入该合伙人的待追回金额，下次打款时扣减。</div>' : ''}
-      <div style="margin-top:6px; color:var(--muted-foreground);">退款后本单佣金：¥${fmtC(Math.max(0, o.points - preview._recover))}（原 ¥${fmtC(o.points)}）</div>
+      ${short > 0 ? '<div style="margin-top:6px; color:#B45309;">该差额对应已结算打款的佣金，无法从余额抵扣，将挂入该合伙人的待追回金额，下次打款时扣减。</div>' : ''}
+      <div style="margin-top:6px; color:var(--muted-foreground);">退款后本单佣金：¥${fmtC(Math.max(0, o.points - preview._recover))}</div>
     </div>`;
 }
 
@@ -1464,6 +1506,7 @@ function openSettleSheet(pid) {
         </div>
         <div class="drawer-body">
           <div style="font-size:12.5px; color:var(--muted-foreground); margin-bottom:10px;">${p.org} · ${p.phone}${p.wx ? ' · 微信 ' + p.wx : ''}</div>
+          ${dueOffset > 0 ? `<div style="background:#FEF2F2; border:1px solid #FCA5A5; border-radius:8px; padding:8px 12px; font-size:12.5px; color:#B91C1C; margin-bottom:12px;">该合伙人存在退款待追回 <strong class="num">¥${fmtC(p.points.unrecovered)}</strong>，本次结算自动扣减 <strong class="num">¥${fmtC(dueOffset)}</strong>${p.points.unrecovered > total ? '，剩余 ¥' + fmtC(p.points.unrecovered - total) + ' 结转下次扣减' : ''}。</div>` : ''}
           <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; font-size:12.5px;">
             <span>本期可结算范围：<strong>${cutoff}（含）</strong>之前解冻的佣金</span>
             <span style="flex:1;"></span>
@@ -1483,7 +1526,6 @@ function openSettleSheet(pid) {
                 <td class="num" style="text-align:right;"><strong>¥${fmtC(l.remaining)}</strong>${l.settled > 0 ? `<div style="font-size:11px; color:var(--muted-foreground);">已结算 ¥${fmtC(l.settled)}（原 ¥${fmtC(l.amt)}）</div>` : ''}</td>
               </tr>`).join('')}</tbody>
           </table></div>
-          ${dueOffset > 0 ? `<div style="background:#FEF2F2; border:1px solid #FCA5A5; border-radius:8px; padding:8px 12px; font-size:12.5px; color:#B91C1C; margin-bottom:12px;">该合伙人存在退款待追回 <strong class="num">¥${fmtC(p.points.unrecovered)}</strong>，本次结算自动扣减 <strong class="num">¥${fmtC(dueOffset)}</strong>${p.points.unrecovered > total ? '，剩余 ¥' + fmtC(p.points.unrecovered - total) + ' 结转下次扣减' : ''}。</div>` : '<div style="margin-bottom:8px;"></div>'}
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
             <div class="form-group"><label class="form-group-label">财务打款凭证流水单号 <span class="req">*</span></label><input class="form-input-full num" id="sheet-voucher" value="${autoVoucher}"></div>
             <div class="form-group"><label class="form-group-label">结算经办人</label><input class="form-input-full" id="sheet-op" value="财务王敏"></div>
@@ -1520,6 +1562,7 @@ function sheetSelectAll(on) {
   });
   updateSheetTotal();
 }
+let SETTLE_PENDING = null;
 function confirmSettleSheet() {
   const p = PARTNERS.find(x => x.id === SHEET.pid); if (!p) return;
   const sel = SHEET.lines.filter(l => SHEET.checked.has(l.key));
@@ -1531,6 +1574,30 @@ function confirmSettleSheet() {
   const total = sel.reduce((a, l) => a + l.remaining, 0);
   const offset = Math.min(p.points.unrecovered || 0, total);
   const net = total - offset;
+  SETTLE_PENDING = { pid: p.id, sel, voucher, op, rem, total, offset, net };
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-mask show" id="modal-settle-confirm">
+      <div class="modal-dialog" style="width:440px;">
+        <div class="modal-dialog-header"><h3>确认结算 · ${p.name}</h3><button class="btn-ghost" style="padding:4px;" onclick="closeModal('modal-settle-confirm')">✕</button></div>
+        <div class="modal-dialog-body">
+          <div style="display:grid; gap:10px; font-size:13px;">
+            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted-foreground);">已选结算明细</span><span>${sel.length} 条</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted-foreground);">明细合计</span><span class="num">¥${fmtC(total)}</span></div>
+            ${offset > 0 ? `<div style="display:flex; justify-content:space-between; color:#B91C1C;"><span>扣减退款待追回</span><span class="num">−¥${fmtC(offset)}</span></div>` : ''}
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:10px;"><span style="color:var(--muted-foreground);">本次实结</span><strong class="num" style="font-size:18px; color:#15803D;">¥${fmtC(net)}</strong></div>
+          </div>
+          <div style="margin-top:12px; font-size:12px; color:var(--muted-foreground);">确认后明细将标记为已结算，并实时同步合伙人端，可在结算历史中查看。</div>
+        </div>
+        <div class="modal-dialog-footer"><button class="btn btn-outline" onclick="closeModal('modal-settle-confirm')">取消</button><button class="btn btn-primary" onclick="executeSettleSheet()">确认结算并同步</button></div>
+      </div>
+    </div>`;
+}
+function executeSettleSheet() {
+  const d = SETTLE_PENDING; if (!d) return;
+  const p = PARTNERS.find(x => x.id === d.pid); if (!p) return;
+  closeModal('modal-settle-confirm');
+  SETTLE_PENDING = null;
+  const { sel, voucher, op, rem, total, offset, net } = d;
   const before = p.points.withdrawable;
   const bNo = 'SETTLE-' + REF_DATE.slice(0, 7).replace('-', '') + '-' + Math.floor(100 + Math.random() * 899);
   sel.forEach(l => { LINE_SETTLED[l.key] = (LINE_SETTLED[l.key] || 0) + l.remaining; LINE_SETTLE_ID[l.key] = bNo; });
@@ -1636,11 +1703,11 @@ function openOrgEntryDrawer() {
           </div>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 14px;">
             <div class="form-group" style="grid-column:1/3;"><label class="form-group-label">归属合伙人 <span class="req">*</span></label>
-              <select class="form-input-full" id="org-partner" onchange="onOrgPartnerChange()">${cand.map(p => `<option value="${p.id}">${p.name} · ${p.org} · ${p.channel_type === 'INTERNAL' ? '内部' : '外部'}渠道（续购比例 ${p.renew_rate.toFixed(1)}%）${p.status === 'FROZEN' ? ' · 已冻结' : ''}</option>`).join('')}</select></div>
+              <select class="form-input-full" id="org-partner" onchange="onOrgPartnerChange()">${cand.map(p => `<option value="${p.id}">${p.name} · ${p.org} · ${p.channel_type === 'INTERNAL' ? '内部' : '外部'}渠道（续购比例 ${p.renew_rate}%）${p.status === 'FROZEN' ? ' · 已冻结' : ''}</option>`).join('')}</select></div>
             <div class="form-group"><label class="form-group-label">机构名称 <span class="req">*</span></label><input class="form-input-full" id="org-name" placeholder="如：某某大学某某实验室" oninput="refreshOrgPreview()"></div>
             <div class="form-group"><label class="form-group-label">合同编号 <span class="req">*</span></label><input class="form-input-full" id="org-contract" placeholder="线下合同编号"></div>
             <div class="form-group"><label class="form-group-label">合同金额（元）<span class="req">*</span></label><input class="form-input-full num" type="number" id="org-amount" placeholder="如 40000" oninput="refreshOrgPreview()"></div>
-            <div class="form-group"><label class="form-group-label">分成比例（%）<span class="req">*</span></label><input class="form-input-full num" type="number" step="0.1" id="org-rate" value="${cand[0].renew_rate}" oninput="refreshOrgPreview()"><div class="form-hint-note">默认带出合伙人续购比例，可按合同调整；录入后锁定，不随后续比例调整变化。</div></div>
+            <div class="form-group"><label class="form-group-label">分成比例（%）<span class="req">*</span></label><input class="form-input-full num" type="number" step="1" id="org-rate" value="${cand[0].renew_rate}" oninput="refreshOrgPreview()"><div class="form-hint-note">默认带出合伙人续购比例，可按合同调整；录入后锁定，不随后续比例调整变化。</div></div>
             <div class="form-group"><label class="form-group-label">服务起始日 <span class="req">*</span></label><input class="form-input-full" type="date" id="org-start" value="${REF_DATE}" oninput="refreshOrgPreview()"></div>
             <div class="form-group"><label class="form-group-label">服务周期（月）<span class="req">*</span></label><input class="form-input-full num" type="number" id="org-months" value="12" min="1" max="60" oninput="refreshOrgPreview()"><div class="form-hint-note" id="org-end-hint"></div></div>
             <div class="form-group"><label class="form-group-label">已发放金额（元）</label><input class="form-input-full num" type="number" id="org-paid" value="0" min="0" oninput="refreshOrgPreview()"><div class="form-hint-note">录入前已线下发给合伙人的佣金，系统按期次从前往后抵扣，并生成一条「录入时已发放」结算记录。</div></div>
@@ -1970,7 +2037,7 @@ function renderApplicationsView(container) {
                   <button class="btn btn-destructive btn-sm" onclick="openRejectModal('${item.id}')">拒绝</button>
                 ` : ''}
                 ${item.status === 'REJECTED' ? `
-                  <button class="btn btn-primary btn-sm" onclick="openApproveModal('${item.id}', true)">改为通过</button>
+                  <button class="btn btn-primary btn-sm" onclick="openApproveModal('${item.id}', true)">重新审核</button>
                 ` : ''}
               </td>
             </tr>
@@ -2190,7 +2257,7 @@ function renderPartnerListView(container) {
             <th>合伙人姓名</th>
             <th>账号状态</th>
             <th>单位</th>
-            <th>手机号 (完整展示)</th>
+            <th>手机号</th>
             <th>渠道</th>
             <th>推荐码</th>
             <th>首购 / 续购比例</th>
@@ -2216,7 +2283,7 @@ function renderPartnerListView(container) {
                 ${p.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部</span>' : '<span class="badge badge-neutral">外部</span>'}
               </td>
               <td><span class="code-badge">${p.code}</span>${p.status === 'FROZEN' ? '<div style="font-size:10.5px; color:var(--destructive); margin-top:2px;">已失效</div>' : ''}</td>
-              <td><strong class="num">${p.first_rate.toFixed(1)}%</strong> <span style="font-size:11px; color:var(--muted-foreground);">/ 续 ${p.renew_rate.toFixed(1)}%</span></td>
+              <td><strong class="num">${p.first_rate}%</strong> <span style="font-size:11px; color:var(--muted-foreground);">/ 续 ${p.renew_rate}%</span></td>
               <td><strong class="num">¥${formatNum(partnerSales(p))}</strong></td>
               <td><strong class="num">¥${fmtC(p.points.total)}</strong></td>
               <td style="color: var(--muted-foreground); font-size: 12px;">${p.join_time.split(' ')[0]}</td>
@@ -2257,7 +2324,7 @@ function renderPartnerDetailView(container, p, activeTab = 'orders') {
           ${p.status === 'FROZEN' ? '<span class="badge badge-warning">已冻结</span>' : ''}
         </h1>
         <div style="font-size: 13px; color: var(--muted-foreground); margin-top: 4px;">
-          ${p.org} · ${p.role} · 加入时间: ${p.join_time}
+          ${p.org} · 加入时间: ${p.join_time}
         </div>
       </div>
 
@@ -2306,7 +2373,7 @@ function renderPartnerDetailView(container, p, activeTab = 'orders') {
     <div class="content-card" style="padding: 16px 20px; margin-bottom: 22px;">
       <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; font-size: 13px;">
         <div>
-          <span style="color: var(--muted-foreground); font-size: 12px; display:block; margin-bottom:2px;">手机号码 (完整展示)</span>
+          <span style="color: var(--muted-foreground); font-size: 12px; display:block; margin-bottom:2px;">手机号码</span>
           <strong class="num">${p.phone}</strong>
         </div>
         <div>
@@ -2315,7 +2382,7 @@ function renderPartnerDetailView(container, p, activeTab = 'orders') {
         </div>
         <div>
           <span style="color: var(--muted-foreground); font-size: 12px; display:block; margin-bottom:2px;">当前分成比例（首购 / 续购）</span>
-          <strong class="num">${p.first_rate.toFixed(1)}% / ${p.renew_rate.toFixed(1)}%</strong>
+          <strong class="num">${p.first_rate}% / ${p.renew_rate}%</strong>
         </div>
         <div>
           <span style="color: var(--muted-foreground); font-size: 12px; display:block; margin-bottom:2px;">微信号</span>
@@ -2372,13 +2439,13 @@ function renderDetailTabTable(p, tab) {
               : '<span class="badge badge-success" style="font-size:10.5px;">已支付</span>';
             const isOrg = o.kind === 'ORG';
             return `<tr>
-              <td>${isOrg ? `<span class="code-badge">${o.contract_no}</span><div style="font-size:11.5px; color:var(--muted-foreground); margin-top:2px;">${o.id}</div>` : `<span class="code-badge">${o.id}</span>`}</td>
+              <td><span class="code-badge">${o.id}</span></td>
               <td>${isOrg ? `<strong>${o.org_name}</strong>` : `<strong class="num">${o.customer_phone}</strong>`}</td>
               <td style="font-size:12.5px;">${productName(o)}<div style="margin-top:3px;">${productTagHtml(o)}${o.months ? ` <span class="badge badge-neutral" style="font-size:10px;">${o.months} 个月服务期</span>` : ''}</div></td>
               <td>${payBadge}</td>
-              <td class="num">¥${formatNum(o.pay_amount)}</td>
-              <td class="num">${o.rate.toFixed(1)}%</td>
-              <td><strong class="num" style="color:${pc};">${netPoints > 0 ? '+' : ''}¥${fmtC(netPoints)}</strong>${o._recover > 0 ? `<div style="font-size:11px; color:var(--destructive);">原 +¥${fmtC(o.points)} · 扣回 ¥${fmtC(o._recover)}</div>` : ''}</td>
+              <td class="num">¥${formatNum(o.pay_amount - refunded)}${refunded > 0 ? `<div style="font-size:10.5px; color:var(--muted-foreground); margin-top:2px;">已退 ¥${formatNum(refunded)}</div>` : ''}</td>
+              <td class="num">${o.rate}%</td>
+              <td><strong class="num" style="color:${pc};">${netPoints > 0 ? '+' : ''}¥${fmtC(netPoints)}</strong></td>
               <td class="num" style="color:var(--muted-foreground); font-size:11.5px;">${o.created_at || o.start}</td>
               <td class="col-sticky" style="text-align:right; white-space:nowrap;">
                 ${lines.length ? `<button class="btn btn-outline btn-sm" onclick="showOrderLines('${o.id}')">分期明细</button>` : ''}
@@ -2436,9 +2503,6 @@ let settleKw = '';
 
 function renderSettlementsView(container) {
   const pendingPartners = PARTNERS.filter(p => p.points.withdrawable > 0);
-  const totalPending = pendingPartners.reduce((s, p) => s + p.points.withdrawable, 0);
-  const sumLines = (p, kind) => partnerLines(p).filter(l => l.state === 'UNLOCKED' && (kind === 'ORG' ? l.kind === 'ORG' : l.kind !== 'ORG')).reduce((a, l) => a + l.remaining, 0);
-  const orgPending = pendingPartners.reduce((s, p) => s + sumLines(p, 'ORG'), 0);
   const tabBtn = (key, label) => `<button class="seg-tab-btn ${settleSubTab === key ? 'active' : ''}" onclick="settleSubTab='${key}'; renderSettlementsView(document.getElementById('main-view-container'))">${label}</button>`;
   const headerBtn = '';
 
@@ -2446,11 +2510,6 @@ function renderSettlementsView(container) {
   if (settleSubTab === 'pending') {
     const pagedPending = pagedList('settle-pending', pendingPartners);
     body = `
-      <div style="background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-xl); padding:14px 20px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
-        <div style="font-size:13.5px;">当前共有 <strong>${pendingPartners.length}</strong> 位合伙人有可结算明细，待打款合计 <strong class="num" style="font-size:17px; color:#15803D;">¥${fmtC(totalPending)}</strong>
-          <span style="color:var(--muted-foreground); font-size:12.5px;">（线上套餐 ¥${fmtC(totalPending - orgPending)} · 机构订单 ¥${fmtC(orgPending)}）</span></div>
-        <div style="font-size:12px; color:var(--muted-foreground);">结算周期：每月仅结算上月最后一日（含）前解冻的佣金</div>
-      </div>
       <div class="table-container">
         <table class="official-table">
           <thead><tr>
@@ -2482,16 +2541,14 @@ function renderSettlementsView(container) {
     body = `
       <div class="table-container">
         <table class="official-table">
-          <thead><tr><th>结算单号</th><th>合伙人</th><th>渠道</th><th>结算金额</th><th>结算内容</th><th>财务打款凭证号</th><th>经办人</th><th>核销时间</th><th>打款备注</th><th class="col-sticky" style="text-align:right;">操作</th></tr></thead>
+          <thead><tr><th>结算单号</th><th>合伙人姓名</th><th>手机号</th><th>渠道</th><th>结算金额</th><th>财务打款凭证号</th><th>经办人</th><th>核销时间</th><th>打款备注</th><th class="col-sticky" style="text-align:right;">操作</th></tr></thead>
           <tbody>${pagedHistory.map(s => {
-            const ls = s.lines || [];
-            const hasOrg = ls.some(l => l.kind === 'ORG'), hasOn = ls.some(l => l.kind !== 'ORG');
             return `<tr>
               <td><span class="code-badge">${s.settle_id}</span>${s.imported ? '<div><span class="badge badge-neutral" style="font-size:10.5px;">录入时已发放</span></div>' : ''}</td>
-              <td><strong>${s.partner_name}</strong><div class="num" style="font-size:11.5px; color:var(--muted-foreground);">${s.partner_phone}</div></td>
+              <td><strong>${s.partner_name}</strong></td>
+              <td><span class="num">${s.partner_phone}</span></td>
               <td>${s.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部</span>' : '<span class="badge badge-neutral">外部</span>'}</td>
               <td><strong class="num" style="color:#15803D;">-¥${fmtC(s.points)}</strong></td>
-              <td style="font-size:12.5px;">${ls.length} 期明细<div style="font-size:11.5px; color:var(--muted-foreground);">${[hasOn ? '线上套餐' : '', hasOrg ? '机构订单' : ''].filter(Boolean).join(' + ')}</div></td>
               <td><span class="code-badge">${s.voucher}</span></td>
               <td>${s.operator}</td>
               <td style="color:var(--muted-foreground); font-size:12px;">${s.settle_time}</td>
@@ -2605,9 +2662,9 @@ function renderOrdersView(container) {
               <td style="font-size:12.5px;">${productName(o)}<div style="margin-top:3px;">${productTagHtml(o)}</div></td>
               <td><strong>${p.name}</strong><div style="font-size:11.5px; color:var(--muted-foreground);">${p.channel_type === 'INTERNAL' ? '内部' : '外部'}渠道</div></td>
               <td>${payBadge}</td>
-              <td class="num">¥${formatNum(o.pay_amount)}</td>
-              <td class="num">${o.rate.toFixed(1)}%</td>
-              <td><strong class="num" style="color:${pc};">${netPoints > 0 ? '+' : ''}¥${fmtC(netPoints)}</strong>${o._recover > 0 ? `<div style="font-size:11px; color:var(--destructive);">原 +¥${fmtC(o.points)} · 扣回 ¥${fmtC(o._recover)}</div>` : ''}</td>
+              <td class="num">¥${formatNum(o.pay_amount - refunded)}${refunded > 0 ? `<div style="font-size:10.5px; color:var(--muted-foreground); margin-top:2px;">已退 ¥${formatNum(refunded)}</div>` : ''}</td>
+              <td class="num">${o.rate}%</td>
+              <td><strong class="num" style="color:${pc};">${netPoints > 0 ? '+' : ''}¥${fmtC(netPoints)}</strong></td>
               <td class="num" style="color:var(--muted-foreground); font-size:11.5px;">${o.created_at}</td>
               <td class="col-sticky" style="text-align:right; white-space:nowrap;">
                 ${lines.length ? `<button class="btn btn-outline btn-sm" onclick="showOrderLines('${o.id}')">分期明细</button>` : ''}
@@ -2625,7 +2682,7 @@ function renderOrdersView(container) {
       </div>
       <div class="table-container">
         <table class="official-table">
-          <thead><tr><th>合同编号</th><th>机构名称</th><th>商品名称</th><th>合伙人</th><th>订单状态</th><th>订单金额</th><th>分成比例</th><th>本单佣金</th><th>下单时间</th><th class="col-sticky" style="text-align:right;">操作</th></tr></thead>
+          <thead><tr><th>订单编号</th><th>机构名称</th><th>商品名称</th><th>合伙人</th><th>订单状态</th><th>订单金额</th><th>分成比例</th><th>本单佣金</th><th>下单时间</th><th class="col-sticky" style="text-align:right;">操作</th></tr></thead>
           <tbody>${orgOrders.length === 0 ? '<tr><td colspan="10" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无机构订单，点击右上角「录入机构订单」</td></tr>' : pagedOrgOrders.map(({ p, o, lines }) => {
             const netPoints = Math.max(0, o.points - (o._recover || 0));
             const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
@@ -2633,14 +2690,14 @@ function renderOrdersView(container) {
               ? '<span class="badge badge-danger" style="font-size:10.5px;">已退款</span>'
               : '<span class="badge badge-success" style="font-size:10.5px;">已支付</span>';
             return `<tr>
-              <td><span class="code-badge">${o.contract_no}</span><div style="font-size:11.5px; color:var(--muted-foreground); margin-top:2px;">${o.id}</div></td>
+              <td><span class="code-badge">${o.id}</span></td>
               <td><strong>${o.org_name}</strong></td>
               <td style="font-size:12.5px;">${productName(o)}<div style="margin-top:3px;">${productTagHtml(o)} <span class="badge badge-neutral" style="font-size:10px;">${o.months} 个月服务期</span></div></td>
               <td><strong>${p.name}</strong><div style="font-size:11.5px; color:var(--muted-foreground);">${p.channel_type === 'INTERNAL' ? '内部' : '外部'}渠道</div></td>
               <td>${payBadge}</td>
-              <td class="num">¥${formatNum(o.pay_amount)}</td>
-              <td class="num">${o.rate.toFixed(1)}%</td>
-              <td><strong class="num" style="color:${netPoints > 0 ? '#15803D' : 'var(--muted-foreground)'};">${netPoints > 0 ? '+¥' : '¥'}${fmtC(Math.abs(netPoints))}</strong>${o._recover > 0 ? `<div style="font-size:11px; color:var(--destructive);">原 +¥${fmtC(o.points)} · 扣回 ¥${fmtC(o._recover)}</div>` : ''}</td>
+              <td class="num">¥${formatNum(o.pay_amount - refunded)}${refunded > 0 ? `<div style="font-size:10.5px; color:var(--muted-foreground); margin-top:2px;">已退 ¥${formatNum(refunded)}</div>` : ''}</td>
+              <td class="num">${o.rate}%</td>
+              <td><strong class="num" style="color:${netPoints > 0 ? '#15803D' : 'var(--muted-foreground)'};">${netPoints > 0 ? '+¥' : '¥'}${fmtC(Math.abs(netPoints))}</strong></td>
               <td class="num" style="color:var(--muted-foreground); font-size:11.5px;">${o.created_at || o.start}</td>
               <td class="col-sticky" style="text-align:right; white-space:nowrap;">
                 <button class="btn btn-outline btn-sm" onclick="showOrderLines('${o.id}')">分期明细</button>
@@ -2775,7 +2832,7 @@ function renderReportsView(container) {
           <tr>
             <th style="width: 70px;">排名</th>
             <th>合伙人姓名 / 单位</th>
-            <th>手机号码 (完整展示)</th>
+            <th>手机号码</th>
             <th>渠道分类</th>
             <th>分成比例</th>
             <th>带单有效订单数</th>
@@ -2846,7 +2903,7 @@ function openApproveModal(appId, isReapprove = false) {
     <div class="modal-mask show" id="modal-approve">
       <div class="modal-dialog">
         <div class="modal-dialog-header">
-          <h3>${isReapprove ? '修改审核状态为：已通过' : '合伙人申请审核通过'}</h3>
+          <h3>${isReapprove ? '重新审核 · 设为已通过' : '合伙人申请审核通过'}</h3>
           <button class="btn-ghost" style="padding:4px;" onclick="closeModal('modal-approve')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
@@ -2854,7 +2911,7 @@ function openApproveModal(appId, isReapprove = false) {
         <div class="modal-dialog-body">
           <div style="background: #FAFAFA; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 18px; font-size: 13px;">
             <div style="display:flex; justify-content:space-between;">
-              <span>申请人：<strong>${app.name}</strong> (${app.role})</span>
+              <span>申请人：<strong>${app.name}</strong></span>
               <strong class="num">${app.phone}</strong>
             </div>
             <div style="color: var(--muted-foreground); margin-top: 4px;">所属单位：${app.org}</div>
@@ -2875,15 +2932,17 @@ function openApproveModal(appId, isReapprove = false) {
           </div>
 
           <div class="form-group">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-              <label class="form-group-label" style="margin-bottom:0;">分成比例（首购 / 续购）<span class="req">*</span></label>
-              <span style="font-size: 11.5px; color: var(--muted-foreground);" id="rate-source-hint">带出默认值 (首购 ${GLOBAL_CONFIG.external_first_rate}% / 续购 ${GLOBAL_CONFIG.external_renew_rate}%)</span>
-            </div>
+            <label class="form-group-label">分成比例（首购 / 续购）<span class="req">*</span></label>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-              <input class="form-input-full num" type="number" step="0.1" min="0" max="100" id="in-approve-first-rate" value="${GLOBAL_CONFIG.external_first_rate}" placeholder="首购比例">
-              <input class="form-input-full num" type="number" step="0.1" min="0" max="100" id="in-approve-renew-rate" value="${GLOBAL_CONFIG.external_renew_rate}" placeholder="续购比例">
+              <div style="display: flex; align-items: center; height: 36px; border: 1px solid var(--input); border-radius: var(--radius-md); background: #fff; padding: 0 12px; gap: 8px;">
+                <span style="flex: none; font-size: 12px; color: var(--muted-foreground);">首购</span>
+                <input class="num" type="number" step="1" min="0" max="100" id="in-approve-first-rate" value="${GLOBAL_CONFIG.external_first_rate}" style="flex: 1; min-width: 0; height: 100%; border: none; outline: none; background: transparent; font-family: inherit; font-size: 13px; text-align: right;">
+              </div>
+              <div style="display: flex; align-items: center; height: 36px; border: 1px solid var(--input); border-radius: var(--radius-md); background: #fff; padding: 0 12px; gap: 8px;">
+                <span style="flex: none; font-size: 12px; color: var(--muted-foreground);">续购</span>
+                <input class="num" type="number" step="1" min="0" max="100" id="in-approve-renew-rate" value="${GLOBAL_CONFIG.external_renew_rate}" style="flex: 1; min-width: 0; height: 100%; border: none; outline: none; background: transparent; font-family: inherit; font-size: 13px; text-align: right;">
+              </div>
             </div>
-            <div class="form-hint-note">左：首购（客户首次付费）；右：续购（后续复购）。支持 0.0% ~ 100.0%，允许一位小数，仅对后续新订单生效。</div>
           </div>
 
           <div class="form-group">
@@ -2893,10 +2952,6 @@ function openApproveModal(appId, isReapprove = false) {
             </div>
             <input class="form-input-full num" type="text" maxlength="4" id="in-approve-code" value="${autoCode}" style="letter-spacing: 4px; font-weight: 700; text-align: center; font-size:16px;">
             <div class="form-hint-note">下单结算页输入或短链带入的 4 位唯一代码。</div>
-          </div>
-
-          <div style="background: #FAFAFA; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; font-size: 12px; color: var(--muted-foreground);">
-            确认通过后，系统将自动在合伙人管理中创建档案并激活前台账号。
           </div>
         </div>
         <div class="modal-dialog-footer">
@@ -2913,7 +2968,6 @@ function pickChannelType(type) {
   const optInt = document.getElementById('opt-int');
   const firstIn = document.getElementById('in-approve-first-rate');
   const renewIn = document.getElementById('in-approve-renew-rate');
-  const hint = document.getElementById('rate-source-hint');
 
   if (type === 'EXTERNAL') {
     optExt.classList.add('selected');
@@ -2921,14 +2975,12 @@ function pickChannelType(type) {
     optExt.querySelector('input').checked = true;
     firstIn.value = GLOBAL_CONFIG.external_first_rate;
     renewIn.value = GLOBAL_CONFIG.external_renew_rate;
-    hint.textContent = `带出默认值 (首购 ${GLOBAL_CONFIG.external_first_rate}% / 续购 ${GLOBAL_CONFIG.external_renew_rate}%)`;
   } else {
     optInt.classList.add('selected');
     optExt.classList.remove('selected');
     optInt.querySelector('input').checked = true;
     firstIn.value = GLOBAL_CONFIG.internal_first_rate;
     renewIn.value = GLOBAL_CONFIG.internal_renew_rate;
-    hint.textContent = `带出默认值 (首购 ${GLOBAL_CONFIG.internal_first_rate}% / 续购 ${GLOBAL_CONFIG.internal_renew_rate}%)`;
   }
 }
 
@@ -2942,7 +2994,7 @@ function confirmApprovePartner(appId) {
   const renewRate = parseFloat(document.getElementById('in-approve-renew-rate').value);
   const code = document.getElementById('in-approve-code').value.trim();
 
-  if (isNaN(firstRate) || firstRate < 0 || firstRate > 100 || isNaN(renewRate) || renewRate < 0 || renewRate > 100) { alert('请输入有效的首购与续购比例 (0~100%)'); return; }
+  if (isNaN(firstRate) || firstRate < 0 || firstRate > 100 || isNaN(renewRate) || renewRate < 0 || renewRate > 100 || !Number.isInteger(firstRate) || !Number.isInteger(renewRate)) { alert('首购与续购比例需为 0~100 的整数'); return; }
   if (!/^\d{4}$/.test(code)) { alert('专属推荐码必须为 4 位纯数字'); return; }
   if (PARTNERS.some(p => p.code === code)) { alert('该推荐码已被其他合伙人占用'); return; }
 
@@ -2954,7 +3006,7 @@ function confirmApprovePartner(appId) {
     time: opTime,
     operator: '张博文',
     action: '审核通过',
-    detail: `设为${channel==='INTERNAL'?'内部渠道':'外部渠道'}，首购 ${firstRate.toFixed(1)}% / 续购 ${renewRate.toFixed(1)}%，推荐码 ${code}`
+    detail: `设为${channel==='INTERNAL'?'内部渠道':'外部渠道'}，首购 ${firstRate}% / 续购 ${renewRate}%，推荐码 ${code}`
   });
 
   PARTNERS.unshift({
@@ -3070,12 +3122,7 @@ function openAppDetailDrawer(appId) {
           </div>
 
           <div class="form-group">
-            <label class="form-group-label">身份属性 <span class="req">*</span></label>
-            <input class="form-input-full" id="dr-in-role" value="${app.role}">
-          </div>
-
-          <div class="form-group">
-            <label class="form-group-label">申请手机号 (账号标识，只读完整展示)</label>
+            <label class="form-group-label">申请手机号 (账号标识，只读)</label>
             <input class="form-input-full num" value="${app.phone}" disabled>
             <div class="form-hint-note">合伙人前台登录凭据，不可更改。</div>
           </div>
@@ -3106,12 +3153,11 @@ function saveAppInfo(appId) {
   if (!app) return;
   const name = document.getElementById('dr-in-name').value.trim();
   const org = document.getElementById('dr-in-org').value.trim();
-  const role = document.getElementById('dr-in-role').value.trim();
   const wx = document.getElementById('dr-in-wx').value.trim();
 
-  if (!name || !org || !role) { alert('姓名、单位与身份属性必填'); return; }
+  if (!name || !org) { alert('姓名与单位必填'); return; }
 
-  app.name = name; app.org = org; app.role = role; app.wx = wx;
+  app.name = name; app.org = org; app.wx = wx;
   app.logs.unshift({
     time: nowTime(),
     operator: '张博文',
@@ -3146,23 +3192,24 @@ function openModifyRateModal(partnerId) {
 
           <div class="form-group">
             <label class="form-group-label">当前比例（首购 / 续购）</label>
-            <input class="form-input-full num" value="${p.first_rate.toFixed(1)}% / ${p.renew_rate.toFixed(1)}%" disabled>
+            <input class="form-input-full num" value="${p.first_rate}% / ${p.renew_rate}%" disabled>
           </div>
 
           <div class="form-group">
             <label class="form-group-label">新分成比例（首购 / 续购） <span class="req">*</span></label>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-              <input class="form-input-full num" type="number" step="0.1" min="0" max="100" id="in-new-first-rate" value="${p.first_rate.toFixed(1)}" placeholder="首购比例">
-              <input class="form-input-full num" type="number" step="0.1" min="0" max="100" id="in-new-renew-rate" value="${p.renew_rate.toFixed(1)}" placeholder="续购比例">
+              <div style="display:flex; align-items:center; height:36px; border:1px solid var(--input); border-radius:var(--radius-md); background:#fff; padding:0 12px; gap:8px;">
+                <span style="flex:none; font-size:12px; color:var(--muted-foreground);">首购</span>
+                <input class="num" type="number" step="1" min="0" max="100" id="in-new-first-rate" value="${p.first_rate}" style="flex:1; min-width:0; height:100%; border:none; outline:none; background:transparent; font-family:inherit; font-size:13px; text-align:right; color:var(--foreground);">
+              </div>
+              <div style="display:flex; align-items:center; height:36px; border:1px solid var(--input); border-radius:var(--radius-md); background:#fff; padding:0 12px; gap:8px;">
+                <span style="flex:none; font-size:12px; color:var(--muted-foreground);">续购</span>
+                <input class="num" type="number" step="1" min="0" max="100" id="in-new-renew-rate" value="${p.renew_rate}" style="flex:1; min-width:0; height:100%; border:none; outline:none; background:transparent; font-family:inherit; font-size:13px; text-align:right; color:var(--foreground);">
+              </div>
             </div>
             <div class="form-hint-note" style="color: #A16207;">
               ⚠️ 仅对修改后新产生订单生效，历史已带单分成不追溯重算。
             </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-group-label">修改原因与审计备注 <span class="req">*</span></label>
-            <textarea class="form-textarea-full" id="txt-rate-reason" placeholder="如：重点自媒体签约合作，特批上调分成比例..."></textarea>
           </div>
         </div>
         <div class="modal-dialog-footer">
@@ -3179,10 +3226,8 @@ function confirmModifyRate(partnerId) {
   if (!p) return;
   const firstRate = parseFloat(document.getElementById('in-new-first-rate').value);
   const renewRate = parseFloat(document.getElementById('in-new-renew-rate').value);
-  const reason = document.getElementById('txt-rate-reason').value.trim();
 
-  if (isNaN(firstRate) || firstRate < 0 || firstRate > 100 || isNaN(renewRate) || renewRate < 0 || renewRate > 100) { alert('请输入有效的首购与续购比例'); return; }
-  if (!reason) { alert('请填写修改原因'); return; }
+  if (isNaN(firstRate) || firstRate < 0 || firstRate > 100 || isNaN(renewRate) || renewRate < 0 || renewRate > 100 || !Number.isInteger(firstRate) || !Number.isInteger(renewRate)) { alert('首购与续购比例需为 0~100 的整数'); return; }
 
   const oldFirst = p.first_rate, oldRenew = p.renew_rate;
   p.first_rate = firstRate;
@@ -3191,13 +3236,12 @@ function confirmModifyRate(partnerId) {
     time: nowTime(),
     operator: '张博文',
     action: '分成比例调整',
-    before: `首购 ${oldFirst.toFixed(1)}% / 续购 ${oldRenew.toFixed(1)}%`,
-    after: `首购 ${firstRate.toFixed(1)}% / 续购 ${renewRate.toFixed(1)}%`,
-    reason: reason
+    before: `首购 ${oldFirst}% / 续购 ${oldRenew}%`,
+    after: `首购 ${firstRate}% / 续购 ${renewRate}%`
   });
 
   closeModal('modal-rate');
-  toast(`分成比例已调整为 首购 ${firstRate.toFixed(1)}% / 续购 ${renewRate.toFixed(1)}%`);
+  toast(`分成比例已调整为 首购 ${firstRate}% / 续购 ${renewRate}%`);
   renderActiveView();
 }
 
@@ -3287,7 +3331,7 @@ function renderSettingsView(container) {
   const numInput = (id, label, value, on) => `
     <div style="${boxStyle(on)}">
       <span style="flex: none; font-size: 12px; color: var(--muted-foreground);">${label}</span>
-      <input class="num" type="number" step="0.1" min="0" max="100" id="${id}" value="${value}" ${on ? '' : 'disabled'} style="flex: 1; min-width: 0; height: 100%; border: none; outline: none; background: transparent; font-family: inherit; font-size: 13px; text-align: right; color: ${on ? 'var(--foreground)' : 'var(--muted-foreground)'};">
+      <input class="num" type="number" step="1" min="0" max="100" id="${id}" value="${value}" ${on ? '' : 'disabled'} style="flex: 1; min-width: 0; height: 100%; border: none; outline: none; background: transparent; font-family: inherit; font-size: 13px; text-align: right; color: ${on ? 'var(--foreground)' : 'var(--muted-foreground)'};">
     </div>`;
   const editActions = (key, saveFn) => `
     <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
@@ -3357,7 +3401,7 @@ function requestSaveRates() {
   const iR = parseFloat(document.getElementById('set-in-renew').value);
   const eF = parseFloat(document.getElementById('set-ext-first').value);
   const eR = parseFloat(document.getElementById('set-ext-renew').value);
-  if ([iF, iR, eF, eR].some(v => isNaN(v) || v < 0 || v > 100)) { alert('请输入有效的首购与续购比例 (0~100%)'); return; }
+  if ([iF, iR, eF, eR].some(v => isNaN(v) || v < 0 || v > 100 || !Number.isInteger(v))) { alert('首购与续购比例需为 0~100 的整数'); return; }
 
   const diffs = [];
   if (iF !== GLOBAL_CONFIG.internal_first_rate) diffs.push(`内部 首购 ${GLOBAL_CONFIG.internal_first_rate}% → ${iF}%`);
