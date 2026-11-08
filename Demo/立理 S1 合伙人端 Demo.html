@@ -352,10 +352,13 @@ var ORDERS = [
   { no: 'ORD202608200066', time: '2026-08-20 11:30', name: 'Pro 月卡（首购）', kind: 'month', paid: 299, rate: 30, ph: '139****0021', refund: 299, refundAt: '2026-08-25' },
   { no: 'ORD202607010215', time: '2026-07-01 16:42', name: 'Lite 年卡（首购）', kind: 'year', paid: 999, rate: 30, ph: '136****8890', refund: 500, refundAt: '2026-08-30' },
   { no: 'ORD202603050132', time: '2026-03-05 20:15', name: 'Pro 年卡（首购）', kind: 'year', paid: 2999, rate: 30, ph: '138****4501', refund: 0 },
-  { no: 'ORD202602100077', time: '2026-02-10 13:30', name: 'Max 年卡（首购）', kind: 'year', paid: 9999, rate: 30, ph: '137****9086', refund: 0 }
+  { no: 'ORD202602100077', time: '2026-02-10 13:30', name: 'Max 年卡（首购）', kind: 'year', paid: 9999, rate: 30, ph: '137****9086', refund: 0 },
+  { no: 'ORD202609100201', time: '2026-09-10 15:10', name: 'Max 年卡（首购）', kind: 'year', paid: 2999, rate: 30, ph: '150****3344', refund: 2999, refundAt: '2026-11-05' },
+  { no: 'ORD202606200177', time: '2026-06-20 10:30', name: 'Lite 年卡（首购）', kind: 'year', paid: 999, rate: 30, ph: '137****9086', refund: 999, refundAt: '2026-08-05', refundNote: '其中 ¥24.98 已于 2026-08-31 结算抵扣（本次实结 ¥0.00）' }
 ];
 
 var SETTLE = [
+  ['SETTLE-202608-011', '0.00', '2026-08-31 14:00', '抵扣核销', '本期可结算 ¥24.98 全部抵扣退款待追回，本次实结 ¥0.00，无需打款', '24.98'],
   ['SETTLE-202610-008', '-2,000.00', '2026-10-28 15:00', '已结算', '招行对公转账流水尾号 8892，款项已结清']
 ];
 
@@ -391,16 +394,19 @@ function calcOrder(o) {
     if (x.done) { unlocked = round2(unlocked + x.amt); if (x.amt > 0) doneCnt++; }
     else frozen = round2(frozen + x.amt);
   });
-  return { o: o, total0: total0, eff: eff, deduct: deduct, ins: ins, unlocked: unlocked, frozen: frozen, doneCnt: doneCnt, n: n,
+  return { o: o, total0: total0, eff: eff, deduct: deduct, ins: ins, unlocked: unlocked, frozen: frozen, doneCnt: doneCnt, n: n, short: left,
            full: o.refund >= o.paid, part: o.refund > 0 && o.refund < o.paid };
 }
 
 function getSum() {
-  var u = 0, f = 0;
-  ORDERS.forEach(function(o) { var c = calcOrder(o); u += c.unlocked; f += c.frozen; });
+  var u = 0, f = 0, shortTotal = 0, offset = 0;
+  ORDERS.forEach(function(o) { var c = calcOrder(o); u += c.unlocked; f += c.frozen; shortTotal += c.short; });
   var st = SETTLE.reduce(function(a, r) { return a + Math.abs(parseFloat(r[1].replace(/[^0-9.]/g, ''))); }, 0);
+  SETTLE.forEach(function(r) { if (r[5]) offset += parseFloat(r[5]); });
   u = round2(u); f = round2(f); st = round2(st);
-  return { total: round2(u + f), settleable: round2(u - st), frozen: f, settled: st };
+  var unrecovered = Math.max(0, round2(shortTotal - offset));
+  return { total: round2(u + f), settleable: round2(u - st), frozen: f, settled: st, unrecovered: unrecovered,
+           payable: Math.max(0, round2(u - st - unrecovered)) };
 }
 
 var BADGE = {
@@ -451,7 +457,7 @@ function ordersHtml(items) {
       if (c.part) badges += ' ' + badge('部分退款', 'rose');
     }
     var refundLine = o.refund > 0
-      ? '<div class="text-xs text-rose-600 mt-1">' + (c.full ? '全额退款' : '部分退款') + ' ¥' + fmt2(o.refund) + '（' + o.refundAt + '）· 扣除 −' + fmt2(c.deduct) + ' 推广币</div>'
+      ? '<div class="text-xs text-rose-600 mt-1">' + (c.full ? '全额退款' : '部分退款') + ' ¥' + fmt2(o.refund) + '（' + o.refundAt + '）· 扣除 −' + fmt2(c.deduct) + ' 推广币' + (c.short > 0 ? '，' + (o.refundNote || '其中 ¥' + fmt2(c.short) + ' 已打款无法扣回，计入待追回') : '') + '</div>'
       : '';
     var cell = function(label, val, color) {
       return '<div class="rounded-xl bg-white border border-surface-border py-2 text-center"><div class="text-xs text-slate-muted">' + label + '</div><div class="font-bold tabular-nums ' + color + '">' + val + '</div></div>';
@@ -503,7 +509,7 @@ function ordersHtml(items) {
   }).join('');
 }
 function ordersNote() {
-  return '<div class="mt-4 text-xs text-slate-muted leading-relaxed">说明：月卡推广币在服务期结束 +7 天后解冻；年卡推广币按 12 个月分期，每期在对应服务月结束 +7 天后解冻并进入可结算。退款会扣除退款时尚未解冻的部分（从最后一期往前扣）。线下结算按账户整体核销，不拆分到单个订单。</div>';
+  return '<div class="mt-4 text-xs text-slate-muted leading-relaxed">说明：月卡推广币在服务期结束 +7 天后解冻；年卡推广币按 12 个月分期，每期在对应服务月结束 +7 天后解冻并进入可结算。退款会扣除退款时尚未解冻的部分（从最后一期往前扣）；已解冻打款部分无法扣回的差额计为待追回，在下期结算中自动抵扣。</div>';
 }
 
 function $(id) { return document.getElementById(id); }
@@ -1523,24 +1529,33 @@ function pComm() {
   var settlePg = paged(SETTLE, S.sp);
   var flowHtml = ordersHtml(flowPg.items);
 
+  var sum = getSum();
   var settleHtml = settlePg.items.map(function(r) {
+    var isOffset = r[3] === '抵扣核销';
+    var tagCls = isOffset ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200';
     return [
       '<div class="p-4 rounded-2xl bg-surface-subtle border border-surface-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">',
         '<div>',
           '<div class="flex items-center space-x-2">',
             '<span class="font-bold text-sm text-slate-title">结算批次: ' + r[0] + '</span>',
-            '<span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">' + r[3] + '</span>',
+            '<span class="px-2 py-0.5 rounded-full text-xs font-semibold ' + tagCls + '">' + r[3] + '</span>',
           '</div>',
           '<div class="text-xs text-slate-muted mt-1">核准时间: ' + r[2] + '</div>',
+          '<div class="text-xs text-slate-muted mt-1">' + r[4] + '</div>',
         '</div>',
         '<div class="sm:text-right">',
-          '<div class="font-extrabold text-base text-slate-title tabular-nums">' + r[1] + ' 推广币</div>',
+          '<div class="font-extrabold text-base text-slate-title tabular-nums">' + (isOffset ? '本次实结 ¥0.00' : r[1] + ' 推广币') + '</div>',
         '</div>',
       '</div>'
     ].join('');
   }).join('');
 
   var contentHtml = [
+    sum.unrecovered > 0
+      ? '<div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs text-rose-700">'
+        + '存在退款待追回 ¥' + fmt2(sum.unrecovered) + '，下次结算时自动抵扣；可结算不足时打款为 ¥0.00，剩余部分结转下期。'
+        + '</div>'
+      : '',
     '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">',
       '<div class="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-brand-500 to-brand-600 text-white p-5 shadow-hero flex flex-col">',
         '<div class="flex items-center justify-between">',
@@ -1558,7 +1573,10 @@ function pComm() {
           '<span class="text-xs font-semibold text-slate-body">可结算推广币</span>',
           '<div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center"><i data-lucide="check-circle-2" class="w-4 h-4"></i></div>',
         '</div>',
-        '<div class="mt-3 text-3xl font-extrabold tracking-tight text-emerald-600 tabular-nums">' + fmt2(getSum().settleable) + '</div>',
+        '<div class="mt-3 text-3xl font-extrabold tracking-tight text-emerald-600 tabular-nums">' + fmt2(sum.settleable) + '</div>',
+        (sum.unrecovered > 0
+          ? '<div class="mt-auto pt-4 text-xs text-rose-600">本次可打款 ¥' + fmt2(sum.payable) + '（已扣除待追回 ¥' + fmt2(Math.min(sum.unrecovered, sum.settleable)) + '）</div>'
+          : '<div class="mt-auto pt-4 text-xs text-slate-muted">已解冻，可线下核销</div>'),
       '</div>',
 
       '<div class="rounded-[20px] bg-surface-card border border-surface-border p-5 shadow-card hover:shadow-card-hover flex flex-col transition-all">',
@@ -1588,7 +1606,7 @@ function pComm() {
           '<button onclick="S.tab=\'flow\';pComm()" class="px-4 py-1.5 rounded-full transition-all ' + (isFlow ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">订单明细</button>',
           '<button onclick="S.tab=\'settle\';pComm()" class="px-4 py-1.5 rounded-full transition-all ' + (!isFlow ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">结算记录</button>',
         '</div>',
-        '<div class="text-xs text-slate-muted hidden sm:block">' + (isFlow ? '按订单展示分佣；年卡按月分期发放' : '展示由财务线下对公转账结算记录') + '</div>',
+        '<div class="text-xs text-slate-muted hidden sm:block">' + (isFlow ? '按订单展示分佣；年卡按月分期发放' : '展示财务线下打款与抵扣核销记录') + '</div>',
       '</div>',
 
       '<div class="space-y-3">' + (isFlow ? flowHtml : settleHtml) + '</div>' + (isFlow ? ordersNote() : ''),
