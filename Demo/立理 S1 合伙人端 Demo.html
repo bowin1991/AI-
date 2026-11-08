@@ -149,6 +149,10 @@
             <div class="text-[#4B5563] font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1 flex-shrink-0"></span>已冻结 (Frozen)</div>
           </button>
         </div>
+        <button type="button" onclick="demoFillOps()" class="mt-1.5 w-full p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+          <div class="font-bold text-[#111827] group-hover:text-[#FF5C28] text-xs">运营账号 ops_admin</div>
+          <div class="text-[#4B5563] font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mr-1 flex-shrink-0"></span>密码 Admin1234（进入运营工作台）</div>
+        </button>
       </div>
 
       <!-- 快速模拟审核通过 -->
@@ -173,6 +177,7 @@ var ICON_PATHS = {
   'users': '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
   'user-check': '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/>',
   'user-plus': '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>',
+  'user': '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
   'wallet': '<path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>',
   'wallet-cards': '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2"/><path d="M3 11h3c.8 0 1.6.3 2.1.9l1.1.9c.5.6 1.3.9 2.1.9H21"/>',
   'coins': '<circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/>',
@@ -281,6 +286,15 @@ function demoSwitchAccount(phone) {
   }
 }
 
+function demoFillOps() {
+  S.lmode = 'pwd'; S.user = null;
+  go('login');
+  var a = $('l_phone'), b = $('l_pwd');
+  if (a) a.value = 'ops_admin';
+  if (b) b.value = 'Admin1234';
+  toast('已填入运营账号 ops_admin / Admin1234');
+}
+
 // ==================== 全局状态与基础测试数据 (PRD V1.1) ====================
 var S = {
   user: null,
@@ -316,10 +330,16 @@ var PWD = {
   '13800000004': 'Test1234'
 };
 
+// 运营账号（演示用，实际由后台配置）：字母开头，与手机号区分
+var OPS = {
+  'ops_admin': { pwd: 'Admin1234', name: '张博文', role: '超级管理员' },
+  'ops_finance': { pwd: 'Finance1234', name: '李静', role: '财务' }
+};
+
 var APP = {
   '13800000001': { name: '李明', org: '华东师范大学认知神经实验室', wx: 'liming_01', time: '2026-11-01 10:30' },
   '13800000002': { name: '王芳', org: '知本信息科技技术社区', wx: 'wf_ai_tech', time: '2026-10-20 09:12' },
-  '13800000003': { name: '张伟', org: '清华大学智能计算实验室', wx: 'zhangwei_s1', time: '2026-09-05 15:40' }
+  '13800000003': { name: '张伟', org: '清华大学智能计算实验室', wx: 'zhangwei_s1', time: '2026-09-05 15:40', first: 30, next: 20 }
 };
 
 var ST = {
@@ -350,16 +370,18 @@ var ORDERS = [
   { no: 'ORD202610120455', time: '2026-10-12 09:41', name: 'Pro 年卡（首购）', kind: 'year', paid: 2999, rate: 30, ph: '150****3344', refund: 0 },
   { no: 'ORD202609020102', time: '2026-09-02 18:05', name: 'Lite 月卡（首购）', kind: 'month', paid: 99, rate: 30, ph: '150****6620', refund: 0 },
   { no: 'ORD202608200066', time: '2026-08-20 11:30', name: 'Pro 月卡（首购）', kind: 'month', paid: 299, rate: 30, ph: '139****0021', refund: 299, refundAt: '2026-08-25' },
-  { no: 'ORD202607010215', time: '2026-07-01 16:42', name: 'Lite 年卡（首购）', kind: 'year', paid: 999, rate: 30, ph: '136****8890', refund: 500, refundAt: '2026-08-30' },
+  { no: 'ORD202607010215', time: '2026-07-01 16:42', name: 'Lite 年卡（首购）', kind: 'year', paid: 999, rate: 30, ph: '136****8890', refund: 500, refundAt: '2026-09-15', refunds: [{ amt: 200, at: '2026-08-30' }, { amt: 300, at: '2026-09-15' }] },
   { no: 'ORD202603050132', time: '2026-03-05 20:15', name: 'Pro 年卡（首购）', kind: 'year', paid: 2999, rate: 30, ph: '138****4501', refund: 0 },
-  { no: 'ORD202602100077', time: '2026-02-10 13:30', name: 'Max 年卡（首购）', kind: 'year', paid: 9999, rate: 30, ph: '137****9086', refund: 0 },
+  { no: 'ORD202602100077', time: '2026-02-10 13:30', name: 'Max 年卡（首购）', kind: 'year', paid: 9999, rate: 30, ph: '137****9086', refund: 5000, refundAt: '2026-11-05', settled: 1900 },
   { no: 'ORD202609100201', time: '2026-09-10 15:10', name: 'Max 年卡（首购）', kind: 'year', paid: 2999, rate: 30, ph: '150****3344', refund: 2999, refundAt: '2026-11-05' },
-  { no: 'ORD202606200177', time: '2026-06-20 10:30', name: 'Lite 年卡（首购）', kind: 'year', paid: 999, rate: 30, ph: '137****9086', refund: 999, refundAt: '2026-08-05', refundNote: '其中 ¥24.98 已于 2026-08-31 结算抵扣（本次实结 ¥0.00）' }
+  { no: 'ORD202606200177', time: '2026-06-20 10:30', name: 'Lite 年卡（首购）', kind: 'year', paid: 999, rate: 30, ph: '137****9086', refund: 999, refundAt: '2026-08-05' },
+  { no: 'ORD202610250199', time: '2026-10-25 16:00', name: 'Pro 年卡（升级补差）', kind: 'year', paid: 1000, rate: 20, ph: '138****4501', refund: 0 },
+  { no: 'ORG-20260901-001', time: '2026-09-01', name: '机构年度套餐（机构订单）', kind: 'org', months: 12, paid: 12000, rate: 20, org: '华东理工大学生物工程学院', refund: 0, prepaid: 200, prepaidAt: '2026-11-02' }
 ];
 
 var SETTLE = [
-  ['SETTLE-202608-011', '0.00', '2026-08-31 14:00', '抵扣核销', '本期可结算 ¥24.98 全部抵扣退款待追回，本次实结 ¥0.00，无需打款', '24.98'],
-  ['SETTLE-202610-008', '-2,000.00', '2026-10-28 15:00', '已结算', '招行对公转账流水尾号 8892，款项已结清']
+  { batch: 'SETTLE-202611-002', source: '录入时已发放', status: '已发放', time: '2026-11-02 10:00', gross: 200, offset: 0, note: '机构订单 ORG-20260901-001 录入前已线下发放（第 1 期），不可撤销' },
+  { batch: 'SETTLE-202610-008', source: '线下结算', status: '已结算', time: '2026-10-28 15:00', gross: 1900, offset: 0, note: '招行对公转账流水尾号 8892，款项已结清' }
 ];
 
 function fmt(n) { return Number(n).toLocaleString('en-US'); }
@@ -370,18 +392,29 @@ function addMonthsDate(dateStr, m, extraDays) {
   return new Date(Date.UTC(+p[0], +p[1] - 1 + m, +p[2] + extraDays)).toISOString().slice(0, 10);
 }
 
-// 以订单为维度核算：月卡一期，年卡按 12 个月分期；每期在服务月结束 + 7 天后解冻；退款先扣除退款时尚未解冻的分期（从最后一期往前扣）
+// 以订单为维度核算：月卡/加油包一期，年卡 12 期，机构订单按服务周期分期；每期在服务月结束 + 7 天后解冻
+// 退款扣回顺序：先扣退款时尚未解冻的期次（从最后一期往前），再扣已解冻但未结算的期次；已结算打款部分计入待追回
 function calcOrder(o) {
   var pts = function(amt) { return round2(amt * o.rate / 100); };
   var total0 = pts(o.paid), eff = pts(o.paid - o.refund), deduct = round2(total0 - eff);
-  var n = o.kind === 'year' ? 12 : 1, ins = [], k;
+  var n = o.kind === 'year' ? 12 : (o.kind === 'org' ? (o.months || 12) : 1), ins = [], k;
   var base = n === 1 ? total0 : round2(total0 / n);
   for (k = 1; k <= n; k++) {
     var amt = n === 1 ? total0 : (k < n ? base : round2(total0 - base * (n - 1)));
     var ud = addMonthsDate(o.time, k, 7);
-    ins.push({ k: k, orig: amt, amt: amt, unlock: ud, done: ud <= REF_DATE });
+    ins.push({ k: k, orig: amt, amt: amt, unlock: ud, done: ud <= REF_DATE, sAmt: 0, recoup: 0 });
+  }
+  // 已结算与录入时已发放金额，均按解冻日从早到晚依次核销到期次
+  var leftS = round2((o.settled || 0) + (o.prepaid || 0));
+  for (k = 0; k < n && leftS > 0; k++) {
+    if (ins[k].done) {
+      var sa = Math.min(leftS, ins[k].amt);
+      ins[k].sAmt = round2(sa);
+      leftS = round2(leftS - sa);
+    }
   }
   var left = deduct;
+  // 第一轮：退款时尚未解冻的期次
   for (var j = n - 1; j >= 0 && left > 0; j--) {
     if (ins[j].unlock > (o.refundAt || '')) {
       var cut = Math.min(left, ins[j].amt);
@@ -389,23 +422,47 @@ function calcOrder(o) {
       left = round2(left - cut);
     }
   }
-  var unlocked = 0, frozen = 0, doneCnt = 0;
+  // 第二轮：已解冻但尚未结算的期次
+  for (j = n - 1; j >= 0 && left > 0; j--) {
+    if (ins[j].unlock <= (o.refundAt || '')) {
+      var avail = round2(ins[j].amt - ins[j].sAmt);
+      if (avail > 0) {
+        var cut2 = Math.min(left, avail);
+        ins[j].amt = round2(ins[j].amt - cut2);
+        left = round2(left - cut2);
+      }
+    }
+  }
+  // 仍无法扣回的部分，从最近已结算期次往前标记「待追回」
+  var leftT = left;
+  for (var t = n - 1; t >= 0 && leftT > 0; t--) {
+    if (ins[t].sAmt > 0) {
+      var rc = Math.min(leftT, ins[t].sAmt);
+      ins[t].recoup = round2(rc);
+      leftT = round2(leftT - rc);
+    }
+  }
+  var unlocked = 0, frozen = 0, doneCnt = 0, settled = 0, remain = 0;
   ins.forEach(function(x) {
     if (x.done) { unlocked = round2(unlocked + x.amt); if (x.amt > 0) doneCnt++; }
     else frozen = round2(frozen + x.amt);
+    settled = round2(settled + x.sAmt);
+    remain = round2(remain + x.amt);
   });
-  return { o: o, total0: total0, eff: eff, deduct: deduct, ins: ins, unlocked: unlocked, frozen: frozen, doneCnt: doneCnt, n: n, short: left,
+  var cutTotal = round2(total0 - remain);
+  return { o: o, total0: total0, eff: eff, deduct: deduct, cut: cutTotal, short: left, ins: ins,
+           unlocked: unlocked, settled: settled, settleable: round2(unlocked - settled),
+           frozen: frozen, doneCnt: doneCnt, n: n,
            full: o.refund >= o.paid, part: o.refund > 0 && o.refund < o.paid };
 }
 
 function getSum() {
-  var u = 0, f = 0, shortTotal = 0, offset = 0;
-  ORDERS.forEach(function(o) { var c = calcOrder(o); u += c.unlocked; f += c.frozen; shortTotal += c.short; });
-  var st = SETTLE.reduce(function(a, r) { return a + Math.abs(parseFloat(r[1].replace(/[^0-9.]/g, ''))); }, 0);
-  SETTLE.forEach(function(r) { if (r[5]) offset += parseFloat(r[5]); });
-  u = round2(u); f = round2(f); st = round2(st);
+  var u = 0, f = 0, st = 0, shortTotal = 0, offset = 0;
+  ORDERS.forEach(function(o) { var c = calcOrder(o); u += c.unlocked; f += c.frozen; st += c.settled; shortTotal += c.short; });
+  SETTLE.forEach(function(r) { offset += (r.offset || 0); });
+  u = round2(u); f = round2(f); st = round2(st); shortTotal = round2(shortTotal);
   var unrecovered = Math.max(0, round2(shortTotal - offset));
-  return { total: round2(u + f), settleable: round2(u - st), frozen: f, settled: st, unrecovered: unrecovered,
+  return { total: Math.max(0, round2(u + f - shortTotal)), settleable: round2(u - st), frozen: f, settled: st, unrecovered: unrecovered,
            payable: Math.max(0, round2(u - st - unrecovered)) };
 }
 
@@ -450,22 +507,25 @@ function ordersHtml(items) {
   items = items || ORDERS;
   return items.map(calcOrder).map(function(c) {
     var o = c.o, badges = '';
-    if (c.full) badges = badge('已全额退款', 'rose');
-    else {
-      if (c.n === 1) badges = c.unlocked > 0 ? badge('已解冻', 'emerald') : badge('冻结中', 'amber');
-      else badges = c.doneCnt >= c.n ? badge('已全部解冻', 'emerald') : badge('分期解冻中 ' + c.doneCnt + '/' + c.n, 'amber');
-      if (c.part) badges += ' ' + badge('部分退款', 'rose');
-    }
+    if (c.eff === 0) badges = badge('已退款', 'rose');
+    else if (c.settleable > 0) badges = badge('可结算', 'emerald');
+    else if (c.frozen > 0) badges = badge('冻结中', 'amber');
+    else badges = badge('已结算', 'emerald');
+    var refundCnt = (o.refunds || []).length || 1;
+    var refundHead = refundCnt > 1
+      ? '退款 ' + refundCnt + ' 笔，累计 ¥' + fmt2(o.refund) + '（最近 ' + o.refundAt + '）'
+      : (c.full ? '全额退款' : '部分退款') + ' ¥' + fmt2(o.refund) + '（' + o.refundAt + '）';
     var refundLine = o.refund > 0
-      ? '<div class="text-xs text-rose-600 mt-1">' + (c.full ? '全额退款' : '部分退款') + ' ¥' + fmt2(o.refund) + '（' + o.refundAt + '）· 扣除 −' + fmt2(c.deduct) + ' 推广币' + (c.short > 0 ? '，' + (o.refundNote || '其中 ¥' + fmt2(c.short) + ' 已打款无法扣回，计入待追回') : '') + '</div>'
+      ? '<div class="text-xs text-rose-600 mt-1">' + refundHead + ' · 累计扣除 −' + fmt2(c.deduct) + ' 推广币' + (c.short > 0 ? '，' + (o.refundNote || '其中 ¥' + fmt2(c.short) + ' 已打款无法扣回，计入待追回') : '') + '</div>'
       : '';
     var cell = function(label, val, color) {
       return '<div class="rounded-xl bg-white border border-surface-border py-2 text-center"><div class="text-xs text-slate-muted">' + label + '</div><div class="font-bold tabular-nums ' + color + '">' + val + '</div></div>';
     };
-    var grid = '<div class="mt-3 grid grid-cols-3 gap-2">' +
-      cell('已解冻（可结算）', fmt2(c.unlocked), 'text-emerald-600') +
+    var grid = '<div class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2">' +
+      cell('可结算', fmt2(c.settleable), 'text-emerald-600') +
       cell('冻结中', fmt2(c.frozen), 'text-amber-600') +
-      cell('退款扣除', c.deduct > 0 ? '−' + fmt2(c.deduct) : '0.00', c.deduct > 0 ? 'text-rose-600' : 'text-slate-muted') +
+      cell('已结算', fmt2(c.settled), 'text-slate-title') +
+      cell('退款扣除', c.cut > 0 ? '−' + fmt2(c.cut) : '0.00', c.cut > 0 ? 'text-rose-600' : 'text-slate-muted') +
       '</div>';
     var extra = '';
     if (c.n === 1 && !c.full) {
@@ -476,7 +536,7 @@ function ordersHtml(items) {
       var next = null;
       c.ins.forEach(function(x) { if (!next && !x.done && x.amt > 0) next = x; });
       var seg = c.ins.map(function(x) {
-        var cl = x.orig > 0 && x.amt === 0 ? 'bg-rose-200' : (x.done ? 'bg-emerald-400' : 'bg-amber-300');
+        var cl = x.orig > 0 && x.amt === 0 ? 'bg-rose-200' : (x.sAmt >= x.amt && x.sAmt > 0 ? 'bg-emerald-600' : (x.done ? 'bg-emerald-400' : 'bg-amber-300'));
         return '<div class="h-1.5 flex-1 rounded-full ' + cl + '"></div>';
       }).join('');
       var open = !!S.open[o.no];
@@ -484,13 +544,13 @@ function ordersHtml(items) {
       if (open) {
         rows = '<div class="mt-2 rounded-xl bg-white border border-surface-border divide-y divide-surface-border text-xs">' + c.ins.map(function(x) {
           var voided = x.orig > 0 && x.amt === 0, cut = x.orig - x.amt;
-          var amtTxt = voided ? '−' + fmt2(x.orig) : '+' + fmt2(x.amt) + (cut > 0 ? '<span class="text-slate-muted font-normal">（原 ' + fmt2(x.orig) + '）</span>' : '');
-          var st = voided ? badge('退款扣除', 'rose') : (x.done ? badge('已解冻', 'emerald') : badge('冻结中', 'amber'));
+          var amtTxt = (voided ? '−' + fmt2(x.orig) : '+' + fmt2(x.amt) + (cut > 0 ? '<span class="text-slate-muted font-normal">（原 ' + fmt2(x.orig) + '）</span>' : '')) + (x.recoup > 0 ? '<span class="text-rose-600 font-normal">（待追回 ' + fmt2(x.recoup) + '）</span>' : '');
+          var st = voided ? badge('退款扣除', 'rose') : (x.recoup > 0 ? badge('待追回', 'rose') : (x.sAmt >= x.amt && x.sAmt > 0 ? badge('已结算', 'emerald') : (x.done ? badge('可结算', 'emerald') : badge('冻结中', 'amber'))));
           return '<div class="flex items-center justify-between gap-2 px-3 py-2"><span class="text-slate-body w-12">第 ' + x.k + ' 期</span><span class="text-slate-muted flex-1">解冻日 ' + x.unlock + '</span><span class="font-bold tabular-nums ' + (voided ? 'text-rose-600' : 'text-slate-title') + '">' + amtTxt + '</span>' + st + '</div>';
         }).join('') + '</div>';
       }
       extra = '<div class="mt-3"><div class="flex gap-1">' + seg + '</div>' +
-        '<div class="mt-2 flex items-center justify-between gap-2 text-xs text-slate-muted"><span>已解冻 ' + c.doneCnt + '/12 期' + (next ? ' · 下期 ' + next.unlock + ' 解冻 +' + fmt2(next.amt) : '') + '</span>' +
+        '<div class="mt-2 flex items-center justify-between gap-2 text-xs text-slate-muted"><span>已解冻 ' + c.doneCnt + '/' + c.n + ' 期' + (next ? ' · 下期 ' + next.unlock + ' 解冻 +' + fmt2(next.amt) : '') + '</span>' +
         '<button onclick="togOrder(\'' + o.no + '\')" class="font-bold text-brand-600 hover:underline flex-none">' + (open ? '收起分期明细' : '查看分期明细') + '</button></div>' + rows + '</div>';
     }
     return '<div class="p-4 rounded-2xl bg-surface-subtle border border-surface-border hover:border-brand-200 transition-all">' +
@@ -498,18 +558,18 @@ function ordersHtml(items) {
         '<div class="min-w-0">' +
           '<div class="flex flex-wrap items-center gap-2"><span class="font-bold text-sm text-slate-title">' + o.name + '</span>' + badges + '</div>' +
           '<div class="text-xs text-slate-body mt-1 flex items-center space-x-3"><span>订单实付: <b class="text-slate-title">¥' + fmt2(o.paid) + '</b></span><span>分成比例: <b class="text-brand-600">' + o.rate + '%</b></span></div>' +
-          '<div class="text-xs text-slate-muted mt-0.5">' + o.no + ' · ' + o.time + '</div>' +
-          '<div class="text-xs text-slate-muted mt-0.5">下单用户 <b class="text-slate-body font-normal">' + (o.ph || '-') + '</b></div>' + refundLine +
+          '<div class="text-xs text-slate-muted mt-0.5">' + o.no + ' · ' + (o.kind === 'org' ? '服务起始 ' : '') + o.time + '</div>' +
+          '<div class="text-xs text-slate-muted mt-0.5">' + (o.kind === 'org' ? '机构名称' : '下单用户') + ' <b class="text-slate-body font-normal">' + (o.kind === 'org' ? (o.org || '-') : (o.ph || '-')) + '</b></div>' + refundLine +
         '</div>' +
         '<div class="sm:text-right flex-none"><div class="text-xs text-slate-muted">本单有效推广币</div>' +
           '<div class="font-extrabold text-xl tabular-nums ' + (c.eff > 0 ? 'text-brand-600' : 'text-slate-muted') + '">' + fmt2(c.eff) + '</div>' +
-          (c.deduct > 0 ? '<div class="text-xs text-slate-muted">原 <span class="line-through">' + fmt2(c.total0) + '</span> 推广币</div>' : (c.n > 1 ? '<div class="text-xs text-slate-muted">按 12 个月分期发放</div>' : '')) +
+          (c.deduct > 0 ? '<div class="text-xs text-slate-muted">原 <span class="line-through">' + fmt2(c.total0) + '</span> 推广币</div>' : (c.n > 1 ? '<div class="text-xs text-slate-muted">' + (o.kind === 'org' ? '按 ' + c.n + ' 个月服务期分期' : '按 12 个月分期发放') + '</div>' : '')) +
         '</div>' +
-      '</div>' + grid + extra + '</div>';
+      '</div>' + grid + extra + (c.short > 0 ? '<div class="mt-2 text-xs text-rose-600">本单待追回 ¥' + fmt2(c.short) + '，将在后续结算中自动抵扣</div>' : '') + '</div>';
   }).join('');
 }
 function ordersNote() {
-  return '<div class="mt-4 text-xs text-slate-muted leading-relaxed">说明：月卡推广币在服务期结束 +7 天后解冻；年卡推广币按 12 个月分期，每期在对应服务月结束 +7 天后解冻并进入可结算。退款会扣除退款时尚未解冻的部分（从最后一期往前扣）；已解冻打款部分无法扣回的差额计为待追回，在下期结算中自动抵扣。</div>';
+  return '<div class="mt-4 text-xs text-slate-muted leading-relaxed">说明：月卡 / 加油包推广币在服务期结束 +7 天后整单一次性解冻；年卡与机构订单按服务周期逐月分期，每期在对应服务月结束 +7 天后解冻并进入可结算。退款扣回顺序为「先扣尚未解冻期次 → 再扣已解冻未结算期次 → 已结算打款部分计入待追回」，均从最后一期往前扣；待追回金额在下期结算中自动抵扣。订单状态为：冻结中 / 可结算 / 已结算 / 已退款；期次状态为：冻结中 / 可结算 / 已结算 / 退款扣除 / 待追回。机构订单录入前已线下发放的部分，按期次从前往后抵扣，并在结算记录中展示为「录入时已发放」。</div>';
 }
 
 function $(id) { return document.getElementById(id); }
@@ -547,6 +607,12 @@ function appOf(p) {
   return APP[p] || { name: '李明', org: '某某大学某某实验室', wx: '', time: '2026-11-01 10:30' };
 }
 
+// 当前账号实际生效的分成比例（由运营在审核通过/档案中配置，前端只读展示）
+function rateOf(p) {
+  var a = APP[p] || {};
+  return { first: a.first != null ? a.first : 30, next: a.next != null ? a.next : 20 };
+}
+
 function allTags() {
   return TAGS.def.concat(TAGS.custom);
 }
@@ -560,6 +626,7 @@ function tagBadge(tag) {
 
 function sendCode(btnId, phoneId, errId) {
   var p = $(phoneId).value.trim();
+  if (isOpsAccount(p)) { err(errId, '运营账号不支持短信验证码，请使用账号登录'); return; }
   if (!phoneOk(p)) { err(errId, '请输入有效的 11 位手机号'); return; }
   err(errId, '');
   var b = $(btnId), n = 60;
@@ -621,7 +688,7 @@ function renderAuthLayout(title, subtitle, contentHtml) {
         '<div class="w-full max-w-md bg-surface-card rounded-[24px] border border-surface-border p-6 sm:p-8 shadow-card-hover transition-all">',
           '<div class="text-center mb-6">',
             '<h2 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-title">' + title + '</h2>',
-            '<p class="text-xs sm:text-sm text-slate-body mt-1.5 leading-relaxed">' + subtitle + '</p>',
+            subtitle ? '<p class="text-xs sm:text-sm text-slate-body mt-1.5 leading-relaxed">' + subtitle + '</p>' : '',
           '</div>',
           contentHtml,
         '</div>',
@@ -768,15 +835,15 @@ function pLogin() {
   var formHtml = [
     '<div class="bg-surface-subtle p-1 rounded-full border border-surface-border flex items-center text-xs font-semibold mb-5">',
       '<button type="button" onclick="S.lmode=\'pwd\';pLogin()" class="flex-1 py-1.5 rounded-full transition-all ' + (isPwd ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">密码登录</button>',
-      '<button type="button" onclick="S.lmode=\'sms\';pLogin()" class="flex-1 py-1.5 rounded-full transition-all ' + (!isPwd ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">短信验证码登录</button>',
+      '<button type="button" onclick="S.lmode=\'sms\';pLogin()" class="flex-1 py-1.5 rounded-full transition-all ' + (!isPwd ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">短信登录</button>',
     '</div>',
 
     '<div class="space-y-4 text-left">',
       '<div>',
-        '<label class="block text-xs font-semibold text-slate-body mb-1.5">合伙人手机号码</label>',
+        '<label class="block text-xs font-semibold text-slate-body mb-1.5">手机号</label>',
         '<div class="relative">',
-          '<i data-lucide="phone" class="w-4 h-4 text-slate-muted absolute left-3.5 top-1/2 -translate-y-1/2"></i>',
-          '<input id="l_phone" inputmode="numeric" maxlength="11" placeholder="请输入注册时填写的 11 位手机号" class="w-full bg-surface-subtle text-slate-title text-sm rounded-xl pl-10 pr-4 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+          '<i data-lucide="user" class="w-4 h-4 text-slate-muted absolute left-3.5 top-1/2 -translate-y-1/2"></i>',
+          '<input id="l_phone" autocomplete="username" maxlength="32" placeholder="请输入 11 位手机号" class="w-full bg-surface-subtle text-slate-title text-sm rounded-xl pl-10 pr-4 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
         '</div>',
         '<div class="text-xs text-rose-600 mt-1 min-h-[16px]" id="e_lp"></div>',
       '</div>',
@@ -785,11 +852,11 @@ function pLogin() {
         '<div>',
           '<div class="flex items-center justify-between mb-1.5">',
             '<label class="text-xs font-semibold text-slate-body">登录密码</label>',
-            '<button type="button" onclick="go(\'forgot\')" class="text-xs text-brand-600 hover:text-brand-700 font-medium">忘记密码？</button>',
+            '<button type="button" onclick="forgotEntry()" class="text-xs text-brand-600 hover:text-brand-700 font-medium">忘记密码？</button>',
           '</div>',
           '<div class="relative">',
             '<i data-lucide="lock" class="w-4 h-4 text-slate-muted absolute left-3.5 top-1/2 -translate-y-1/2"></i>',
-            '<input id="l_pwd" type="password" placeholder="请输入合伙人登录密码" class="w-full bg-surface-subtle text-slate-title text-sm rounded-xl pl-10 pr-11 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+            '<input id="l_pwd" type="password" placeholder="请输入登录密码" class="w-full bg-surface-subtle text-slate-title text-sm rounded-xl pl-10 pr-11 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
             '<button type="button" aria-label="显示或隐藏密码" onclick="togglePwdVisibility(\'l_pwd\', this)" class="absolute right-0 top-0 bottom-0 px-3.5 flex items-center justify-center text-slate-muted hover:text-slate-title">',
               '<i data-lucide="eye" class="w-4 h-4"></i>',
             '</button>',
@@ -833,12 +900,17 @@ function pLogin() {
     '</div>'
   ].join('');
 
-  $('app').innerHTML = renderAuthLayout('合伙人登录', '用科研与专业的方式，做可信的学术生产力推荐', formHtml);
+  $('app').innerHTML = renderAuthLayout('登录', '', formHtml);
   renderIcons();
 }
 
 function doLogin() {
   var p = $('l_phone').value.trim(), c = $('l_code').value.trim();
+  if (isOpsAccount(p)) {
+    S.lmode = 'pwd'; pLogin();
+    toast('运营账号不支持验证码登录，请使用账号登录');
+    return;
+  }
   if (!phoneOk(p)) { err('e_lp', '请输入有效的 11 位手机号'); return; }
   err('e_lp', '');
   if (!/^\d{6}$/.test(c)) { err('e_lc', '请输入 6 位数字验证码'); return; }
@@ -846,16 +918,39 @@ function doLogin() {
   finishLogin(p);
 }
 
+function isOpsAccount(v) { return /^[A-Za-z]/.test(v); }
+
 function doPwdLogin() {
-  var p = $('l_phone').value.trim(), w = $('l_pwd').value;
-  if (!phoneOk(p)) { err('e_lp', '请输入有效的 11 位手机号'); return; }
+  var id = $('l_phone').value.trim(), w = $('l_pwd').value;
+  if (!id) { err('e_lp', '请输入手机号或运营账号'); return; }
+  if (isOpsAccount(id)) {
+    if (!/^[A-Za-z][A-Za-z0-9_]{3,19}$/.test(id)) { err('e_lp', '运营账号为字母开头，4-20 位字母、数字或下划线'); return; }
+  } else if (!phoneOk(id)) { err('e_lp', '请输入有效的 11 位手机号或运营账号'); return; }
   err('e_lp', '');
   if (!w) { err('e_lc', '请输入登录密码'); return; }
   err('e_lc', '');
-  if (!PHONES[p]) return finishLogin(p);
-  if (!PWD[p]) { err('e_lc', '该账号尚未设置密码，请通过“忘记密码”重设密码或使用验证码登录'); return; }
-  if (PWD[p] !== w) { err('e_lc', '手机号或登录密码错误'); return; }
-  finishLogin(p);
+  if (isOpsAccount(id)) {
+    var o = OPS[id];
+    if (!o || o.pwd !== w) { err('e_lc', '账号或密码错误'); return; }
+    loginOps(id, o);
+    return;
+  }
+  if (!PHONES[id]) return finishLogin(id);
+  if (!PWD[id]) { err('e_lc', '该账号尚未设置密码，请通过“忘记密码”重设密码或使用验证码登录'); return; }
+  if (PWD[id] !== w) { err('e_lc', '账号或密码错误'); return; }
+  finishLogin(id);
+}
+
+function loginOps(id, o) {
+  S.user = { account: id, ops: true, name: o.name, role: o.role };
+  toast('登录成功，正在进入运营工作台...');
+  setTimeout(function(){ window.location.href = encodeURI('立理 S1 运营后台 Demo.html'); }, 700);
+}
+
+function forgotEntry() {
+  var v = $('l_phone') ? $('l_phone').value.trim() : '';
+  if (isOpsAccount(v)) { toast('运营账号请联系超级管理员重置密码'); return; }
+  go('forgot');
 }
 
 function finishLogin(p) {
@@ -904,8 +999,8 @@ function pApply() {
         '<div class="w-16 h-16 rounded-3xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-4 border border-emerald-100 shadow-sm">',
           '<i data-lucide="check" class="w-8 h-8 stroke-[3]"></i>',
         '</div>',
-        '<h3 class="text-xl font-bold text-slate-title">申请已成功提交 🎉</h3>',
-        '<p class="text-xs text-slate-body mt-2 leading-relaxed max-w-xs mx-auto">官方运营团队将在 <span class="font-bold text-brand-600">3–5 个工作日</span> 内完成审核评估，请保持电话畅通，结果将短信通知。</p>',
+        '<h3 class="text-xl font-bold text-slate-title">申请已成功提交</h3>',
+        '<p class="text-xs text-slate-body mt-2 leading-relaxed max-w-xs mx-auto">官方运营团队将尽快完成审核，请保持电话畅通。</p>',
         '<div class="mt-8 space-y-2">',
           '<button type="button" onclick="go(\'login\')" class="w-full py-3 rounded-full bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold shadow-sm shadow-brand-500/30 transition-all">前往登录页查看状态</button>',
         '</div>',
@@ -990,7 +1085,7 @@ function submitApply() {
 
   var phone = v('a_phone');
   if (PHONES[phone]) {
-    err('e_phone', '该手机号已有申请记录，请直接登录系统查看审核状态');
+    err('e_phone', '该手机号已有申请记录，请登录查看状态');
     toast('该手机号已有申请记录');
     return;
   }
@@ -1082,7 +1177,7 @@ function pStatus() {
           (isRej ? '申请未通过审核' : '合伙人申请审核中'),
         '</div>',
         '<p class="text-xs text-slate-body mt-3 leading-relaxed max-w-sm mx-auto">',
-          (isRej ? '很遗憾，您的合伙人资质暂未达到立理 S1 开放要求。<br><span class="text-rose-600 font-medium">官方原因：提交信息与学术合作条件不匹配（审核归档）</span>' : '您的申请材料已进入运营团队评审流程，将在 3–5 个工作日内完成审核。'),
+          (isRej ? '很遗憾，您的合伙人资质暂未达到立理 S1 开放要求。' : '您的申请材料已进入运营团队评审流程，官方团队将尽快完成审核，请保持电话畅通并耐心等待。'),
         '</p>',
       '</div>',
 
@@ -1136,6 +1231,7 @@ function refreshStatus() {
 function pPromo() {
   var refCode = '8866';
   var promoLink = 'https://s1.liliai.cn/r/' + refCode;
+  var rt = rateOf(S.user && S.user.phone);
 
   var contentHtml = [
     '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">',
@@ -1158,7 +1254,7 @@ function pPromo() {
           '<button onclick="copy(\'' + refCode + '\', \'专属推荐码\')" class="inline-flex items-center px-3 py-1 rounded-full bg-white text-brand-600 text-xs font-bold shadow-xs hover:bg-brand-50 transition-all">',
             '<i data-lucide="copy" class="w-3.5 h-3.5 mr-1"></i> 复制推荐码',
           '</button>',
-          '<span class="text-xs text-white/80 font-medium">首购 30% / 续购 20%</span>',
+          '<span class="text-xs text-white/80 font-medium">首购 ' + rt.first + '% / 续购 ' + rt.next + '%</span>',
         '</div>',
       '</div>',
 
@@ -1531,20 +1627,24 @@ function pComm() {
 
   var sum = getSum();
   var settleHtml = settlePg.items.map(function(r) {
-    var isOffset = r[3] === '抵扣核销';
-    var tagCls = isOffset ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+    var isAdvance = r.source === '录入时已发放';
+    var srcCls = isAdvance ? 'bg-sky-50 text-sky-700 border border-sky-200' : 'bg-white text-slate-body border border-surface-border';
+    var net = round2((r.gross || 0) - (r.offset || 0));
     return [
-      '<div class="p-4 rounded-2xl bg-surface-subtle border border-surface-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">',
+      '<div class="p-4 rounded-2xl bg-surface-subtle border border-surface-border">',
         '<div>',
-          '<div class="flex items-center space-x-2">',
-            '<span class="font-bold text-sm text-slate-title">结算批次: ' + r[0] + '</span>',
-            '<span class="px-2 py-0.5 rounded-full text-xs font-semibold ' + tagCls + '">' + r[3] + '</span>',
+          '<div class="flex flex-wrap items-center gap-2">',
+            '<span class="font-bold text-sm text-slate-title">结算批次: ' + r.batch + '</span>',
+            '<span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">' + r.status + '</span>',
+            '<span class="px-2 py-0.5 rounded-full text-xs font-semibold ' + srcCls + '">' + r.source + '</span>',
           '</div>',
-          '<div class="text-xs text-slate-muted mt-1">核准时间: ' + r[2] + '</div>',
-          '<div class="text-xs text-slate-muted mt-1">' + r[4] + '</div>',
-        '</div>',
-        '<div class="sm:text-right">',
-          '<div class="font-extrabold text-base text-slate-title tabular-nums">' + (isOffset ? '本次实结 ¥0.00' : r[1] + ' 推广币') + '</div>',
+          '<div class="text-xs text-slate-muted mt-1">核准时间: ' + r.time + '</div>',
+          '<div class="mt-3 grid grid-cols-3 gap-2 text-xs">',
+            '<div class="rounded-xl bg-white border border-surface-border px-2 py-2 text-center"><div class="text-slate-muted">明细合计</div><div class="font-bold text-slate-title tabular-nums mt-0.5">−' + fmt2(r.gross || 0) + '</div></div>',
+            '<div class="rounded-xl bg-white border border-surface-border px-2 py-2 text-center"><div class="text-slate-muted">扣减待追回</div><div class="font-bold tabular-nums mt-0.5 ' + ((r.offset || 0) > 0 ? 'text-rose-600' : 'text-slate-muted') + '">' + fmt2(r.offset || 0) + '</div></div>',
+            '<div class="rounded-xl bg-white border border-surface-border px-2 py-2 text-center"><div class="text-slate-muted">本次实结</div><div class="font-extrabold text-slate-title tabular-nums mt-0.5">−' + fmt2(net) + '</div></div>',
+          '</div>',
+          (r.note ? '<div class="text-xs text-slate-muted mt-2">' + r.note + '</div>' : ''),
         '</div>',
       '</div>'
     ].join('');
@@ -1557,14 +1657,17 @@ function pComm() {
         + '</div>'
       : '',
     '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">',
-      '<div class="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-brand-500 to-brand-600 text-white p-5 shadow-hero flex flex-col">',
+      '<div class="relative rounded-[20px] bg-gradient-to-br from-brand-500 to-brand-600 text-white p-5 shadow-hero flex flex-col">',
         '<div class="flex items-center justify-between">',
           '<span class="text-xs font-semibold tracking-wide text-white/90">总推广币 (净收益)</span>',
           '<div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white backdrop-blur-sm"><i data-lucide="coins" class="w-4 h-4"></i></div>',
         '</div>',
         '<div class="mt-3 text-3xl font-extrabold tracking-tight tabular-nums">' + fmt2(getSum().total) + '</div>',
-        '<div class="mt-auto pt-4 flex items-center justify-end text-xs text-white/80">',
-          '<span class="font-bold">可结算+冻结+已结算</span>',
+        '<div class="mt-auto pt-4 flex items-center justify-end">',
+          '<div class="relative group">',
+            '<button type="button" aria-label="查看总推广币口径" class="w-4 h-4 rounded-full border border-white/60 text-white/90 text-[10px] font-bold leading-none flex items-center justify-center cursor-help">i</button>',
+            '<div class="pointer-events-none absolute right-0 bottom-full mb-2 w-60 rounded-xl bg-slate-900/95 text-white text-[11px] leading-relaxed p-3 shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all z-20">总推广币 = 可结算推广币 + 冻结中推广币 + 已结算推广币 − 待追回金额。待追回为退款时应扣回、但对应推广币已打款无法扣回的差额，将在后续结算中自动抵扣。</div>',
+          '</div>',
         '</div>',
       '</div>',
 
@@ -1576,7 +1679,7 @@ function pComm() {
         '<div class="mt-3 text-3xl font-extrabold tracking-tight text-emerald-600 tabular-nums">' + fmt2(sum.settleable) + '</div>',
         (sum.unrecovered > 0
           ? '<div class="mt-auto pt-4 text-xs text-rose-600">本次可打款 ¥' + fmt2(sum.payable) + '（已扣除待追回 ¥' + fmt2(Math.min(sum.unrecovered, sum.settleable)) + '）</div>'
-          : '<div class="mt-auto pt-4 text-xs text-slate-muted">已解冻，可线下核销</div>'),
+          : '<div class="mt-auto pt-4 text-xs text-slate-muted">已可结算，可线下核销</div>'),
       '</div>',
 
       '<div class="rounded-[20px] bg-surface-card border border-surface-border p-5 shadow-card hover:shadow-card-hover flex flex-col transition-all">',
@@ -1606,7 +1709,7 @@ function pComm() {
           '<button onclick="S.tab=\'flow\';pComm()" class="px-4 py-1.5 rounded-full transition-all ' + (isFlow ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">订单明细</button>',
           '<button onclick="S.tab=\'settle\';pComm()" class="px-4 py-1.5 rounded-full transition-all ' + (!isFlow ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">结算记录</button>',
         '</div>',
-        '<div class="text-xs text-slate-muted hidden sm:block">' + (isFlow ? '按订单展示分佣；年卡按月分期发放' : '展示财务线下打款与抵扣核销记录') + '</div>',
+        '<div class="text-xs text-slate-muted hidden sm:block">' + (isFlow ? '按订单展示分佣；年卡 / 机构订单按月分期发放' : '展示财务线下打款与机构订单录入时已发放记录') + '</div>',
       '</div>',
 
       '<div class="space-y-3">' + (isFlow ? flowHtml : settleHtml) + '</div>' + (isFlow ? ordersNote() : ''),
@@ -1622,6 +1725,7 @@ function pComm() {
 function pProfile() {
   var u = S.user || { phone: '13800000003' };
   var a = appOf(u.phone);
+  var rt = rateOf(u.phone);
 
   var contentHtml = [
     '<div class="max-w-3xl space-y-6">',
@@ -1647,7 +1751,7 @@ function pProfile() {
           '<div class="py-3 flex justify-between"><span class="text-slate-muted font-medium">微信号</span><span class="text-slate-title">' + esc(a.wx || '未填写') + '</span></div>',
           '<div class="py-3 flex justify-between"><span class="text-slate-muted font-medium">申请入驻时间</span><span class="text-slate-title">' + esc(a.time) + '</span></div>',
           '<div class="py-3 flex justify-between"><span class="text-slate-muted font-medium">专属推荐码</span><span class="font-mono font-bold text-brand-600">8866</span></div>',
-          '<div class="py-3 flex justify-between"><span class="text-slate-muted font-medium">基准分润比例</span><span class="font-bold text-emerald-600">首购 30% / 续购 20%</span></div>',
+          '<div class="py-3 flex justify-between"><span class="text-slate-muted font-medium">基准分润比例</span><span class="font-bold text-emerald-600">首购 ' + rt.first + '% / 续购 ' + rt.next + '%</span></div>',
         '</div>',
       '</div>',
 
