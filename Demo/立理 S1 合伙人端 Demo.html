@@ -2341,23 +2341,14 @@ function pCust() {
       ].join('');
     }
 
-    var tagHtml = [
-      '<button type="button" onclick="openTag(' + originalIndex + ')" class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs transition-all ' + tagBadge(c[6]) + '">',
-        '<span>' + esc(c[6]) + '</span>',
-        '<i data-lucide="chevron-down" class="w-3 h-3 opacity-70"></i>',
-      '</button>'
-    ].join('');
-
     return [
       '<tr class="hover:bg-surface-subtle/70 transition-colors">',
         '<td class="py-3.5 pl-4 max-w-[190px]">' + remarkHtml + '</td>',
-        '<td class="py-3.5">' + tagHtml + '</td>',
         '<td class="py-3.5">',
           '<div class="font-bold text-slate-title text-xs tabular-nums">' + esc(c[0]) + '</div>',
         '</td>',
         '<td class="py-3.5"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs ' + stInfo.badge + '">' + stInfo.text + '</span></td>',
         '<td class="py-3.5 font-medium tabular-nums ' + (c[4] ? 'text-slate-title' : 'text-slate-muted') + '">' + (c[4] || '-') + '</td>',
-        '<td class="py-3.5 tabular-nums">' + (c[7] ? '<span class="font-semibold text-slate-title">¥' + Number(c[7]).toLocaleString('en-US') + '</span>' : '<span class="text-slate-muted">无</span>') + '</td>',
         '<td class="py-3.5 text-slate-muted tabular-nums">' + c[2] + '</td>',
         '<td class="py-3.5 pr-4 text-slate-muted tabular-nums">' + c[1] + '</td>',
       '</tr>'
@@ -2387,7 +2378,7 @@ function pCust() {
       '<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">',
         '<div>',
           '<h3 class="font-bold text-base text-slate-title">客户跟进明细</h3>',
-          '<p class="text-xs text-slate-muted mt-0.5">支持就地编辑备注（仅本人可见）、客户标签管理及多维排序</p>',
+          '<p class="text-xs text-slate-muted mt-0.5">支持就地编辑备注（仅本人可见）及多维排序</p>',
         '</div>',
 
         '<div class="flex flex-wrap items-center gap-2.5">',
@@ -2409,12 +2400,7 @@ function pCust() {
             f.map(function(s){ return '<option value="' + s[0] + '"' + (S.filter === s[0] ? ' selected' : '') + '>' + s[1] + '</option>'; }).join(''),
           '</select>',
 
-          '<select onchange="S.tf=this.value;S.cp=1;pCust()" class="bg-surface-subtle border border-surface-border rounded-full px-3 py-1.5 text-xs text-slate-title font-medium focus:outline-none cursor-pointer">',
-            '<option value="all">全部标签</option>',
-            allTags().map(function(t){ return '<option value="' + esc(t) + '"' + (S.tf === t ? ' selected' : '') + '>' + esc(t) + '</option>'; }).join(''),
-          '</select>',
-
-          ((S.filter !== 'all' || (S.tf && S.tf !== 'all') || S.query) ? [
+          ((S.filter !== 'all' || S.query) ? [
             '<button onclick="S.filter=\'all\';S.tf=\'all\';S.query=\'\';S.cp=1;pCust()" class="text-xs font-bold text-brand-600 hover:text-brand-700 px-2 py-1">清除筛选</button>'
           ].join('') : ''),
         '</div>',
@@ -2425,17 +2411,15 @@ function pCust() {
           '<thead>',
             '<tr class="text-slate-muted font-bold border-b border-surface-border-subtle pb-3">',
               '<th class="pb-3 pl-4">备注 (仅本人可见)</th>',
-              '<th class="pb-3">客户标签</th>',
               '<th class="pb-3">客户手机号</th>',
               '<th class="pb-3">会员状态</th>',
               '<th class="pb-3">到期时间</th>',
-              '<th class="pb-3">加油包</th>',
               '<th class="pb-3">注册时间</th>',
               '<th class="pb-3 pr-4">绑定时间</th>',
             '</tr>',
           '</thead>',
           '<tbody class="divide-y divide-surface-border-subtle font-medium text-slate-body">',
-            (list.length ? rowsHtml : '<tr><td colspan="8" class="py-8 text-center text-slate-muted">没有匹配条件的客户数据</td></tr>'),
+            (list.length ? rowsHtml : '<tr><td colspan="6" class="py-8 text-center text-slate-muted">没有匹配条件的客户数据</td></tr>'),
           '</tbody>',
         '</table>',
       '</div>',
