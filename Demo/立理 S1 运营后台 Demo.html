@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>立理 S1 平台管理后台 — 合伙人管理</title>
+<title>立理 S1 分销管理系统 — 合伙人管理</title>
 <style>
 /* 
  * 立理 S1 官方统一设计规范 (Tailwind CSS v4 + shadcn/ui 官方逆向提取版)
@@ -747,6 +747,48 @@ tbody tr:hover td.col-sticky { background: #FAFAFA; }
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 #app-toast.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+/* 机构订单：合同扫描件缩略卡 + 回款进度条 + 合同预览纸张 */
+.org-doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; max-width: 420px; }
+.org-doc-card {
+  position: relative; display: block; width: 100%; aspect-ratio: 3 / 4;
+  padding: 0; border: 1px solid var(--border); border-radius: var(--radius-md);
+  background: #F4F4F5; overflow: hidden; cursor: zoom-in; font-family: inherit;
+  transition: all 0.15s ease;
+}
+.org-doc-card:hover { border-color: #A1A1AA; box-shadow: var(--shadow-md); }
+.org-doc-paper {
+  position: absolute; inset: 8px; background: #FFFFFF; border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06); padding: 9px 7px;
+  display: flex; flex-direction: column; gap: 5px;
+}
+.org-doc-paper > i { display: block; height: 3px; border-radius: 2px; background: #E9E9EC; }
+.org-doc-stamp {
+  position: absolute; right: 7px; bottom: 7px; width: 24px; height: 24px;
+  border: 2px solid rgba(225, 29, 72, 0.42); border-radius: 50%;
+}
+.org-doc-zoom {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(9, 9, 11, 0.42); color: #FFFFFF; opacity: 0; transition: opacity 0.15s ease;
+}
+.org-doc-card:hover .org-doc-zoom { opacity: 1; }
+.org-progress { height: 4px; border-radius: 999px; background: #F4F4F5; margin-top: 6px; overflow: hidden; }
+.org-progress > span { display: block; height: 100%; background: #09090B; border-radius: 999px; }
+.org-paper {
+  width: 100%; min-height: 320px; background: #FFFFFF;
+  border: 1px solid var(--border); border-radius: 4px;
+  box-shadow: var(--shadow-md); padding: 26px 24px; position: relative;
+}
+.org-paper-title { text-align: center; font-size: 16px; font-weight: 700; letter-spacing: 0.1em; }
+.org-paper-sub { text-align: center; font-size: 11.5px; color: var(--muted-foreground); margin: 6px 0 18px; }
+.org-paper-line { height: 7px; border-radius: 3px; background: #F1F1F3; margin-bottom: 10px; }
+.org-paper-stamp {
+  position: absolute; right: 28px; bottom: 26px;
+  width: 76px; height: 76px; border: 3px solid rgba(225, 29, 72, 0.5); border-radius: 50%;
+  color: rgba(225, 29, 72, 0.75); font-size: 10.5px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  line-height: 1.3; padding: 8px; transform: rotate(-12deg);
+}
 </style>
 </head>
 <body>
@@ -759,12 +801,16 @@ tbody tr:hover td.col-sticky { background: #FAFAFA; }
         <div class="brand-title">
           立理 <span class="brand-badge">S1</span>
         </div>
-        <div class="brand-sub">平台管理后台</div>
+        <div class="brand-sub">分销管理系统</div>
       </div>
     </div>
 
     <div class="sidebar-menu-wrap">
       <div class="menu-group-header">管理后台</div>
+      <a class="sidebar-menu-item" onclick="navigate('dashboard')" id="nav-dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        数据看板
+      </a>
       <a class="sidebar-menu-item" onclick="navigate('applications')" id="nav-applications">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         申请审核
@@ -780,11 +826,6 @@ tbody tr:hover td.col-sticky { background: #FAFAFA; }
       <a class="sidebar-menu-item" onclick="navigate('settlements')" id="nav-settlements">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="14" x2="6.01" y2="14"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
         结算管理
-      </a>
-      <a class="sidebar-menu-item" onclick="navigate('reports')" id="nav-reports">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        数据报表
-        <span class="menu-tag-pill">第二批</span>
       </a>
       <a class="sidebar-menu-item" onclick="navigate('settings')" id="nav-settings">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -937,6 +978,7 @@ let PARTNERS = [
   {
     id: 'PT-8866',
     name: '李维国',
+    unit: '赤道银河',
     org: '北京航空航天大学计算机学院',
     role: '教授 / 实验室负责人',
     phone: '13700001111',
@@ -991,6 +1033,7 @@ let PARTNERS = [
   {
     id: 'PT-6601',
     name: '宋建华',
+    unit: '启点视界',
     org: '立理科技 (战略创新部)',
     role: '解决方案专家',
     phone: '13800002222',
@@ -1023,6 +1066,7 @@ let PARTNERS = [
   {
     id: 'PT-9902',
     name: '韩磊',
+    unit: '赤道银河',
     org: '南京大学人工智能学院',
     role: '博士后研究员',
     phone: '13911118888',
@@ -1053,6 +1097,7 @@ let PARTNERS = [
   {
     id: 'PT-7711',
     name: '赵子豪',
+    unit: '中部知光',
     org: '极客代码技术社区',
     role: '运营总监',
     phone: '13500003333',
@@ -1154,7 +1199,20 @@ function orderLines(o, p) {
   const voided = o.status === 'VOID_REFUND';
   const kind = voided ? rawKind(o) : orderKind(o);
   if (kind === 'NONE') return [];
-  const n = kind === 'YEAR' ? 12 : (kind === 'ORG' ? o.months : 1);
+  // 机构订单：佣金池 = 合同金额 × 核定比例，审核通过后即可结算，按订单整体一笔，不设分期
+  if (kind === 'ORG') {
+    const pool = round2(o.points || 0);
+    const key = o.id + '#1';
+    const settled = Math.min(round2(Math.max(o.settled_amount || 0, LINE_SETTLED[key] || 0)), pool);
+    const remaining = Math.max(0, round2(pool - settled));
+    return [{
+      key, order_id: o.id, kind, k: 1, n: 1, amt: pool, settled, remaining,
+      unlock: '审核通过即可结算', state: remaining === 0 ? 'SETTLED' : 'ORG',
+      source: o.org_name, customer: o.org_name, pay: o.pay_amount, rate: o.rate, order_total: pool,
+      period: '合同期 ' + (o.months || 12) + ' 个月'
+    }];
+  }
+  const n = kind === 'YEAR' ? 12 : 1;
   const total = voided ? Math.abs(o.points) : o.points, start = orderStart(o);
   const totalC = Math.round(total * 100);
   const baseC = Math.round(totalC / n);
@@ -1234,7 +1292,14 @@ function recalcPartner(p) {
     else if (l.state === 'FROZEN') f += l.remaining;
   });
   // 退款差额中已解冻/已结算、无法从期次扣回的部分，进入待追回，下次打款扣减
-  p.orders.forEach(o => { short += (o._refundShort || 0); });
+  p.orders.forEach(o => {
+    short += (o._refundShort || 0);
+    // 机构订单：未结算佣金不计入可提现，单独在「结算管理 · 待结算机构订单」中按订单结算
+    if (orderKind(o) === 'ORG') {
+      const l = orderLines(o, p)[0];
+      if (l && l.remaining > 0) f += l.remaining;
+    }
+  });
   p.points = { total: round2(w + f + s), withdrawable: round2(w), frozen: round2(f), settled: round2(s), unrecovered: Math.max(0, round2(short - (p._offsetPaid || 0))) };
 }
 function recalcAll() { PARTNERS.forEach(recalcPartner); }
@@ -1262,7 +1327,50 @@ function allocSettled(settleId, keys) {
 }
 function seqKeys(orderId, from, to) { const r = []; for (let k = from; k <= to; k++) r.push(orderId + '#' + k); return r; }
 
-allocSettled('SETTLE-202610-008', seqKeys('ORG-20260810-001', 1, 2).concat(seqKeys('ORD-20260820-0066', 1, 1)));
+// ==========================================
+// 机构订单申请单：合伙人提交 → 运营审核（核定比例）→ 财务线下确认回款后，在结算管理按订单填写结算金额
+// ==========================================
+let ORG_REQUESTS = [
+  { id: 'ORGREQ-20261106-001', partner_id: 'PT-8866', partner_name: '李维国', org: '中国科学技术大学未来技术学院', contract_no: 'LL-2026-1106-01',
+    amount: 50000, rate: null, start: '2026-11-06', months: 12, remark: '首笔款项按合同约定 30 日内到账', imgs: 2,
+    status: 'PENDING', created_at: '2026-11-06 14:20', reviewed_at: '', reviewer: '', reject_reason: '', order_id: '', settled_amount: 0 },
+  { id: 'ORGREQ-20261029-002', partner_id: 'PT-9902', partner_name: '韩磊', org: '南京大学人工智能学院', contract_no: 'LL-2026-1029-07',
+    amount: 30000, rate: null, start: '2026-10-29', months: 6, remark: '', imgs: 1,
+    status: 'REJECTED', created_at: '2026-10-29 09:40', reviewed_at: '2026-11-02 10:15', reviewer: '张博文', reject_reason: '合同盖章页缺失，请补充后重新提交。', order_id: '', settled_amount: 0 },
+  { id: 'ORGREQ-20261103-003', partner_id: 'PT-8866', partner_name: '李维国', org: '复旦大学类脑智能研究院', contract_no: 'LL-2026-1103-02',
+    amount: 80000, rate: 18, start: '2026-11-03', months: 12, remark: '', imgs: 2,
+    status: 'APPROVED', created_at: '2026-11-03 10:05', reviewed_at: '2026-11-03 15:20', reviewer: '张博文', reject_reason: '', order_id: 'ORG-20261103-001', settled_amount: 0 },
+  { id: 'ORGREQ-20260928-004', partner_id: 'PT-8866', partner_name: '李维国', org: '上海交通大学医学院', contract_no: 'LL-2026-0928-05',
+    amount: 60000, rate: 15, start: '2026-09-28', months: 12, remark: '首笔款已到账，剩余款项按合同执行', imgs: 1,
+    status: 'APPROVED', created_at: '2026-09-28 09:10', reviewed_at: '2026-09-28 16:40', reviewer: '张博文', reject_reason: '', order_id: 'ORG-20260928-002', settled_amount: 3600, received: 24000 },
+  { id: 'ORGREQ-20260815-005', partner_id: 'PT-8866', partner_name: '李维国', org: '浙江大学计算机学院', contract_no: 'LL-2026-0815-03',
+    amount: 100000, rate: 20, start: '2026-08-15', months: 12, remark: '合同款项已全额到账，佣金结清', imgs: 3,
+    status: 'APPROVED', created_at: '2026-08-15 11:25', reviewed_at: '2026-08-15 17:10', reviewer: '张博文', reject_reason: '', order_id: 'ORG-20260815-003', settled_amount: 20000, received: 100000 }
+];
+// 已通过的申请单同步为机构订单：佣金池 = 合同金额 × 核定比例，按订单整笔结算，不设分期与回款登记
+function seedOrgRequests() {
+  ORG_REQUESTS.forEach(r => {
+    if (r.status !== 'APPROVED' || !r.order_id) return;
+    const p = PARTNERS.find(x => x.id === r.partner_id); if (!p) return;
+    if (p.orders.some(o => o.id === r.order_id)) return;
+    p.orders.unshift({ id: r.order_id, customer_phone: '', org_name: r.org, contract_no: r.contract_no, kind: 'ORG',
+      product: '机构版年度合同（线下签约）', pay_amount: r.amount, rate: r.rate, points: round2(r.amount * r.rate / 100),
+      status: 'ORG', unfreeze_at: '按结算释放', created_at: r.created_at, start: r.start, months: r.months,
+      paid_out: 0, settled_amount: r.settled_amount || 0, received_amount: r.received || 0, remark: r.remark, is_upgrade: false, is_cool: false });
+  });
+}
+seedOrgRequests();
+// 机构订单结算单：按订单维度生成，财务线下确认回款后分次结算
+SETTLEMENT_HISTORY.push(
+  { settle_id: 'SETTLE-202610-005', partner_id: 'PT-8866', partner_name: '李维国', partner_phone: '13700001111', channel_type: 'EXTERNAL',
+    points: 3600, received: 24000, rate: 15, org_name: '上海交通大学医学院', voucher: 'BCM202610158801', operator: '财务王敏', settle_time: '2026-10-15 10:30',
+    remark: '上海交通大学医学院 机构订单结算（首笔款到账 24000，按 15% 结算）', source: 'ORG', org_order_id: 'ORG-20260928-002', lines: [] },
+  { settle_id: 'SETTLE-202610-006', partner_id: 'PT-8866', partner_name: '李维国', partner_phone: '13700001111', channel_type: 'EXTERNAL',
+    points: 20000, received: 100000, rate: 20, org_name: '浙江大学计算机学院', voucher: 'BCM202610208812', operator: '财务王敏', settle_time: '2026-10-20 14:10',
+    remark: '浙江大学计算机学院 机构订单结算（合同款项全额到账，佣金结清）', source: 'ORG', org_order_id: 'ORG-20260815-003', lines: [] }
+);
+
+allocSettled('SETTLE-202610-008', seqKeys('ORG-20260810-001', 1, 1).concat(seqKeys('ORD-20260820-0066', 1, 1)));
 allocSettled('SETTLE-202609-002', seqKeys('ORD-20260410-0155', 1, 5));
 recalcAll();
 
@@ -1563,6 +1671,7 @@ function sheetSelectAll(on) {
   updateSheetTotal();
 }
 let SETTLE_PENDING = null;
+let ORG_SETTLE_PENDING = null;
 function confirmSettleSheet() {
   const p = PARTNERS.find(x => x.id === SHEET.pid); if (!p) return;
   const sel = SHEET.lines.filter(l => SHEET.checked.has(l.key));
@@ -1620,6 +1729,22 @@ function executeSettleSheet() {
 function openSettleDetail(settleId) {
   const s = SETTLEMENT_HISTORY.find(x => x.settle_id === settleId); if (!s) return;
   const ls = s.lines || [];
+  const isOrg = s.source === 'ORG';
+  const detailTable = isOrg
+    ? `<div class="table-container"><table class="official-table">
+        <thead><tr><th>机构订单</th><th>本次到账回款</th><th>分成比例</th><th style="text-align:right;">本次结算推广币</th></tr></thead>
+        <tbody><tr>
+          <td><span class="badge badge-blue">机构订单</span> <span class="code-badge">${s.org_order_id || '-'}</span><div style="font-size:11.5px; color:var(--muted-foreground); margin-top:3px;">${esc(s.org_name || '-')}</div></td>
+          <td class="num">¥${fmtC(s.received || 0)}</td>
+          <td class="num">${s.rate != null ? s.rate + '%' : '-'}</td>
+          <td class="num" style="text-align:right; font-weight:700;">${fmtC(s.points || 0)}</td>
+        </tr></tbody>
+      </table></div>`
+    : `<div class="table-container"><table class="official-table">
+        <thead><tr><th>来源订单</th><th>期次</th><th>解冻日</th><th style="text-align:right;">结算金额</th></tr></thead>
+        <tbody>${ls.map(l => `<tr><td>${kindBadge(l.kind)} <span class="code-badge">${l.order_id}</span><div style="font-size:11.5px; color:var(--muted-foreground);">${l.source}</div></td><td>${l.n > 1 ? '第 ' + l.k + '/' + l.n + ' 期' : '一次性'}</td><td>${l.unlock}</td><td class="num" style="text-align:right;">¥${fmtC(l.amt)}</td></tr>`).join('')}
+        <tr><td colspan="3" style="text-align:right; font-weight:600;">合计</td><td class="num" style="text-align:right; font-weight:700;">¥${fmtC(s.points)}</td></tr></tbody>
+      </table></div>`;
   document.getElementById('drawer-root').innerHTML = `
     <div class="drawer-mask show" id="drawer-sd" onclick="if(event.target===this)closeDrawer('drawer-sd')">
       <div class="drawer-panel" style="width:680px;">
@@ -1629,11 +1754,7 @@ function openSettleDetail(settleId) {
           <button class="btn-ghost" style="padding:4px;" onclick="closeDrawer('drawer-sd')">✕</button>
         </div>
         <div class="drawer-body">
-          <div class="table-container"><table class="official-table">
-            <thead><tr><th>来源订单</th><th>期次</th><th>解冻日</th><th style="text-align:right;">结算金额</th></tr></thead>
-            <tbody>${ls.map(l => `<tr><td>${kindBadge(l.kind)} <span class="code-badge">${l.order_id}</span><div style="font-size:11.5px; color:var(--muted-foreground);">${l.source}</div></td><td>${l.n > 1 ? '第 ' + l.k + '/' + l.n + ' 期' : '一次性'}</td><td>${l.unlock}</td><td class="num" style="text-align:right;">¥${fmtC(l.amt)}</td></tr>`).join('')}
-            <tr><td colspan="3" style="text-align:right; font-weight:600;">合计</td><td class="num" style="text-align:right; font-weight:700;">¥${fmtC(s.points)}</td></tr></tbody>
-          </table></div>
+          ${detailTable}
         </div>
       </div>
     </div>`;
@@ -1684,134 +1805,268 @@ function revokeSettlement(settleId) {
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 
 // ==========================================
-// 机构订单录入
+// 机构订单审核（合伙人提交 → 运营审核核定比例 → 财务登记回款 → 按回款释放佣金）
 // ==========================================
+const ORG_STATE_LABEL = { PENDING: '待审核', REJECTED: '已驳回', PENDING_SETTLE: '待结算', SETTLED: '已结算' };
+const ORG_STATE_BADGE = { PENDING: 'badge-warning', REJECTED: 'badge-danger', PENDING_SETTLE: 'badge-blue', SETTLED: 'badge-success' };
+
 function allOrgOrders() {
   const r = [];
   PARTNERS.forEach(p => p.orders.forEach(o => { if (o.kind === 'ORG') r.push({ p, o, lines: orderLines(o, p) }); }));
-  return r.sort((a, b) => b.o.start.localeCompare(a.o.start));
+  return r.sort((a, b) => (b.o.start || '').localeCompare(a.o.start || ''));
 }
-function openOrgEntryDrawer() {
-  const cand = PARTNERS;
+function orgReqOrder(r) {
+  const p = PARTNERS.find(x => x.id === r.partner_id);
+  if (!p) return null;
+  const o = p.orders.find(x => x.id === r.order_id);
+  return o ? { p, o, lines: orderLines(o, p) } : null;
+}
+function orgReqState(r) {
+  if (r.status === 'PENDING') return 'PENDING';
+  if (r.status === 'REJECTED') return 'REJECTED';
+  const x = orgReqOrder(r);
+  if (!x) return 'PENDING_SETTLE';
+  return orgRemainOf(x.o) === 0 ? 'SETTLED' : 'PENDING_SETTLE';
+}
+function orgSettledOf(o) {
+  const pool = round2(o.points || 0);
+  return Math.min(round2(Math.max(o.settled_amount || 0, LINE_SETTLED[o.id + '#1'] || 0)), pool);
+}
+function orgRemainOf(o) { return Math.max(0, round2((o.points || 0) - orgSettledOf(o))); }
+function orgReceivedOf(o) { return round2(o.received_amount || 0); }
+function orgReqRate(r) {
+  if (r.rate != null) return r.rate;
+  const x = orgReqOrder(r);
+  return x ? x.o.rate : null;
+}
+function orgDocCount(r) { return r.imgs || 0; }
+
+function openOrgReviewDrawer(reqId) {
+  const r = ORG_REQUESTS.find(x => x.id === reqId); if (!r) return;
+  const p = PARTNERS.find(x => x.id === r.partner_id);
+  const st = orgReqState(r);
+  const editable = st === 'PENDING';
+  const rate = orgReqRate(r);
+  const linkedOrder = orgReqOrder(r);
+  const initRate = rate != null ? rate : '';
+  const pool = rate != null ? round2(r.amount * rate / 100) : 0;
+  const settled = linkedOrder ? orgSettledOf(linkedOrder.o) : 0;
+  const remain = Math.max(0, round2((linkedOrder ? linkedOrder.o.points : pool) - settled));
+  const kv = (k, v) => `<div style="display:flex; justify-content:space-between; gap:14px; padding:9px 0; border-bottom:1px dashed var(--border); font-size:13px;"><span style="flex:none; color:var(--muted-foreground);">${k}</span><span style="text-align:right; font-weight:500;">${v}</span></div>`;
+  const docs = Array.from({ length: r.imgs || 0 }, (_, i) => `
+    <button type="button" class="org-doc-card" title="点击预览" onclick="previewOrgDoc('${r.id}', ${i})">
+      <span class="org-doc-paper"><i></i><i></i><i></i><i></i><i style="width:58%"></i><span class="org-doc-stamp"></span></span>
+      <span class="org-doc-zoom">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+      </span>
+    </button>`).join('');
+
   document.getElementById('drawer-root').innerHTML = `
-    <div class="drawer-mask show" id="drawer-org" onclick="if(event.target===this)closeDrawer('drawer-org')">
-      <div class="drawer-panel" style="width:700px;">
-        <div class="drawer-header"><h3 style="font-size:15px; font-weight:600;">录入机构订单</h3><button class="btn-ghost" style="padding:4px;" onclick="closeDrawer('drawer-org')">✕</button></div>
+    <div class="drawer-mask show" id="drawer-org-review" onclick="if(event.target===this)closeDrawer('drawer-org-review')">
+      <div class="drawer-panel" style="width:720px;">
+        <div class="drawer-header">
+          <div>
+            <h3 style="font-size:15px; font-weight:600;">${editable ? '机构订单审核' : '机构订单详情'}</h3>
+            <div style="font-size:11.5px; color:var(--muted-foreground); margin-top:3px;">申请单 ${r.id}</div>
+          </div>
+          <button class="btn-ghost" style="padding:4px;" onclick="closeDrawer('drawer-org-review')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
         <div class="drawer-body">
-          <div style="background:#FAFAFA; border:1px solid var(--border); border-radius:8px; padding:10px 14px; font-size:12.5px; margin-bottom:14px;">
-            机构版为线下签合同，无法在线上自动打通，由运营按合同手动录入。解冻规则与年卡一致：<strong>按合同周期逐月分期，每期在服务月结束 +7 天后解冻</strong>；与年卡不同的是，金额、比例、周期均按合同填写。
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 16px; border:1px solid var(--border); border-radius:var(--radius-lg); background:#FAFAFA; margin-bottom:18px;">
+            <div>
+              <div style="font-size:11.5px; color:var(--muted-foreground);">当前状态</div>
+              <div style="display:flex; align-items:center; gap:8px; margin-top:5px;">
+                <span class="badge ${ORG_STATE_BADGE[st]}">${ORG_STATE_LABEL[st]}</span>
+                <span style="font-size:12px; color:var(--muted-foreground);">提交于 ${r.created_at}</span>
+              </div>
+            </div>
+            <div style="text-align:right; font-size:12px; color:var(--muted-foreground); line-height:1.7;">
+              ${r.reviewed_at ? `审核人 ${r.reviewer}<br>审核于 ${r.reviewed_at}` : '等待运营审核'}
+            </div>
           </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 14px;">
-            <div class="form-group" style="grid-column:1/3;"><label class="form-group-label">归属合伙人 <span class="req">*</span></label>
-              <select class="form-input-full" id="org-partner" onchange="onOrgPartnerChange()">${cand.map(p => `<option value="${p.id}">${p.name} · ${p.org} · ${p.channel_type === 'INTERNAL' ? '内部' : '外部'}渠道（续购比例 ${p.renew_rate}%）${p.status === 'FROZEN' ? ' · 已冻结' : ''}</option>`).join('')}</select></div>
-            <div class="form-group"><label class="form-group-label">机构名称 <span class="req">*</span></label><input class="form-input-full" id="org-name" placeholder="如：某某大学某某实验室" oninput="refreshOrgPreview()"></div>
-            <div class="form-group"><label class="form-group-label">合同编号 <span class="req">*</span></label><input class="form-input-full" id="org-contract" placeholder="线下合同编号"></div>
-            <div class="form-group"><label class="form-group-label">合同金额（元）<span class="req">*</span></label><input class="form-input-full num" type="number" id="org-amount" placeholder="如 40000" oninput="refreshOrgPreview()"></div>
-            <div class="form-group"><label class="form-group-label">分成比例（%）<span class="req">*</span></label><input class="form-input-full num" type="number" step="1" id="org-rate" value="${cand[0].renew_rate}" oninput="refreshOrgPreview()"><div class="form-hint-note">默认带出合伙人续购比例，可按合同调整；录入后锁定，不随后续比例调整变化。</div></div>
-            <div class="form-group"><label class="form-group-label">服务起始日 <span class="req">*</span></label><input class="form-input-full" type="date" id="org-start" value="${REF_DATE}" oninput="refreshOrgPreview()"></div>
-            <div class="form-group"><label class="form-group-label">服务周期（月）<span class="req">*</span></label><input class="form-input-full num" type="number" id="org-months" value="12" min="1" max="60" oninput="refreshOrgPreview()"><div class="form-hint-note" id="org-end-hint"></div></div>
-            <div class="form-group"><label class="form-group-label">已发放金额（元）</label><input class="form-input-full num" type="number" id="org-paid" value="0" min="0" oninput="refreshOrgPreview()"><div class="form-hint-note">录入前已线下发给合伙人的佣金，系统按期次从前往后抵扣，并生成一条「录入时已发放」结算记录。</div></div>
-            <div class="form-group"><label class="form-group-label">备注</label><input class="form-input-full" id="org-remark" placeholder="选填"></div>
+
+          ${st === 'REJECTED' ? `<div style="background:#FEF2F2; border:1px solid #FECACA; color:#B91C1C; border-radius:var(--radius-md); padding:10px 14px; font-size:12.5px; margin-bottom:18px;">驳回原因：${esc(r.reject_reason)}</div>` : ''}
+
+          <div style="font-size:13px; font-weight:600; margin-bottom:4px;">申请信息</div>
+          <div style="margin-bottom:20px;">
+            ${kv('归属合伙人', `${r.partner_name}${p ? `<span style="font-weight:400; color:var(--muted-foreground);"> · ${p.channel_type === 'INTERNAL' ? '内部' : '外部'}渠道</span>` : ''}`)}
+            ${kv('机构名称', esc(r.org))}
+            ${kv('合同编号', `<span class="code-badge">${esc(r.contract_no)}</span>`)}
+            ${kv('合同金额', `<span class="num">¥${formatNum(r.amount)}</span>`)}
+            ${kv('服务周期', `${r.start} · ${r.months} 个月`)}
+            ${r.remark ? kv('合伙人备注', esc(r.remark)) : ''}
           </div>
-          <div id="org-preview"></div>
+
+          <div style="font-size:13px; font-weight:600; margin-bottom:10px;">合同扫描件 <span style="font-size:11.5px; font-weight:400; color:var(--muted-foreground);">（${r.imgs || 0} 张）</span></div>
+          <div class="org-doc-grid" style="margin-bottom:22px;">${docs || '<div style="font-size:12.5px; color:var(--muted-foreground);">未上传合同扫描件</div>'}</div>
+
+          ${editable ? `
+          <div style="border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px; margin-bottom:18px;">
+            <div style="font-size:13px; font-weight:600; margin-bottom:12px;">核定分成比例</div>
+            <div style="display:flex; align-items:center; height:36px; border:1px solid var(--input); border-radius:var(--radius-md); background:#fff; padding:0 12px; gap:8px; max-width:200px;">
+              <span style="flex:none; font-size:12px; color:var(--muted-foreground);">比例</span>
+              <input class="num" type="number" step="1" min="0" max="100" id="org-review-rate" value="${initRate}" style="flex:1; min-width:0; height:100%; border:none; outline:none; background:transparent; font-family:inherit; font-size:13px; text-align:right;" oninput="refreshOrgReviewPool('${r.id}')">
+              <span style="flex:none; font-size:12px; color:var(--muted-foreground);">%</span>
+            </div>
+            <div class="form-hint-note">比例由审核运营核定，通过后锁定，不随后续比例调整变化。</div>
+            <div style="margin-top:14px; display:grid; grid-template-columns:repeat(2, 1fr); gap:10px;">
+              <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">合同金额</div><strong class="num">¥${formatNum(r.amount)}</strong></div>
+              <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">总佣金</div><strong class="num" id="org-review-pool">${rate != null ? '¥' + fmtC(pool) : '—'}</strong></div>
+            </div>
+          </div>` : `
+          <div style="font-size:13px; font-weight:600; margin-bottom:4px;">审核结果</div>
+          <div style="margin-bottom:20px;">
+            ${kv('核定比例', rate != null ? rate + '%' : '-')}
+            ${kv('总佣金（合同金额 × 比例）', `<span class="num">¥${fmtC(rate != null ? round2(r.amount * rate / 100) : 0)}</span>`)}
+            ${kv('已结算佣金 / 总佣金', `<span class="num">¥${fmtC(settled)} / ¥${fmtC(linkedOrder ? linkedOrder.o.points : 0)}</span>`)}
+            ${kv('待结算佣金', `<span class="num" style="color:#A16207;">¥${fmtC(remain)}</span>`)}
+            ${kv('审核人', r.reviewer || '-')}
+          </div>
+          <div style="font-size:13px; font-weight:600; margin-bottom:10px;">结算记录</div>
+          ${(() => {
+            const recs = linkedOrder ? SETTLEMENT_HISTORY.filter(s => s.org_order_id === linkedOrder.o.id) : [];
+            if (!recs.length) return `<div style="font-size:12.5px; color:var(--muted-foreground); border:1px dashed var(--border); border-radius:var(--radius-md); padding:16px; text-align:center;">该订单尚未结算。财务确认回款后，在「结算管理 · 待结算机构订单」中按订单填写结算金额。</div>`;
+            return `<div class="table-container"><table class="official-table">
+              <thead><tr><th>结算单号</th><th>结算金额</th><th>打款凭证</th><th>经办人</th><th>结算时间</th></tr></thead>
+              <tbody>${recs.map(s => `<tr>
+                  <td><span class="code-badge">${s.settle_id}</span></td>
+                  <td class="num" style="color:#15803D; font-weight:600;">¥${fmtC(s.points)}</td>
+                  <td><span class="code-badge">${esc(s.voucher)}</span></td>
+                  <td>${esc(s.operator)}</td>
+                  <td class="num" style="font-size:12px; color:var(--muted-foreground);">${s.settle_time}</td>
+                </tr>`).join('')}</tbody></table></div>`;
+          })()}`}
         </div>
         <div class="drawer-footer">
-          <button class="btn btn-outline" onclick="closeDrawer('drawer-org')">取消</button>
-          <button class="btn btn-primary" onclick="confirmOrgEntry()">确认录入</button>
+          <button class="btn btn-outline" onclick="closeDrawer('drawer-org-review')">${editable ? '取消' : '关闭'}</button>
+          ${editable ? `<button class="btn btn-destructive" onclick="openOrgRejectModal('${r.id}')">驳回</button>
+          <button class="btn btn-primary" onclick="confirmOrgApprove('${r.id}')">通过并生成订单</button>` : ''}
         </div>
       </div>
     </div>`;
-  refreshOrgPreview();
 }
-function onOrgPartnerChange() {
-  const p = PARTNERS.find(x => x.id === document.getElementById('org-partner').value);
-  if (p) document.getElementById('org-rate').value = p.renew_rate;
-  refreshOrgPreview();
+
+function refreshOrgReviewPool(reqId) {
+  const r = ORG_REQUESTS.find(x => x.id === reqId); if (!r) return;
+  const el = document.getElementById('org-review-pool'); if (!el) return;
+  const rate = parseFloat(document.getElementById('org-review-rate').value);
+  el.textContent = (isNaN(rate) || rate < 0 || rate > 100) ? '—' : '¥' + fmtC(round2(r.amount * rate / 100));
 }
-function readOrgForm() {
-  const g = id => document.getElementById(id).value;
-  return { pid: g('org-partner'), name: g('org-name').trim(), contract: g('org-contract').trim(), amount: parseFloat(g('org-amount')),
-    rate: parseFloat(g('org-rate')), start: g('org-start'), months: parseInt(g('org-months'), 10), paid: parseFloat(g('org-paid')) || 0, remark: g('org-remark').trim() };
+
+function openOrgRejectModal(reqId) {
+  const r = ORG_REQUESTS.find(x => x.id === reqId); if (!r) return;
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-mask show" id="modal-org-reject" onclick="if(event.target===this)closeModal('modal-org-reject')">
+      <div class="modal-dialog" style="max-width:460px;">
+        <div class="modal-dialog-header">
+          <h3>驳回机构订单</h3>
+          <button class="btn-ghost" style="padding:4px;" onclick="closeModal('modal-org-reject')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-dialog-body">
+          <div style="display:flex; gap:12px; padding:12px 14px; background:#FAFAFA; border:1px solid var(--border); border-radius:var(--radius-md); margin-bottom:16px;">
+            <div style="font-size:12px; color:var(--muted-foreground); flex:none; padding-top:1px;">申请单</div>
+            <div style="min-width:0;">
+              <div style="font-size:13px; font-weight:600;">${esc(r.org)}</div>
+              <div style="font-size:11.5px; color:var(--muted-foreground); margin-top:2px;">${r.id} · 合同 ${esc(r.contract_no)} · ¥${formatNum(r.amount)}</div>
+            </div>
+          </div>
+          <label class="form-group-label">驳回原因<span class="req">*</span></label>
+          <textarea class="form-textarea-full" id="org-reject-reason" placeholder="如：合同盖章页缺失，请补充后重新提交"></textarea>
+        </div>
+        <div class="modal-dialog-footer">
+          <button class="btn btn-outline" onclick="closeModal('modal-org-reject')">取消</button>
+          <button class="btn btn-destructive" onclick="confirmOrgReject('${r.id}')">确认驳回</button>
+        </div>
+      </div>
+    </div>`;
+  const ta = document.getElementById('org-reject-reason');
+  if (ta) ta.focus();
 }
-function computeOrgPreview(f) {
-  const res = { ok: false, msg: '', lines: [], total: 0, alloc: [] };
-  if (!(f.amount > 0) || isNaN(f.rate) || f.rate < 0 || f.rate > 100 || !f.start || !(f.months >= 1 && f.months <= 60)) { res.msg = '填写合同金额、分成比例、服务起始日和周期后，这里会预览分期明细'; return res; }
-  const total = round2(f.amount * f.rate / 100);
-  const n = f.months;
-  const totalC = Math.round(total * 100), baseC = Math.round(totalC / n);
-  res.total = total;
-  let left = f.paid, unlockedSum = 0;
-  for (let k = 1; k <= n; k++) {
-    const amt = (k < n ? baseC : totalC - baseC * (n - 1)) / 100;
-    const unlock = addMonthsDate(f.start, k, GLOBAL_CONFIG.unfreeze_days);
-    const done = unlock <= REF_DATE;
-    if (done) unlockedSum += amt;
-    let a = 0;
-    if (left > 0) { a = Math.min(left, amt); left -= a; }
-    res.lines.push({ k, n, amt, unlock, done, alloc: a, period: addMonthsDate(f.start, k - 1, 0) + ' ~ ' + addMonthsDate(f.start, k, -1) });
-  }
-  res.unlockedSum = unlockedSum;
-  if (f.paid > total) res.msg = `已发放金额不能超过应分佣金总额 ¥${fmtC(total)}`;
-  else if (f.paid > unlockedSum) res.msg = `已发放金额不能超过截至今日已解冻金额 ¥${fmtC(unlockedSum)}`;
-  else res.ok = true;
-  return res;
+
+function previewOrgDoc(reqId, idx) {
+  const r = ORG_REQUESTS.find(x => x.id === reqId); if (!r) return;
+  const name = '合同扫描件 ' + (idx + 1) + (orgDocCount(r) ? ' / ' + orgDocCount(r) : '');
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-mask show" id="modal-org-doc" onclick="if(event.target===this)closeModal('modal-org-doc')">
+      <div class="modal-dialog" style="max-width:560px;">
+        <div class="modal-dialog-header">
+          <h3>${name}</h3>
+          <button class="btn-ghost" style="padding:4px;" onclick="closeModal('modal-org-doc')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-dialog-body" style="background:#F4F4F5;">
+          <div class="org-paper">
+            <div class="org-paper-title">技术推广服务合同</div>
+            <div class="org-paper-sub">合同编号 ${esc(r.contract_no)}</div>
+            <div class="org-paper-line" style="width:88%"></div>
+            <div class="org-paper-line" style="width:76%"></div>
+            <div class="org-paper-line" style="width:92%"></div>
+            <div class="org-paper-line" style="width:64%"></div>
+            <div class="org-paper-line" style="width:84%"></div>
+            <div class="org-paper-line" style="width:72%"></div>
+            <div class="org-paper-line" style="width:90%"></div>
+            <div class="org-paper-line" style="width:56%"></div>
+            <div style="font-size:11.5px; color:var(--muted-foreground); margin-top:18px;">甲方：${esc(r.org)}</div>
+            <div style="font-size:11.5px; color:var(--muted-foreground); margin-top:4px;">乙方：立理（杭州）智能科技有限公司</div>
+            <div class="org-paper-stamp">合同专用章</div>
+          </div>
+        </div>
+        <div class="modal-dialog-footer">
+          <button class="btn btn-outline" onclick="closeModal('modal-org-doc')">关闭</button>
+        </div>
+      </div>
+    </div>`;
 }
-function refreshOrgPreview() {
-  const f = readOrgForm();
-  const el = document.getElementById('org-preview'); if (!el) return;
-  const end = (f.start && f.months >= 1) ? addMonthsDate(f.start, f.months, -1) : '';
-  const hint = document.getElementById('org-end-hint'); if (hint) hint.textContent = end ? `服务期间：${f.start} ~ ${end}` : '';
-  const r = computeOrgPreview(f);
-  if (!r.lines.length) { el.innerHTML = `<div style="font-size:12.5px; color:var(--muted-foreground); border:1px dashed var(--border); border-radius:8px; padding:14px; text-align:center;">${r.msg}</div>`; return; }
-  const unlockedUnsettled = r.unlockedSum - Math.min(f.paid, r.unlockedSum);
-  const frozen = r.total - r.unlockedSum;
-  el.innerHTML = `
-    <div style="font-size:13px; font-weight:600; margin:4px 0 8px;">分期预览</div>
-    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:10px;">
-      <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">应分佣金总额</div><strong class="num">¥${fmtC(r.total)}</strong></div>
-      <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">已发放</div><strong class="num">¥${fmtC(Math.min(f.paid, r.total))}</strong></div>
-      <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">可结算（已解冻未结算）</div><strong class="num" style="color:#15803D;">¥${fmtC(Math.max(unlockedUnsettled, 0))}</strong></div>
-      <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">冻结中</div><strong class="num" style="color:#A16207;">¥${fmtC(frozen)}</strong></div>
-    </div>
-    ${r.msg && !r.ok ? `<div style="background:#FEF2F2; border:1px solid #FECACA; color:#B91C1C; border-radius:8px; padding:8px 12px; font-size:12.5px; margin-bottom:10px;">${r.msg}</div>` : ''}
-    <div class="table-container" style="max-height:260px; overflow-y:auto;"><table class="official-table">
-      <thead><tr><th>期次</th><th>服务期间</th><th>解冻日</th><th style="text-align:right;">金额</th><th>状态</th></tr></thead>
-      <tbody>${r.lines.map(l => `<tr><td>第 ${l.k}/${l.n} 期</td><td style="font-size:12px; color:var(--muted-foreground);">${l.period}</td><td>${l.unlock}</td><td class="num" style="text-align:right;">¥${fmtC(l.amt)}</td><td>${
-        l.alloc >= l.amt ? '<span class="badge badge-neutral">已发放</span>' : (l.alloc > 0 ? `<span class="badge badge-neutral">已发放 ¥${fmtC(l.alloc)}，剩余 ¥${fmtC(l.amt - l.alloc)}</span>` : (l.done ? '<span class="badge badge-success">可结算</span>' : '<span class="badge badge-warning">冻结中</span>'))}</td></tr>`).join('')}</tbody>
-    </table></div>`;
-}
-function confirmOrgEntry() {
-  const f = readOrgForm();
-  const p = PARTNERS.find(x => x.id === f.pid);
-  if (!p) { toast('请选择归属合伙人'); return; }
-  if (!f.name) { toast('请填写机构名称'); return; }
-  if (!f.contract) { toast('请填写合同编号'); return; }
-  if (allOrgOrders().some(x => x.o.contract_no === f.contract)) { toast('该合同编号已录入，请勿重复'); return; }
-  const r = computeOrgPreview(f);
-  if (!r.lines.length) { toast('请完整填写合同金额、比例、起始日和周期'); return; }
-  if (!r.ok) { toast(r.msg); return; }
-  const seq = allOrgOrders().length + 1;
-  const id = 'ORG-' + f.start.replace(/-/g, '') + '-' + String(seq).padStart(3, '0');
+
+function confirmOrgApprove(reqId) {
+  const r = ORG_REQUESTS.find(x => x.id === reqId); if (!r) return;
+  const p = PARTNERS.find(x => x.id === r.partner_id);
+  if (!p) { toast('归属合伙人不存在，无法生成订单'); return; }
+  const rate = parseFloat(document.getElementById('org-review-rate').value);
+  if (isNaN(rate) || rate < 0 || rate > 100) { toast('请填写 0~100 之间的核定分成比例'); return; }
   const now = nowTime();
-  p.orders.unshift({ id, customer_phone: '', org_name: f.name, contract_no: f.contract, kind: 'ORG', product: '机构版年度合同（线下签约）',
-    pay_amount: f.amount, rate: f.rate, points: r.total, status: 'ORG', unfreeze_at: '按月分期', created_at: now, start: f.start, months: f.months,
-    paid_out: f.paid, remark: f.remark, is_upgrade: false, is_cool: false });
-  p.flow.unshift({ time: now, order_id: id, type: '机构订单录入', points: '+¥' + fmtC(r.total), status: `合同 ${f.contract}，${f.months} 期分期解冻` });
-  p.logs.unshift({ time: now, operator: '张博文', action: '录入机构订单', before: '-', after: `${f.name} · ¥${formatNum(f.amount)} × ${f.rate}%`, reason: `应分佣金 ¥${fmtC(r.total)}，周期 ${f.months} 个月，已发放 ¥${fmtC(f.paid)}` });
-  if (f.paid > 0) {
-    const sid = 'IMPORT-' + REF_DATE.slice(0, 7).replace('-', '') + '-' + Math.floor(100 + Math.random() * 899);
-    const lines = [];
-    r.lines.forEach(l => { if (l.alloc > 0) { const key = id + '#' + l.k; LINE_SETTLED[key] = l.alloc; LINE_SETTLE_ID[key] = sid; lines.push({ key, order_id: id, k: l.k, n: l.n, kind: 'ORG', source: f.name, amt: l.alloc, unlock: l.unlock }); } });
-    SETTLEMENT_HISTORY.unshift({ settle_id: sid, partner_id: p.id, partner_name: p.name, partner_phone: p.phone, channel_type: p.channel_type, points: f.paid,
-      voucher: '录入时登记', operator: '张博文', settle_time: now, remark: `机构订单录入时登记的已发放金额（合同 ${f.contract}）`, lines, imported: true });
-    p.settlements.unshift({ batch_no: sid, points: f.paid, voucher: '录入时登记', operator: '张博文', time: now, remark: `机构订单录入时登记的已发放金额（合同 ${f.contract}）` });
-  }
+  const orderId = 'ORG-' + r.start.replace(/-/g, '') + '-' + String(allOrgOrders().length + 1).padStart(3, '0');
+  const pool = round2(r.amount * rate / 100);
+  r.status = 'APPROVED';
+  r.rate = rate;
+  r.reviewed_at = now;
+  r.reviewer = '张博文';
+  r.reject_reason = '';
+  r.order_id = orderId;
+  r.settled_amount = 0;
+  p.orders.unshift({ id: orderId, customer_phone: '', org_name: r.org, contract_no: r.contract_no, kind: 'ORG',
+    product: '机构版年度合同（线下签约）', pay_amount: r.amount, rate, points: pool,
+    status: 'ORG', unfreeze_at: '按结算释放', created_at: now, start: r.start, months: r.months,
+    paid_out: 0, settled_amount: 0, received_amount: 0, remark: r.remark, is_upgrade: false, is_cool: false });
+  p.flow.unshift({ time: now, order_id: orderId, type: '机构订单审核通过', points: '+¥' + fmtC(pool), status: `合同 ${r.contract_no}，待结算佣金 ¥${fmtC(pool)}` });
+  p.logs.unshift({ time: now, operator: '张博文', action: '审核机构订单', before: r.id, after: `${r.org} · ¥${formatNum(r.amount)} × ${rate}%`, reason: `核定比例 ${rate}%，总佣金 ¥${fmtC(pool)}，按订单维度结算` });
   recalcAll();
-  closeDrawer('drawer-org');
-  toast(`机构订单已录入：应分佣金 ¥${fmtC(r.total)}，共 ${f.months} 期`);
-  orderSubTab = 'org';
-  if (currentRoute === 'orders') renderOrdersView(document.getElementById('main-view-container'));
-  else navigate('orders');
+  closeDrawer('drawer-org-review');
+  toast(`审核通过：${r.org}，核定 ${rate}%，总佣金 ¥${fmtC(pool)}`);
+  renderOrdersView(document.getElementById('main-view-container'));
+}
+
+function confirmOrgReject(reqId) {
+  const r = ORG_REQUESTS.find(x => x.id === reqId); if (!r) return;
+  const ta = document.getElementById('org-reject-reason');
+  const reason = ta ? ta.value.trim() : '';
+  if (!reason) { toast('请填写驳回原因'); return; }
+  const now = nowTime();
+  r.status = 'REJECTED';
+  r.reviewed_at = now;
+  r.reviewer = '张博文';
+  r.reject_reason = reason;
+  const p = PARTNERS.find(x => x.id === r.partner_id);
+  if (p) p.logs.unshift({ time: now, operator: '张博文', action: '驳回机构订单', before: r.id, after: r.org, reason });
+  closeModal('modal-org-reject');
+  closeDrawer('drawer-org-review');
+  toast(`已驳回：${r.org}`);
+  renderOrdersView(document.getElementById('main-view-container'));
 }
 
 // ==========================================
@@ -1826,7 +2081,7 @@ function initRouter() {
 }
 
 function parseRoute() {
-  const hash = location.hash.replace(/^#/, '') || 'applications';
+  const hash = location.hash.replace(/^#/, '') || 'dashboard';
   const parts = hash.split('/');
   currentRoute = parts[0];
   if (parts[0] === 'partner' && parts[1]) {
@@ -1890,7 +2145,8 @@ function pagerBar(key, total) {
 
 function renderActiveView() {
   const container = document.getElementById('main-view-container');
-  if (currentRoute === 'applications') renderApplicationsView(container);
+  if (currentRoute === 'dashboard') renderDashboardView(container);
+  else if (currentRoute === 'applications') renderApplicationsView(container);
   else if (currentRoute === 'list') renderPartnerListView(container);
   else if (currentRoute === 'partner') {
     const p = PARTNERS.find(item => item.id === routeParams.partnerId) || PARTNERS[0];
@@ -2449,7 +2705,6 @@ function renderDetailTabTable(p, tab) {
               <td class="num" style="color:var(--muted-foreground); font-size:11.5px;">${o.created_at || o.start}</td>
               <td class="col-sticky" style="text-align:right; white-space:nowrap;">
                 ${lines.length ? `<button class="btn btn-outline btn-sm" onclick="showOrderLines('${o.id}')">分期明细</button>` : ''}
-                ${o.points > 0 && refunded < o.pay_amount ? `<button class="btn btn-outline btn-sm" onclick="openRefundDrawer('${o.id}')">退款登记</button>` : ''}
               </td>
             </tr>`;
           }).join('')}
@@ -2500,9 +2755,51 @@ function renderDetailTabTable(p, tab) {
 // ==========================================
 let settleSubTab = 'pending';
 let settleKw = '';
+let settleChannel = 'ALL';
+let settleOrgKw = '';
+let settleOrgChannel = 'ALL';
+
+function settleRefocus(id) {
+  renderSettlementsView(document.getElementById('main-view-container'));
+  const el = document.getElementById(id);
+  if (el) { el.focus(); try { el.setSelectionRange(el.value.length, el.value.length); } catch (e) {} }
+}
+
+function settleFilterBar(kind) {
+  const isOrg = kind === 'org';
+  const kw = isOrg ? settleOrgKw : settleKw;
+  const ch = isOrg ? settleOrgChannel : settleChannel;
+  return `<div class="filter-card" style="margin-bottom:16px;">
+    <div class="filter-inputs-grid">
+      <div class="filter-field" style="flex:1; min-width:240px;">
+        <label class="field-label">搜索</label>
+        <input class="input-control" id="${isOrg ? 'settle-org-kw' : 'settle-kw'}" value="${esc(kw)}"
+          placeholder="${isOrg ? '机构名称 / 合伙人姓名' : '合伙人姓名 / 手机号'}"
+          oninput="${isOrg ? `settleOrgKw=this.value; settleRefocus('settle-org-kw')` : `settleKw=this.value; settleRefocus('settle-kw')`}">
+      </div>
+      <div class="filter-field" style="min-width:150px;">
+        <label class="field-label">渠道</label>
+        <select class="input-control" onchange="${isOrg ? `settleOrgChannel=this.value; renderSettlementsView(document.getElementById('main-view-container'))` : `settleChannel=this.value; renderSettlementsView(document.getElementById('main-view-container'))`}">
+          <option value="ALL"${ch === 'ALL' ? ' selected' : ''}>全部渠道</option>
+          <option value="INTERNAL"${ch === 'INTERNAL' ? ' selected' : ''}>内部</option>
+          <option value="EXTERNAL"${ch === 'EXTERNAL' ? ' selected' : ''}>外部</option>
+        </select>
+      </div>
+      <button class="btn btn-outline" onclick="${isOrg ? `settleOrgKw=''; settleOrgChannel='ALL'; renderSettlementsView(document.getElementById('main-view-container'))` : `settleKw=''; settleChannel='ALL'; renderSettlementsView(document.getElementById('main-view-container'))`}">重置</button>
+    </div>
+  </div>`;
+}
 
 function renderSettlementsView(container) {
-  const pendingPartners = PARTNERS.filter(p => p.points.withdrawable > 0);
+  const ukw = settleKw.trim().toLowerCase();
+  const pendingPartners = PARTNERS.filter(p => p.points.withdrawable > 0)
+    .filter(p => settleChannel === 'ALL' || p.channel_type === settleChannel)
+    .filter(p => !ukw || p.name.toLowerCase().includes(ukw) || String(p.phone).includes(ukw));
+  const okw = settleOrgKw.trim();
+  const orgPending = allOrgOrders().filter(({ o }) => orgRemainOf(o) > 0)
+    .filter(({ p }) => settleOrgChannel === 'ALL' || p.channel_type === settleOrgChannel)
+    .filter(({ p, o }) => !okw || String(o.org_name || '').includes(okw) || p.name.includes(okw))
+    .sort((a, b) => orgRemainOf(b.o) - orgRemainOf(a.o));
   const tabBtn = (key, label) => `<button class="seg-tab-btn ${settleSubTab === key ? 'active' : ''}" onclick="settleSubTab='${key}'; renderSettlementsView(document.getElementById('main-view-container'))">${label}</button>`;
   const headerBtn = '';
 
@@ -2510,6 +2807,7 @@ function renderSettlementsView(container) {
   if (settleSubTab === 'pending') {
     const pagedPending = pagedList('settle-pending', pendingPartners);
     body = `
+      ${settleFilterBar('pending')}
       <div class="table-container">
         <table class="official-table">
           <thead><tr>
@@ -2536,26 +2834,55 @@ function renderSettlementsView(container) {
         </table>
         ${pagerBar('settle-pending', pendingPartners.length)}
       </div>`;
+  } else if (settleSubTab === 'org') {
+    const pagedOrg = pagedList('settle-org', orgPending);
+    body = `
+      ${settleFilterBar('org')}
+      <div class="table-container">
+        <table class="official-table">
+          <thead><tr><th>订单编号</th><th>机构名称</th><th>归属合伙人</th><th>渠道</th><th>合同金额</th><th>核定比例</th><th>总佣金</th><th>已结算</th><th>待结算</th><th>结算进度</th><th class="col-sticky" style="text-align:right;">操作</th></tr></thead>
+          <tbody>${orgPending.length === 0 ? '<tr><td colspan="11" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无待结算的机构订单</td></tr>' : pagedOrg.map(({ p, o }) => {
+            const pool = round2(o.points || 0), settled = orgSettledOf(o), remain = orgRemainOf(o);
+            const pct = pool > 0 ? Math.min(100, Math.round(settled / pool * 100)) : 0;
+            return `<tr>
+              <td><span class="code-badge">${o.id}</span></td>
+              <td><strong>${esc(o.org_name || '-')}</strong></td>
+              <td><strong>${p.name}</strong></td>
+              <td>${p.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部</span>' : '<span class="badge badge-neutral">外部</span>'}</td>
+              <td class="num">¥${formatNum(o.pay_amount)}</td>
+              <td class="num">${o.rate}%</td>
+              <td><strong class="num" style="color:#15803D;">¥${fmtC(pool)}</strong></td>
+              <td class="num">¥${fmtC(settled)}</td>
+              <td><strong class="num" style="color:#A16207;">¥${fmtC(remain)}</strong></td>
+              <td style="min-width:120px;"><div class="org-progress"><span style="width:${pct}%"></span></div><div style="font-size:11px; color:var(--muted-foreground); margin-top:4px;">${pct}%</div></td>
+              <td class="col-sticky" style="text-align:right; white-space:nowrap;">
+                <button class="btn btn-primary btn-sm" onclick="openOrgSettleDrawer('${o.id}')">结算</button>
+                <button class="btn btn-outline btn-sm" onclick="openOrgOrderDetail('${o.id}')">订单详情</button>
+              </td></tr>`;
+          }).join('')}</tbody>
+        </table>
+        ${pagerBar('settle-org', orgPending.length)}
+      </div>`;
   } else {
     const pagedHistory = pagedList('settle-history', SETTLEMENT_HISTORY);
     body = `
       <div class="table-container">
         <table class="official-table">
-          <thead><tr><th>结算单号</th><th>合伙人姓名</th><th>手机号</th><th>渠道</th><th>结算金额</th><th>财务打款凭证号</th><th>经办人</th><th>核销时间</th><th>打款备注</th><th class="col-sticky" style="text-align:right;">操作</th></tr></thead>
+          <thead><tr><th>结算单号</th><th>结算来源</th><th>合伙人姓名</th><th>手机号</th><th>渠道</th><th>结算金额</th><th>财务打款凭证号</th><th>经办人</th><th>核销时间</th><th>打款备注</th><th class="col-sticky" style="text-align:right;">操作</th></tr></thead>
           <tbody>${pagedHistory.map(s => {
             return `<tr>
               <td><span class="code-badge">${s.settle_id}</span>${s.imported ? '<div><span class="badge badge-neutral" style="font-size:10.5px;">录入时已发放</span></div>' : ''}</td>
+              <td>${s.source === 'ORG' ? `<span class="badge badge-blue">机构订单</span><div style="font-size:11px; color:var(--muted-foreground); margin-top:3px;">${s.org_order_id || ''}</div>` : '<span class="badge badge-neutral">用户订单</span>'}</td>
               <td><strong>${s.partner_name}</strong></td>
               <td><span class="num">${s.partner_phone}</span></td>
               <td>${s.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部</span>' : '<span class="badge badge-neutral">外部</span>'}</td>
               <td><strong class="num" style="color:#15803D;">-¥${fmtC(s.points)}</strong></td>
-              <td><span class="code-badge">${s.voucher}</span></td>
+              <td>${s.voucher ? `<span class="code-badge">${s.voucher}</span>` : '<span style="color:var(--muted-foreground);">—</span>'}</td>
               <td>${s.operator}</td>
               <td style="color:var(--muted-foreground); font-size:12px;">${s.settle_time}</td>
               <td style="color:var(--muted-foreground); font-size:12px; max-width:200px;" title="${esc(s.remark)}">${esc(s.remark)}</td>
               <td class="col-sticky" style="text-align:right; white-space:nowrap;">
                 <button class="btn btn-outline btn-sm" onclick="openSettleDetail('${s.settle_id}')">查看明细</button>
-                <button class="btn btn-outline btn-sm" onclick="navigate('partner/${s.partner_id}/settlements')">合伙人详情</button>
               </td></tr>`; }).join('')}
           </tbody>
         </table>
@@ -2571,10 +2898,330 @@ function renderSettlementsView(container) {
       <div>${headerBtn}</div>
     </div>
     <div class="segmented-tabs">
-      ${tabBtn('pending', '待结算')}
+      ${tabBtn('pending', '待结算用户订单')}
+      ${tabBtn('org', '待结算机构订单')}
       ${tabBtn('history', '结算历史')}
     </div>
     ${body}
+  `;
+}
+
+function findOrgOrder(orderId) {
+  for (const p of PARTNERS) {
+    const o = p.orders.find(x => x.id === orderId && orderKind(x) === 'ORG');
+    if (o) return { p, o };
+  }
+  return null;
+}
+
+function openOrgOrderDetail(orderId) {
+  const req = ORG_REQUESTS.find(x => x.order_id === orderId);
+  if (req) { openOrgReviewDrawer(req.id); return; }
+  toast('该机构订单为历史数据，请在合伙人详情中查看');
+}
+
+function openOrgSettleDrawer(orderId) {
+  const found = findOrgOrder(orderId); if (!found) return;
+  const { p, o } = found;
+  const pool = round2(o.points || 0), settled = orgSettledOf(o), remainPool = orgRemainOf(o);
+  const contract = round2(o.pay_amount || 0), received = orgReceivedOf(o);
+  const remainContract = Math.max(0, round2(contract - received));
+  const today = (typeof REF_DATE === 'string' ? REF_DATE : '2026-11-06');
+  document.getElementById('drawer-root').innerHTML = `
+    <div class="drawer-mask show" id="drawer-org-settle" onclick="if(event.target===this)closeDrawer('drawer-org-settle')">
+      <div class="drawer-panel" style="width:760px;">
+        <div class="drawer-header">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <h3 style="font-size:15px; font-weight:600;">结算核对单 · ${esc(o.org_name)}</h3>
+            <span class="code-badge">${o.id}</span>
+            ${p.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部渠道</span>' : '<span class="badge badge-neutral">外部渠道</span>'}
+          </div>
+          <button class="btn-ghost" style="padding:4px;" onclick="closeDrawer('drawer-org-settle')">✕</button>
+        </div>
+        <div class="drawer-body">
+          <div style="font-size:12.5px; color:var(--muted-foreground); margin-bottom:12px;">${p.name} · 核定比例 ${o.rate}%</div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:10px;">
+            <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">合同金额</div><strong class="num">¥${fmtC(contract)}</strong></div>
+            <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">累计已回款</div><strong class="num">¥${fmtC(received)}</strong></div>
+            <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">剩余未回款</div><strong class="num">¥${fmtC(remainContract)}</strong></div>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px;">
+            <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">总佣金</div><strong class="num" style="color:#15803D;">¥${fmtC(pool)}</strong></div>
+            <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">已结算佣金</div><strong class="num">¥${fmtC(settled)}</strong></div>
+            <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">待结算佣金</div><strong class="num" style="color:#A16207;">¥${fmtC(remainPool)}</strong></div>
+          </div>
+          <div class="form-group">
+            <label class="form-group-label">本次到账回款金额<span class="req">*</span></label>
+            <input class="input-control num" id="org-settle-received" type="number" min="0" step="0.01" max="${remainContract}" value="" placeholder="请输入本次实际到账金额"
+              data-rate="${o.rate}" data-remain="${remainPool}" oninput="calcOrgSettleFee()">
+            <div style="font-size:11.5px; color:var(--muted-foreground); margin-top:4px;">按银行实际到账填写，最高 ¥${fmtC(remainContract)}（剩余未回款）</div>
+          </div>
+          <div class="form-group">
+            <label class="form-group-label">本次应结算佣金</label>
+            <div id="org-settle-fee" class="num" style="height:34px; display:flex; align-items:center; padding:0 10px; background:#F4F4F5; border:1px solid var(--border); border-radius:var(--radius-md); font-weight:600; color:#15803D;">¥0.00</div>
+          </div>
+          <div id="org-settle-fee-note" style="font-size:11.5px; color:var(--muted-foreground); margin:-4px 0 12px;"></div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-group">
+              <label class="form-group-label">打款凭证号</label>
+              <input class="input-control" id="org-settle-voucher" placeholder="选填，如 BCM202611060012">
+            </div>
+            <div class="form-group">
+              <label class="form-group-label">结算经办人</label>
+              <input class="input-control" id="org-settle-operator" value="张博文">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-group-label">打款备注</label>
+            <textarea class="form-textarea-full" id="org-settle-remark" placeholder="如：机构首笔款 24000 到账，按 15% 结算"></textarea>
+          </div>
+        </div>
+        <div class="drawer-footer" style="justify-content:space-between;">
+          <div style="font-size:13px;">本次结算 <strong id="org-settle-final" class="num" style="font-size:20px; color:#15803D;">¥0.00</strong></div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-outline" onclick="closeDrawer('drawer-org-settle')">取消</button>
+            <button class="btn btn-primary" onclick="confirmOrgSettle('${o.id}')">确认结算并同步</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  calcOrgSettleFee();
+}
+
+function calcOrgSettleFee() {
+  const el = document.getElementById('org-settle-received'); if (!el) return;
+  const amt = Math.max(0, parseFloat(el.value) || 0);
+  const rate = parseFloat(el.dataset.rate) || 0;
+  const remainPool = parseFloat(el.dataset.remain) || 0;
+  const raw = round2(amt * rate / 100);
+  const fee = Math.min(raw, remainPool);
+  document.getElementById('org-settle-fee').textContent = '¥' + fmtC(fee);
+  document.getElementById('org-settle-final').textContent = '¥' + fmtC(fee);
+  document.getElementById('org-settle-fee-note').textContent = amt <= 0
+    ? ''
+    : (raw > remainPool
+      ? `按比例应为 ¥${fmtC(raw)}，受总佣金上限限制，本次按 ¥${fmtC(remainPool)} 结算，订单结清。`
+      : `本次释放佣金 = ¥${fmtC(amt)} × ${rate}% = ¥${fmtC(raw)}`);
+}
+
+function confirmOrgSettle(orderId) {
+  const found = findOrgOrder(orderId); if (!found) return;
+  const { p, o } = found;
+  const received = round2(parseFloat(document.getElementById('org-settle-received').value));
+  const remainContract = Math.max(0, round2(round2(o.pay_amount || 0) - orgReceivedOf(o)));
+  const remainPool = orgRemainOf(o);
+  const fee = Math.min(round2(received * (o.rate || 0) / 100), remainPool);
+  const date = (typeof REF_DATE === 'string' ? REF_DATE : '2026-11-06');
+  const voucher = document.getElementById('org-settle-voucher').value.trim();
+  const operator = document.getElementById('org-settle-operator').value.trim() || '张博文';
+  const remark = document.getElementById('org-settle-remark').value.trim();
+  if (!(received > 0)) { toast('请输入本次到账回款金额'); return; }
+  if (received > remainContract + 0.001) { toast('回款金额不能超过剩余未回款 ¥' + fmtC(remainContract)); return; }
+  if (!(fee > 0)) { toast('本次应结算佣金为 0，请核对回款金额'); return; }
+  ORG_SETTLE_PENDING = {
+    orderId: o.id, partnerId: p.id, org: o.org_name, rate: o.rate, date, received, fee,
+    remainAfter: round2(remainPool - fee), voucher, operator, remark
+  };
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-mask show" id="modal-org-settle-confirm">
+      <div class="modal-dialog" style="width:460px;">
+        <div class="modal-dialog-header"><h3>确认结算 · ${esc(o.org_name)}</h3><button class="btn-ghost" style="padding:4px;" onclick="closeModal('modal-org-settle-confirm')">✕</button></div>
+        <div class="modal-dialog-body">
+          <div style="display:grid; gap:10px; font-size:13px;">
+            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted-foreground);">机构订单</span><span class="code-badge">${o.id}</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted-foreground);">本次到账回款</span><span class="num">¥${fmtC(received)}</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted-foreground);">核定比例</span><span class="num">${o.rate}%</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted-foreground);">结算后待结算</span><span class="num">¥${fmtC(round2(remainPool - fee))}</span></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:10px;"><span style="color:var(--muted-foreground);">本次结算佣金</span><strong class="num" style="font-size:18px; color:#15803D;">¥${fmtC(fee)}</strong></div>
+          </div>
+          <div style="margin-top:12px; font-size:12px; color:var(--muted-foreground);">确认后将从该订单的待结算佣金中扣减，并实时同步合伙人端，可在结算历史中查看。</div>
+        </div>
+        <div class="modal-dialog-footer"><button class="btn btn-outline" onclick="closeModal('modal-org-settle-confirm')">取消</button><button class="btn btn-primary" onclick="executeOrgSettle()">确认结算并同步</button></div>
+      </div>
+    </div>`;
+}
+
+function executeOrgSettle() {
+  const d = ORG_SETTLE_PENDING; if (!d) return;
+  ORG_SETTLE_PENDING = null;
+  closeModal('modal-org-settle-confirm');
+  const found = findOrgOrder(d.orderId); if (!found) return;
+  const { p, o } = found;
+  const { date, received, fee, voucher, operator, remark } = d;
+  const ym = date.slice(0, 7).replace('-', '');
+  let seq = 1, sid = '';
+  do { sid = 'SETTLE-' + ym + '-' + String(seq).padStart(3, '0'); seq++; } while (SETTLEMENT_HISTORY.some(s => s.settle_id === sid));
+  SETTLEMENT_HISTORY.unshift({
+    settle_id: sid, partner_id: p.id, partner_name: p.name, partner_phone: p.phone,
+    channel_type: p.channel_type, points: fee, received, rate: o.rate, org_name: o.org_name, voucher, operator, settle_time: date + ' 10:00',
+    remark: remark || (o.org_name + ' 机构订单结算'), source: 'ORG', org_order_id: o.id, lines: []
+  });
+  o.received_amount = round2(orgReceivedOf(o) + received);
+  o.settled_amount = round2(orgSettledOf(o) + fee);
+  if (p.logs) p.logs.unshift({ time: date + ' 10:00', operator, action: '机构订单结算', before: o.id, after: `回款 ¥${fmtC(received)} · 结算 ¥${fmtC(fee)}`, reason: remark || '-' });
+  recalcAll();
+  closeDrawer('drawer-org-settle');
+  toast(`已结算 ¥${fmtC(fee)}：${o.org_name}`);
+  renderSettlementsView(document.getElementById('main-view-container'));
+}
+
+// ==========================================
+// 4.4 页面：数据看板 (DASHBOARD)
+// ==========================================
+const DASH_UNITS = ['赤道银河', '中部知光', '启点视界'];
+
+function dashMetrics(list) {
+  let userGmv = 0, orgGmv = 0, userFee = 0, orgFee = 0, cust = 0, paying = 0, orgDeals = 0;
+  list.forEach(p => {
+    cust += p.customers_count || 0;
+    (p.orders || []).forEach(o => {
+      const refunded = (o.refunds || []).reduce((a, r) => a + (r.amount || 0), 0);
+      const net = Math.max(0, round2((o.pay_amount || 0) - refunded));
+      const fee = Math.max(0, round2(net * (o.rate || 0) / 100));
+      if (orderKind(o) === 'ORG') { orgGmv += net; orgFee += fee; if (net > 0) orgDeals++; }
+      else { userGmv += net; userFee += fee; if (net > 0) paying++; }
+    });
+  });
+  userGmv = round2(userGmv); orgGmv = round2(orgGmv);
+  userFee = round2(userFee); orgFee = round2(orgFee);
+  return {
+    gmv: round2(userGmv + orgGmv), userGmv, orgGmv,
+    fee: round2(userFee + orgFee), userFee, orgFee,
+    cust, paying, orgDeals,
+    userAov: paying > 0 ? round2(userGmv / paying) : 0,
+    orgAov: orgDeals > 0 ? round2(orgGmv / orgDeals) : 0
+  };
+}
+
+function renderDashboardView(container) {
+  const m = dashMetrics(PARTNERS);
+  const userShare = m.gmv > 0 ? Math.round(m.userGmv / m.gmv * 100) : 0;
+  const orgShare = 100 - userShare;
+  const conv = m.cust > 0 ? Math.round(m.paying / m.cust * 1000) / 10 : 0;
+  const ic = p => `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+  const I = {
+    trend: '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
+    coins: '<circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/>',
+    users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    user: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+    building: '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
+    receipt: '<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/>'
+  };
+  const mini = (label, value) => `<div style="background:#FAFAFA; border:1px solid var(--border); border-radius:8px; padding:8px 10px;">
+      <div style="font-size:11px; color:var(--muted-foreground);">${label}</div>
+      <div class="num" style="font-size:13px; font-weight:600; margin-top:2px;">${value}</div>
+    </div>`;
+  const tile = (label, value, sub, icon, big) => `<div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <span style="font-size:12.5px; color:var(--muted-foreground);">${label}</span>
+        <span style="width:26px; height:26px; border-radius:8px; background:var(--muted); display:flex; align-items:center; justify-content:center; color:#3F3F46;">${icon}</span>
+      </div>
+      <div class="num" style="margin-top:8px; font-size:${big ? 26 : 22}px; font-weight:700; letter-spacing:-0.02em;">${value}</div>
+      <div style="margin-top:4px; font-size:12px; color:var(--muted-foreground);">${sub}</div>
+    </div>`;
+
+  const dashUnits = DASH_UNITS.concat(PARTNERS.some(p => DASH_UNITS.indexOf(p.unit) < 0) ? ['未分配'] : []);
+  const unitCards = dashUnits.map(u => {
+    const ps = PARTNERS.filter(p => p.unit === u);
+    const d = dashMetrics(ps);
+    return `<div class="content-card" style="margin-bottom:0;">
+      <div class="card-header-bar" style="padding:13px 18px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="width:26px; height:26px; border-radius:8px; background:var(--muted); display:flex; align-items:center; justify-content:center; color:#3F3F46;">${ic(I.building)}</span>
+          <span class="card-header-title">${u}</span>
+        </div>
+        <span class="badge badge-neutral">${ps.length} 位合伙人</span>
+      </div>
+      <div style="padding:14px 18px 16px;">
+        <div style="font-size:12px; color:var(--muted-foreground);">总成交 GMV</div>
+        <div class="num" style="font-size:22px; font-weight:700; letter-spacing:-0.02em; margin-top:2px;">¥${formatNum(d.gmv)}</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;">
+          ${mini('用户成交', '¥' + formatNum(d.userGmv))}
+          ${mini('机构成交', '¥' + formatNum(d.orgGmv))}
+          ${mini('客户数 / 签单', d.cust + ' / ' + d.paying)}
+          ${mini('机构签单数', d.orgDeals + ' 单')}
+          ${mini('用户客单价', '¥' + formatNum(d.userAov))}
+          ${mini('机构客单价', '¥' + formatNum(d.orgAov))}
+        </div>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <span style="font-size:12px; color:var(--muted-foreground);">产生佣金总额</span>
+            <span class="num" style="font-size:15px; font-weight:700;">¥${formatNum(d.fee)}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:11.5px; color:var(--muted-foreground); margin-top:3px;">
+            <span>用户订单 ¥${formatNum(d.userFee)}</span><span>机构订单 ¥${formatNum(d.orgFee)}</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div style="margin-bottom:20px;">
+      <h1 style="font-size:22px; font-weight:700; letter-spacing:-0.02em;">数据看板</h1>
+      <div style="font-size:12.5px; color:var(--muted-foreground); margin-top:4px;">截止 2026-11-06 · 成交与佣金口径均按订单实付金额扣除退款</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:16px; margin-bottom:16px;">
+      <div class="content-card" style="margin-bottom:0; padding:22px 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <div style="font-size:13px; color:var(--muted-foreground);">总成交 GMV</div>
+            <div class="num" style="font-size:40px; font-weight:800; letter-spacing:-0.03em; margin-top:6px;">¥${formatNum(m.gmv)}</div>
+          </div>
+          <span class="badge badge-neutral">累计</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:18px;">
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--muted-foreground);"><span>用户成交 GMV</span><span class="num">${userShare}%</span></div>
+            <div class="num" style="font-size:18px; font-weight:700; margin-top:2px;">¥${formatNum(m.userGmv)}</div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--muted-foreground);"><span>机构成交 GMV</span><span class="num">${orgShare}%</span></div>
+            <div class="num" style="font-size:18px; font-weight:700; margin-top:2px;">¥${formatNum(m.orgGmv)}</div>
+          </div>
+        </div>
+        <div style="margin-top:14px; height:6px; border-radius:999px; background:#F4F4F5; overflow:hidden; display:flex;">
+          <span style="width:${userShare}%; background:#09090B;"></span>
+          <span style="flex:1; background:#D4D4D8;"></span>
+        </div>
+      </div>
+
+      <div class="content-card" style="margin-bottom:0; padding:22px 24px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <div style="font-size:13px; color:var(--muted-foreground);">产生佣金总额</div>
+            <div class="num" style="font-size:32px; font-weight:800; letter-spacing:-0.03em; margin-top:6px;">¥${formatNum(m.fee)}</div>
+          </div>
+          <span style="width:28px; height:28px; border-radius:8px; background:var(--muted); display:flex; align-items:center; justify-content:center; color:#3F3F46;">${ic(I.coins)}</span>
+        </div>
+        <div style="margin-top:16px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#FAFAFA; border:1px solid var(--border); border-radius:8px;">
+            <span style="font-size:12px; color:var(--muted-foreground);">用户订单佣金</span>
+            <span class="num" style="font-size:13px; font-weight:600;">¥${formatNum(m.userFee)}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#FAFAFA; border:1px solid var(--border); border-radius:8px;">
+            <span style="font-size:12px; color:var(--muted-foreground);">机构订单佣金</span>
+            <span class="num" style="font-size:13px; font-weight:600;">¥${formatNum(m.orgFee)}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:26px;">
+      ${tile('客户总数 / 签单客户数', m.cust + ' / ' + m.paying, '签单转化率 ' + conv + '%', ic(I.users), true)}
+      ${tile('用户单客客单价', '¥' + formatNum(m.userAov), '用户 GMV ÷ 签单客户数', ic(I.user))}
+      ${tile('机构单客客单价', '¥' + formatNum(m.orgAov), '机构 GMV ÷ 机构签单数', ic(I.building))}
+      ${tile('机构签单数', m.orgDeals + ' 单', '已签约机构合同数', ic(I.receipt))}
+    </div>
+
+    <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;">
+      <h2 style="font-size:15px; font-weight:600;">分单位数据</h2>
+      <span style="font-size:12px; color:var(--muted-foreground);">口径与总表一致，按单位汇总</span>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
+      ${unitCards}
+    </div>
   `;
 }
 
@@ -2584,6 +3231,7 @@ function renderSettlementsView(container) {
 let orderSubTab = 'user';
 let ordKw = '';
 let ordStatus = 'ALL';
+let orgStatusTab = 'PENDING';
 
 function ordIsRefunded(o) {
   return (o.refunds || []).length > 0 || o.status === 'VOID_REFUND';
@@ -2597,11 +3245,7 @@ function allUserOrders() {
 
 function renderOrdersView(container) {
   const userOrders = allUserOrders();
-  const orgOrders = allOrgOrders();
   const tabBtn = (key, label) => `<button class="seg-tab-btn ${orderSubTab === key ? 'active' : ''}" onclick="orderSubTab='${key}'; resetPage('orders-user'); resetPage('orders-org'); renderOrdersView(document.getElementById('main-view-container'))">${label}</button>`;
-  const headerBtn = orderSubTab === 'user'
-    ? ''
-    : `<button class="btn btn-primary" onclick="openOrgEntryDrawer()">＋ 录入机构订单</button>`;
   let body = '';
   if (orderSubTab === 'user') {
     const kw = ordKw.trim().toLowerCase();
@@ -2613,18 +3257,9 @@ function renderOrdersView(container) {
         || o.customer_phone.includes(kw)
         || p.name.toLowerCase().includes(kw);
     });
-    const filteredUserPay = filteredUserOrders.reduce((a, { o }) => {
-      const refunded = (o.refunds || []).reduce((s, r) => s + r.amount, 0);
-      return a + Math.max(0, o.status === 'VOID_REFUND' ? 0 : (o.pay_amount || 0) - refunded);
-    }, 0);
-    const filteredUserPoints = filteredUserOrders.reduce((a, { o }) => a + Math.max(0, (o.points || 0) - (o._recover || 0)), 0);
     const pagedUserOrders = pagedList('orders-user', filteredUserOrders);
     body = `
       <div class="filter-card">
-        <div class="filter-title-row">
-          <span class="filter-title">筛选订单</span>
-          <button class="btn btn-outline btn-sm" onclick="ordKw=''; ordStatus='ALL'; resetPage('orders-user'); renderOrdersView(document.getElementById('main-view-container'))">重置</button>
-        </div>
         <div class="filter-inputs-grid">
           <div class="filter-field" style="flex: 2; min-width: 280px;">
             <span class="field-label">关键词</span>
@@ -2638,12 +3273,8 @@ function renderOrdersView(container) {
               <option value="REFUNDED" ${ordStatus==='REFUNDED'?'selected':''}>已退款</option>
             </select>
           </div>
+          <button class="btn btn-outline" onclick="ordKw=''; ordStatus='ALL'; resetPage('orders-user'); renderOrdersView(document.getElementById('main-view-container'))">重置</button>
         </div>
-      </div>
-      <div style="background:#FFFFFF; border:1px solid var(--border); border-radius:var(--radius-xl); padding:14px 20px; margin-bottom:16px; display:flex; flex-wrap:wrap; gap:28px; align-items:center; font-size:13px;">
-        <div>订单总数 <strong class="num">${filteredUserOrders.length}</strong> 笔</div>
-        <div>总销售金额 <strong class="num">¥${formatNum(filteredUserPay)}</strong></div>
-        <div>佣金合计 <strong class="num">${filteredUserPoints < 0 ? '-¥' + fmtC(Math.abs(filteredUserPoints)) : '¥' + fmtC(filteredUserPoints)}</strong></div>
       </div>
       <div class="table-container">
         <table class="official-table">
@@ -2668,44 +3299,49 @@ function renderOrdersView(container) {
               <td class="num" style="color:var(--muted-foreground); font-size:11.5px;">${o.created_at}</td>
               <td class="col-sticky" style="text-align:right; white-space:nowrap;">
                 ${lines.length ? `<button class="btn btn-outline btn-sm" onclick="showOrderLines('${o.id}')">分期明细</button>` : ''}
-                ${o.points > 0 && refunded < o.pay_amount ? `<button class="btn btn-outline btn-sm" onclick="openRefundDrawer('${o.id}')">退款登记</button>` : ''}
               </td></tr>`; }).join('')}
           </tbody>
         </table>
         ${pagerBar('orders-user', userOrders.length)}
       </div>`;
   } else {
-    const pagedOrgOrders = pagedList('orders-org', orgOrders);
+    const filteredOrgReqs = ORG_REQUESTS.filter(r => orgStatusTab === 'ALL' || orgReqState(r) === orgStatusTab)
+      .sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+    const pagedOrgReqs = pagedList('orders-org', filteredOrgReqs);
+    const subTab = (key, label) => `<button class="seg-tab-btn ${orgStatusTab === key ? 'active' : ''}" onclick="orgStatusTab='${key}'; resetPage('orders-org'); renderOrdersView(document.getElementById('main-view-container'))">${label}</button>`;
     body = `
       <div class="content-card" style="padding:14px 20px; margin-bottom:16px; font-size:12.5px; color:var(--muted-foreground); line-height:1.7;">
-        机构版为线下签合同，由运营<strong style="color:var(--foreground);">手动录入</strong>：合同金额、分成比例、服务周期、已发放金额。录入后与年卡规则一致，按月分期解冻（服务月结束 +7 天）；解冻后的明细在「结算管理 · 待结算」中统一核对结算。
+        机构订单由合伙人在合伙人端提交（机构名称、合同编号、合同金额、服务周期、合同扫描件），运营在此<strong style="color:var(--foreground);">审核并核定分成比例</strong>；通过后自动生成机构订单，总佣金 = 合同金额 × 核定比例，财务线下确认回款后到「结算管理 · 待结算机构订单」按订单填写结算金额。
+      </div>
+      <div class="segmented-tabs" style="margin-bottom:16px;">
+        ${subTab('PENDING', '待审核')}
+        ${subTab('REJECTED', '已驳回')}
+        ${subTab('ALL', '全部')}
       </div>
       <div class="table-container">
         <table class="official-table">
-          <thead><tr><th>订单编号</th><th>机构名称</th><th>商品名称</th><th>合伙人</th><th>订单状态</th><th>订单金额</th><th>分成比例</th><th>本单佣金</th><th>下单时间</th><th class="col-sticky" style="text-align:right;">操作</th></tr></thead>
-          <tbody>${orgOrders.length === 0 ? '<tr><td colspan="10" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无机构订单，点击右上角「录入机构订单」</td></tr>' : pagedOrgOrders.map(({ p, o, lines }) => {
-            const netPoints = Math.max(0, o.points - (o._recover || 0));
-            const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
-            const payBadge = (refunded > 0 || o.status === 'VOID_REFUND')
-              ? '<span class="badge badge-danger" style="font-size:10.5px;">已退款</span>'
-              : '<span class="badge badge-success" style="font-size:10.5px;">已支付</span>';
+          <thead><tr><th>申请单号</th><th>机构名称</th><th>归属合伙人</th><th>合同金额</th><th>核定比例</th><th>总佣金</th><th>状态</th><th>提交时间</th><th class="col-sticky" style="text-align:right;">操作</th></tr></thead>
+          <tbody>${filteredOrgReqs.length === 0 ? '<tr><td colspan="9" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无该状态的机构订单</td></tr>' : pagedOrgReqs.map(r => {
+            const st = orgReqState(r);
+            const rate = orgReqRate(r);
+            const pool = rate != null ? round2(r.amount * rate / 100) : 0;
             return `<tr>
-              <td><span class="code-badge">${o.id}</span></td>
-              <td><strong>${o.org_name}</strong></td>
-              <td style="font-size:12.5px;">${productName(o)}<div style="margin-top:3px;">${productTagHtml(o)} <span class="badge badge-neutral" style="font-size:10px;">${o.months} 个月服务期</span></div></td>
-              <td><strong>${p.name}</strong><div style="font-size:11.5px; color:var(--muted-foreground);">${p.channel_type === 'INTERNAL' ? '内部' : '外部'}渠道</div></td>
-              <td>${payBadge}</td>
-              <td class="num">¥${formatNum(o.pay_amount - refunded)}${refunded > 0 ? `<div style="font-size:10.5px; color:var(--muted-foreground); margin-top:2px;">已退 ¥${formatNum(refunded)}</div>` : ''}</td>
-              <td class="num">${o.rate}%</td>
-              <td><strong class="num" style="color:${netPoints > 0 ? '#15803D' : 'var(--muted-foreground)'};">${netPoints > 0 ? '+¥' : '¥'}${fmtC(Math.abs(netPoints))}</strong></td>
-              <td class="num" style="color:var(--muted-foreground); font-size:11.5px;">${o.created_at || o.start}</td>
+              <td><span class="code-badge">${r.id}</span>${r.order_id ? `<div style="font-size:11px; color:var(--muted-foreground); margin-top:3px;">订单 ${r.order_id}</div>` : ''}</td>
+              <td><strong>${esc(r.org)}</strong><div style="font-size:11.5px; color:var(--muted-foreground);">合同 ${esc(r.contract_no)} · ${r.months} 个月</div></td>
+              <td><strong>${r.partner_name}</strong><div style="font-size:11.5px; color:var(--muted-foreground);">${r.partner_id}</div></td>
+              <td class="num">¥${formatNum(r.amount)}</td>
+              <td class="num">${rate != null ? rate + '%' : '<span style="color:var(--muted-foreground);">待核定</span>'}</td>
+              <td><strong class="num" style="color:${pool > 0 ? '#15803D' : 'var(--muted-foreground)'};">${pool > 0 ? '¥' + fmtC(pool) : '—'}</strong></td>
+              <td><span class="badge ${ORG_STATE_BADGE[st]}">${ORG_STATE_LABEL[st]}</span></td>
+              <td class="num" style="color:var(--muted-foreground); font-size:11.5px;">${r.created_at}</td>
               <td class="col-sticky" style="text-align:right; white-space:nowrap;">
-                <button class="btn btn-outline btn-sm" onclick="showOrderLines('${o.id}')">分期明细</button>
-                ${o.points > 0 && refunded < o.pay_amount ? `<button class="btn btn-outline btn-sm" onclick="openRefundDrawer('${o.id}')">退款登记</button>` : ''}
+                ${st === 'PENDING'
+                  ? `<button class="btn btn-primary btn-sm" onclick="openOrgReviewDrawer('${r.id}')">审核</button>`
+                  : `<button class="btn btn-outline btn-sm" onclick="openOrgReviewDrawer('${r.id}')">详情</button>`}
               </td></tr>`; }).join('')}
           </tbody>
         </table>
-        ${pagerBar('orders-org', orgOrders.length)}
+        ${pagerBar('orders-org', filteredOrgReqs.length)}
       </div>`;
   }
 
@@ -2714,7 +3350,6 @@ function renderOrdersView(container) {
       <div>
         <h1 style="font-size:24px; font-weight:700; color:var(--foreground); letter-spacing:-0.02em;">订单管理</h1>
       </div>
-      <div>${headerBtn}</div>
     </div>
     <div class="segmented-tabs">
       ${tabBtn('user', '用户订单')}
@@ -3012,6 +3647,7 @@ function confirmApprovePartner(appId) {
   PARTNERS.unshift({
     id: 'PT-' + code,
     name: app.name,
+    unit: '未分配',
     org: app.org,
     role: app.role,
     phone: app.phone,
