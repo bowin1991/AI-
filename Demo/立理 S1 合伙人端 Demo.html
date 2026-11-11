@@ -382,8 +382,7 @@ var ORDERS = [
   { no: 'ORD202602100077', time: '2026-02-10 13:30', name: 'Max 年卡（首购）', kind: 'year', paid: 9999, rate: 30, ph: '137****9086', refund: 5000, refundAt: '2026-11-05', settled: 1900 },
   { no: 'ORD202609100201', time: '2026-09-10 15:10', name: 'Max 年卡（首购）', kind: 'year', paid: 2999, rate: 30, ph: '150****3344', refund: 2999, refundAt: '2026-11-05' },
   { no: 'ORD202606200177', time: '2026-06-20 10:30', name: 'Lite 年卡（首购）', kind: 'year', paid: 999, rate: 30, ph: '137****9086', refund: 999, refundAt: '2026-08-05' },
-  { no: 'ORD202610250199', time: '2026-10-25 16:00', name: 'Pro 年卡（升级补差）', kind: 'year', paid: 1000, rate: 20, ph: '138****4501', refund: 0 },
-  { no: 'ORG-20260901-001', time: '2026-09-01', name: '机构年度套餐（机构订单）', kind: 'org', months: 12, paid: 12000, rate: 20, org: '华东理工大学生物工程学院', refund: 0, prepaid: 200, prepaidAt: '2026-11-02' }
+  { no: 'ORD202610250199', time: '2026-10-25 16:00', name: 'Pro 年卡（升级补差）', kind: 'year', paid: 1000, rate: 20, ph: '138****4501', refund: 0 }
 ];
 
 // ==================== 机构订单申请（合伙人录入 → 运营审核） ====================
@@ -513,11 +512,11 @@ function hydrateOrgOrders() {
 }
 
 var SETTLE = [
-  { batch: 'SETTLE-202611-004', kind: 'ORG', org: '上海交通大学医学院', order_id: 'ORG-20261020-002', received: 24000, source: '线下结算', status: '已结算', time: '2026-11-04 16:20', gross: 3600, offset: 0, note: '' },
-  { batch: 'SETTLE-202611-002', kind: 'ORG', org: '南京大学人工智能学院', order_id: 'ORG-20260901-001', received: 2000, source: '录入时已发放', status: '已发放', time: '2026-11-02 10:00', gross: 200, offset: 0, note: '第 1 期佣金于录入前线下发放，不可撤销' },
+  { batch: 'SETTLE-202611-004', kind: 'ORG', org: '上海交通大学医学院', order_id: 'ORG-20260928-002', received: 24000, source: '线下结算', status: '已结算', time: '2026-11-04 16:20', gross: 3600, offset: 0, note: '' },
+  { batch: 'SETTLE-202611-002', kind: 'ORG', org: '上海交通大学医学院', order_id: 'ORG-20260928-002', received: 2000, source: '录入时已发放', status: '已发放', time: '2026-11-02 10:00', gross: 200, offset: 0, note: '第 1 期佣金于录入前线下发放，不可撤销' },
   { batch: 'SETTLE-202611-001', kind: 'USER', count: 5, source: '线下结算', status: '已结算', time: '2026-11-01 11:30', gross: 2400, offset: 0, note: '建行对公转账流水尾号 3321' },
   { batch: 'SETTLE-202610-008', kind: 'USER', count: 3, source: '线下结算', status: '已结算', time: '2026-10-28 15:00', gross: 1900, offset: 0, note: '招行对公转账流水尾号 8892，款项已结清' },
-  { batch: 'SETTLE-202610-021', kind: 'ORG', org: '复旦大学类脑智能研究院', order_id: 'ORG-20261012-004', received: 40000, source: '线下结算', status: '已结算', time: '2026-10-21 14:05', gross: 6000, offset: 0, note: '' },
+  { batch: 'SETTLE-202610-021', kind: 'ORG', org: '复旦大学类脑智能研究院', order_id: 'ORG-20261103-001', received: 40000, source: '线下结算', status: '已结算', time: '2026-10-21 14:05', gross: 6000, offset: 0, note: '' },
   { batch: 'SETTLE-202610-014', kind: 'USER', count: 6, source: '线下结算', status: '已结算', time: '2026-10-14 10:20', gross: 3200, offset: 100, note: '' },
   { batch: 'SETTLE-202609-006', kind: 'ORG', org: '浙江大学计算机学院', order_id: 'ORG-20260815-003', received: 36000, source: '线下结算', status: '已结算', time: '2026-09-06 16:40', gross: 5400, offset: 0, note: '招行对公转账流水尾号 6618' },
   { batch: 'SETTLE-202608-003', kind: 'USER', count: 4, source: '线下结算', status: '已结算', time: '2026-08-03 09:50', gross: 3000, offset: 0, note: '' }
@@ -545,7 +544,7 @@ function calcReceiptOrder(o) {
     if (amt < 0) amt = 0;
     used = round2(used + amt);
     received = round2(received + r.amount);
-    ins.push({ k: i + 1, orig: amt, amt: amt, unlock: r.date, done: true, sAmt: 0, recoup: 0, date: r.date, payAmt: r.amount, voucher: r.voucher || '' });
+    ins.push({ k: i + 1, orig: amt, amt: amt, unlock: r.date, done: true, sAmt: 0, date: r.date, payAmt: r.amount, voucher: r.voucher || '' });
   });
   var settled = round2(o.settled || 0);
   return {
@@ -562,72 +561,59 @@ function calcOrder(o) {
   var pts = function(amt) { return round2(amt * o.rate / 100); };
   var total0 = pts(o.paid), eff = pts(o.paid - o.refund), deduct = round2(total0 - eff);
   var n = o.kind === 'year' ? 12 : (o.kind === 'org' ? (o.months || 12) : 1), ins = [], k;
-  var base = n === 1 ? total0 : round2(total0 / n);
+  // 退款后每期佣金按「有效推广币 ÷ 期数」重算，各期之和恒等于有效推广币
+  var baseNet = n === 1 ? eff : round2(eff / n);
+  var baseOrig = n === 1 ? total0 : round2(total0 / n);
   for (k = 1; k <= n; k++) {
-    var amt = n === 1 ? total0 : (k < n ? base : round2(total0 - base * (n - 1)));
+    var netAmt = n === 1 ? eff : (k < n ? baseNet : round2(eff - baseNet * (n - 1)));
+    var origAmt = n === 1 ? total0 : (k < n ? baseOrig : round2(total0 - baseOrig * (n - 1)));
     var ud = addMonthsDate(o.time, k, 7);
-    ins.push({ k: k, orig: amt, amt: amt, unlock: ud, done: ud <= REF_DATE, sAmt: 0, recoup: 0 });
+    ins.push({ k: k, orig: origAmt, amt: netAmt, unlock: ud, done: ud <= REF_DATE, sAmt: 0 });
   }
-  // 已结算与录入时已发放金额，均按解冻日从早到晚依次核销到期次
-  var leftS = round2((o.settled || 0) + (o.prepaid || 0));
+  // 已打款核销：先已解冻期次，再提前支付的未解冻期次；只有超出有效推广币的部分才是待追回
+  var paidTotal = round2((o.settled || 0) + (o.prepaid || 0));
+  var leftS = paidTotal;
   for (k = 0; k < n && leftS > 0; k++) {
-    if (ins[k].done) {
+    if (ins[k].done && ins[k].amt > 0) {
       var sa = Math.min(leftS, ins[k].amt);
       ins[k].sAmt = round2(sa);
       leftS = round2(leftS - sa);
     }
   }
-  var left = deduct;
-  // 第一轮：退款时尚未解冻的期次
-  for (var j = n - 1; j >= 0 && left > 0; j--) {
-    if (ins[j].unlock > (o.refundAt || '')) {
-      var cut = Math.min(left, ins[j].amt);
-      ins[j].amt = round2(ins[j].amt - cut);
-      left = round2(left - cut);
+  for (k = 0; k < n && leftS > 0; k++) {
+    if (!ins[k].done && ins[k].amt > 0) {
+      var sb = Math.min(leftS, ins[k].amt);
+      ins[k].sAmt = round2(sb);
+      leftS = round2(leftS - sb);
     }
   }
-  // 第二轮：已解冻但尚未结算的期次
-  for (j = n - 1; j >= 0 && left > 0; j--) {
-    if (ins[j].unlock <= (o.refundAt || '')) {
-      var avail = round2(ins[j].amt - ins[j].sAmt);
-      if (avail > 0) {
-        var cut2 = Math.min(left, avail);
-        ins[j].amt = round2(ins[j].amt - cut2);
-        left = round2(left - cut2);
-      }
-    }
-  }
-  // 仍无法扣回的部分，从最近已结算期次往前标记「待追回」
-  var leftT = left;
-  for (var t = n - 1; t >= 0 && leftT > 0; t--) {
-    if (ins[t].sAmt > 0) {
-      var rc = Math.min(leftT, ins[t].sAmt);
-      ins[t].recoup = round2(rc);
-      leftT = round2(leftT - rc);
-    }
-  }
-  var unlocked = 0, frozen = 0, doneCnt = 0, settled = 0, remain = 0;
+  var short = round2(Math.max(0, leftS));
+  var unlocked = 0, doneCnt = 0;
   ins.forEach(function(x) {
     if (x.done) { unlocked = round2(unlocked + x.amt); if (x.amt > 0) doneCnt++; }
-    else frozen = round2(frozen + x.amt);
-    settled = round2(settled + x.sAmt);
-    remain = round2(remain + x.amt);
   });
-  var cutTotal = round2(total0 - remain);
-  return { o: o, total0: total0, eff: eff, deduct: deduct, cut: cutTotal, short: left, ins: ins,
-           unlocked: unlocked, settled: settled, settleable: round2(unlocked - settled),
+  // 对账口径：可结算 + 冻结中 + 已结算 = 有效推广币；有效推广币 + 退款扣除 = 原推广币
+  var settledAmt = round2(Math.min(paidTotal, eff));
+  var unpaid = round2(Math.max(0, eff - paidTotal));
+  var settleable = round2(Math.min(unlocked, unpaid));
+  var frozen = round2(unpaid - settleable);
+  return { o: o, total0: total0, eff: eff, deduct: deduct, cut: deduct, short: short, ins: ins,
+           unlocked: unlocked, settled: settledAmt, paid: paidTotal, settleable: settleable,
            frozen: frozen, doneCnt: doneCnt, n: n,
            full: o.refund >= o.paid, part: o.refund > 0 && o.refund < o.paid };
 }
 
 function getSum() {
   var u = 0, f = 0, st = 0, shortTotal = 0, offset = 0;
-  ORDERS.forEach(function(o) { var c = calcOrder(o); u += c.unlocked; f += c.frozen; st += c.settled; shortTotal += c.short; });
+  // 只统计用户订单（机构合同订单走机构订单维度，单独核算，避免口径互串）
+  ORDERS.filter(function(o) { return o.kind !== 'orgc'; }).forEach(function(o) {
+    var c = calcOrder(o); u += c.settleable; f += c.frozen; st += c.settled; shortTotal += c.short;
+  });
   SETTLE.forEach(function(r) { offset += (r.offset || 0); });
   u = round2(u); f = round2(f); st = round2(st); shortTotal = round2(shortTotal);
   var unrecovered = Math.max(0, round2(shortTotal - offset));
-  return { total: Math.max(0, round2(u + f - shortTotal)), settleable: round2(u - st), frozen: f, settled: st, unrecovered: unrecovered,
-           payable: Math.max(0, round2(u - st - unrecovered)) };
+  return { total: Math.max(0, round2(u + f + st)), settleable: u, frozen: f, settled: st, unrecovered: unrecovered,
+           payable: Math.max(0, round2(u - unrecovered)) };
 }
 
 var BADGE = {
@@ -740,7 +726,7 @@ function ordersHtml(items) {
       ? '退款 ' + refundCnt + ' 笔，累计 ¥' + fmt2(o.refund) + '（最近 ' + o.refundAt + '）'
       : (c.full ? '全额退款' : '部分退款') + ' ¥' + fmt2(o.refund) + '（' + o.refundAt + '）';
     var refundLine = o.refund > 0
-      ? '<div class="text-xs text-rose-600 mt-1">' + refundHead + ' · 累计扣除 −' + fmt2(c.deduct) + ' 推广币' + (c.short > 0 ? '，' + (o.refundNote || '其中 ¥' + fmt2(c.short) + ' 已打款无法扣回，计入待追回') : '') + '</div>'
+      ? '<div class="text-xs text-rose-600 mt-1">' + refundHead + ' · 累计扣除 −' + fmt2(c.deduct) + ' 推广币' + (c.short > 0 ? '，' + (o.refundNote || '其中 ' + fmt2(c.short) + ' 推广币已打款无法扣回，计入待追回') : '') + '</div>'
       : '';
     var cell = function(label, val, color) {
       return '<div class="rounded-xl bg-white border border-surface-border py-2 text-center"><div class="text-xs text-slate-muted">' + label + '</div><div class="font-bold tabular-nums ' + color + '">' + val + '</div></div>';
@@ -758,7 +744,7 @@ function ordersHtml(items) {
     }
     if (c.n > 1) {
       var next = null;
-      c.ins.forEach(function(x) { if (!next && !x.done && x.amt > 0) next = x; });
+      c.ins.forEach(function(x) { if (!next && !x.done && x.amt > 0 && x.sAmt === 0) next = x; });
       var seg = c.ins.map(function(x) {
         var cl = x.orig > 0 && x.amt === 0 ? 'bg-rose-200' : (x.sAmt >= x.amt && x.sAmt > 0 ? 'bg-emerald-600' : (x.done ? 'bg-emerald-400' : 'bg-amber-300'));
         return '<div class="h-1.5 flex-1 rounded-full ' + cl + '"></div>';
@@ -768,8 +754,8 @@ function ordersHtml(items) {
       if (open) {
         rows = '<div class="mt-2 rounded-xl bg-white border border-surface-border divide-y divide-surface-border text-xs">' + c.ins.map(function(x) {
           var voided = x.orig > 0 && x.amt === 0, cut = x.orig - x.amt;
-          var amtTxt = (voided ? '−' + fmt2(x.orig) : '+' + fmt2(x.amt) + (cut > 0 ? '<span class="text-slate-muted font-normal">（原 ' + fmt2(x.orig) + '）</span>' : '')) + (x.recoup > 0 ? '<span class="text-rose-600 font-normal">（待追回 ' + fmt2(x.recoup) + '）</span>' : '');
-          var st = voided ? badge('退款扣除', 'rose') : (x.recoup > 0 ? badge('待追回', 'rose') : (x.sAmt >= x.amt && x.sAmt > 0 ? badge('已结算', 'emerald') : (x.done ? badge('可结算', 'emerald') : badge('冻结中', 'amber'))));
+          var amtTxt = voided ? '−' + fmt2(x.orig) : '+' + fmt2(x.amt) + (cut > 0 ? '<span class="text-slate-muted font-normal">（原 ' + fmt2(x.orig) + '）</span>' : '') + (x.sAmt > 0 && x.sAmt < x.amt ? '<span class="text-slate-muted font-normal">（已结算 ' + fmt2(x.sAmt) + '）</span>' : '');
+          var st = voided ? badge('退款扣除', 'rose') : (!x.done && x.sAmt > 0 ? badge('已预支', 'emerald') : (x.sAmt >= x.amt && x.sAmt > 0 ? badge('已结算', 'emerald') : (x.done ? badge('可结算', 'emerald') : badge('冻结中', 'amber'))));
           return '<div class="flex items-center justify-between gap-2 px-3 py-2"><span class="text-slate-body w-12">第 ' + x.k + ' 期</span><span class="text-slate-muted flex-1">解冻日 ' + x.unlock + '</span><span class="font-bold tabular-nums ' + (voided ? 'text-rose-600' : 'text-slate-title') + '">' + amtTxt + '</span>' + st + '</div>';
         }).join('') + '</div>';
       }
@@ -789,7 +775,7 @@ function ordersHtml(items) {
           '<div class="font-extrabold text-xl tabular-nums ' + (c.eff > 0 ? 'text-brand-600' : 'text-slate-muted') + '">' + fmt2(c.eff) + '</div>' +
           (c.deduct > 0 ? '<div class="text-xs text-slate-muted">原 <span class="line-through">' + fmt2(c.total0) + '</span> 推广币</div>' : (c.n > 1 ? '<div class="text-xs text-slate-muted">' + (o.kind === 'org' ? '按 ' + c.n + ' 个月服务期分期' : '按 12 个月分期发放') + '</div>' : '')) +
         '</div>' +
-      '</div>' + grid + extra + (c.short > 0 ? '<div class="mt-2 text-xs text-rose-600">本单待追回 ¥' + fmt2(c.short) + '，将在后续结算中自动抵扣</div>' : '') + '</div>';
+      '</div>' + grid + extra + (c.short > 0 ? '<div class="mt-2 text-xs text-rose-600">本单待追回 ' + fmt2(c.short) + ' 推广币，将在后续结算中自动抵扣</div>' : '') + '</div>';
   }).join('');
 }
 
@@ -1816,7 +1802,6 @@ function pLogin() {
             '<span class="w-1.5 h-1.5 rounded-full bg-brand-500 flex-shrink-0"></span>',
             '<span>尚未成为立理合伙人？</span>',
           '</div>',
-          '<div class="text-xs text-slate-body mt-0.5">开放科研合作与推广资格入驻</div>',
         '</div>',
         '<button type="button" onclick="S.done=false;S.pending=\'\';go(\'apply\')" class="py-2 px-3.5 rounded-full bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs shadow-xs hover:shadow-brand-500/20 transition-all flex items-center space-x-1 whitespace-nowrap flex-shrink-0 group">',
           '<i data-lucide="user-plus" class="w-3.5 h-3.5"></i>',
@@ -2549,15 +2534,35 @@ function delTag(idx) {
 }
 
 // ==================== 页面 7: 推广币中心 (pComm) ====================
+// 维度口径：用户订单（分期解冻，有冻结/待追回）与机构订单（回款释放，无冻结/待追回）完全隔离
+function getOrgSum() {
+  var pool = 0, settled = 0, due = 0;
+  loadOrgReqs().forEach(function(r) {
+    if (r.status !== 'APPROVED') return;
+    var n = orgNums(r);
+    pool = round2(pool + n.pool);
+    settled = round2(settled + n.settled);
+    due = round2(due + n.due);
+  });
+  return { pool: pool, settled: settled, due: due };
+}
+
+function setDim(t) { S.tab = t; S.sp = 1; pComm(); }
+function setSettleKind(v) { S.sk = v; S.sp = 1; pComm(); }
+
 function pComm() {
+  if (['flow', 'org', 'settle'].indexOf(S.tab) < 0) S.tab = 'flow';
   var isFlow = S.tab === 'flow';
   var isOrg = S.tab === 'org';
   var isSettle = S.tab === 'settle';
 
-  var settlePg = paged(SETTLE, S.sp);
+  var sum = getSum();
+  var osum = getOrgSum();
+  var sk = S.sk || 'all';
+  var settleAll = SETTLE.filter(function(r) { return sk === 'all' || r.kind === sk; });
+  var settlePg = paged(settleAll, S.sp);
   var flowHtml = ordListInner();
 
-  var sum = getSum();
   var settleHtml = settlePg.items.map(function(r) {
     var isOrg = r.kind === 'ORG';
     var typeCls = isOrg ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-white text-slate-body border border-surface-border';
@@ -2579,15 +2584,26 @@ function pComm() {
         '</div>',
         isOrg
           ? '<div class="text-xs text-slate-muted mt-1">本次到账回款 ¥' + fmt2(r.received || 0) + '</div>'
-          : ((r.offset || 0) > 0 ? '<div class="text-xs text-rose-600 mt-1">已扣减退款待追回 ¥' + fmt2(r.offset) + '</div>' : ''),
+          : ((r.offset || 0) > 0 ? '<div class="text-xs text-rose-600 mt-1">已扣减退款待追回 ' + fmt2(r.offset) + ' 推广币</div>' : ''),
       '</div>'
     ].join('');
   }).join('');
 
-  var contentHtml = [
+  var dimTabs = [
+    '<div class="flex flex-wrap items-center justify-between gap-3">',
+      '<div class="bg-surface-subtle p-1 rounded-full border border-surface-border flex items-center text-xs font-semibold">',
+        '<button onclick="setDim(\'flow\')" class="px-4 py-1.5 rounded-full transition-all ' + (isFlow ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">用户订单</button>',
+        '<button onclick="setDim(\'org\')" class="px-4 py-1.5 rounded-full transition-all ' + (isOrg ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">机构订单</button>',
+        '<button onclick="setDim(\'settle\')" class="px-4 py-1.5 rounded-full transition-all ' + (isSettle ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">结算明细</button>',
+      '</div>',
+      '<div class="text-xs text-slate-muted hidden sm:block">' + (isSettle ? '用户订单与机构订单的历次结算记录' : (isOrg ? '按合同回款释放推广币，无冻结与待追回' : '按履约周期分期解冻，含冻结与退款待追回')) + '</div>',
+    '</div>'
+  ].join('');
+
+  var userCards = [
     sum.unrecovered > 0
       ? '<div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs text-rose-700">'
-        + '存在退款待追回 ¥' + fmt2(sum.unrecovered) + '，下次结算时自动抵扣；可结算不足时打款为 ¥0.00，剩余部分结转下期。'
+        + '存在退款待追回 ' + fmt2(sum.unrecovered) + ' 推广币，下次结算时自动抵扣；可结算不足时打款为 0，剩余部分结转下期。'
         + '</div>'
       : '',
     '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">',
@@ -2600,7 +2616,7 @@ function pComm() {
         '<div class="mt-auto pt-4 flex items-center justify-end">',
           '<div class="relative group">',
             '<button type="button" aria-label="查看总推广币口径" class="w-4 h-4 rounded-full border border-white/60 text-white/90 text-[10px] font-bold leading-none flex items-center justify-center cursor-help">i</button>',
-            '<div class="pointer-events-none absolute right-0 bottom-full mb-2 w-60 rounded-xl bg-slate-900/95 text-white text-[11px] leading-relaxed p-3 shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all z-20">总推广币 = 可结算推广币 + 冻结中推广币 + 已结算推广币 − 待追回金额。待追回为退款时应扣回、但对应推广币已打款无法扣回的差额，将在后续结算中自动抵扣。</div>',
+            '<div class="pointer-events-none absolute right-0 bottom-full mb-2 w-60 rounded-xl bg-slate-900/95 text-white text-[11px] leading-relaxed p-3 shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all z-20">总推广币 = 可结算推广币 + 冻结中推广币 + 已结算推广币，均为扣除退款后的有效佣金；待追回为已多打、无法从退款中扣回的部分，另行抵扣。</div>',
           '</div>',
         '</div>',
       '</div>',
@@ -2612,7 +2628,13 @@ function pComm() {
         '</div>',
         '<div class="mt-3 text-3xl font-extrabold tracking-tight text-emerald-600 tabular-nums">' + fmt2(sum.settleable) + '</div>',
         (sum.unrecovered > 0
-          ? '<div class="mt-auto pt-4 text-xs text-rose-600">本次可打款 ¥' + fmt2(sum.payable) + '（已扣除待追回 ¥' + fmt2(Math.min(sum.unrecovered, sum.settleable)) + '）</div>'
+          ? '<div class="mt-auto pt-4 flex items-center gap-1.5 text-xs text-rose-600">'
+              + '<span>待追回 ' + fmt2(Math.min(sum.unrecovered, sum.settleable)) + '</span>'
+              + '<div class="relative group flex-shrink-0">'
+                + '<button type="button" aria-label="待追回说明" class="w-4 h-4 rounded-full border border-rose-300 text-rose-500 text-[10px] font-bold leading-none flex items-center justify-center cursor-help">?</button>'
+                + '<div class="pointer-events-none absolute left-0 bottom-full mb-2 w-56 rounded-xl bg-slate-900/95 text-white text-[11px] leading-relaxed p-3 shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all z-20">待追回：因客户退款需扣回、但对应推广币已打款无法扣回的差额，将在下次结算时自动抵扣。</div>'
+              + '</div>'
+            + '</div>'
           : '<div class="mt-auto pt-4 text-xs text-slate-muted">已可结算，可线下核销</div>'),
       '</div>',
 
@@ -2622,10 +2644,7 @@ function pComm() {
           '<div class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center"><i data-lucide="lock" class="w-4 h-4"></i></div>',
         '</div>',
         '<div class="mt-3 text-3xl font-extrabold tracking-tight text-amber-600 tabular-nums">' + fmt2(getSum().frozen) + '</div>',
-        '<div class="mt-auto pt-4 flex items-center justify-between text-xs text-slate-muted">',
-          '<span>履约周期保护中</span>',
-          '<span>待退款保护期后解冻</span>',
-        '</div>',
+        '<div class="mt-auto pt-4 text-xs text-slate-muted">履约周期保护中</div>',
       '</div>',
 
       '<div class="rounded-[20px] bg-surface-card border border-surface-border p-5 shadow-card hover:shadow-card-hover flex flex-col transition-all">',
@@ -2635,21 +2654,62 @@ function pComm() {
         '</div>',
         '<div class="mt-3 text-3xl font-extrabold tracking-tight text-slate-title tabular-nums">' + fmt2(getSum().settled) + '</div>',
       '</div>',
-    '</div>',
+    '</div>'
+  ].join('');
 
-    '<div class="flex items-center justify-between gap-3">',
-      '<div class="bg-surface-subtle p-1 rounded-full border border-surface-border flex items-center text-xs font-semibold">',
-        '<button onclick="S.tab=\'flow\';pComm()" class="px-4 py-1.5 rounded-full transition-all ' + (isFlow ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">用户订单</button>',
-        '<button onclick="S.tab=\'org\';pComm()" class="px-4 py-1.5 rounded-full transition-all ' + (isOrg ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">机构订单</button>',
-        '<button onclick="S.tab=\'settle\';pComm()" class="px-4 py-1.5 rounded-full transition-all ' + (isSettle ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">结算明细</button>',
+  var orgCards = [
+    '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">',
+      '<div class="relative rounded-[20px] bg-gradient-to-br from-brand-500 to-brand-600 text-white p-5 shadow-hero flex flex-col">',
+        '<div class="flex items-center justify-between">',
+          '<span class="text-xs font-semibold tracking-wide text-white/90">总推广币 (合同佣金)</span>',
+          '<div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white backdrop-blur-sm"><i data-lucide="coins" class="w-4 h-4"></i></div>',
+        '</div>',
+        '<div class="mt-3 text-3xl font-extrabold tracking-tight tabular-nums">' + fmt2(osum.pool) + '</div>',
+        '<div class="mt-auto pt-4 text-xs text-white/80">合同金额 × 核定比例</div>',
       '</div>',
-      '<div class="text-xs text-slate-muted hidden sm:block">' + (isFlow ? '仅展示用户订单；年卡按月分期解冻' : (isOrg ? '' : '展示财务线下打款与机构订单录入时已发放记录')) + '</div>',
-    '</div>',
+
+      '<div class="rounded-[20px] bg-surface-card border border-surface-border p-5 shadow-card hover:shadow-card-hover flex flex-col transition-all">',
+        '<div class="flex items-center justify-between">',
+          '<span class="text-xs font-semibold text-slate-body">待结算推广币</span>',
+          '<div class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center"><i data-lucide="clock" class="w-4 h-4"></i></div>',
+        '</div>',
+        '<div class="mt-3 text-3xl font-extrabold tracking-tight text-amber-600 tabular-nums">' + fmt2(osum.due) + '</div>',
+        '<div class="mt-auto pt-4 text-xs text-slate-muted">回款到账后释放，可线下核销</div>',
+      '</div>',
+
+      '<div class="rounded-[20px] bg-surface-card border border-surface-border p-5 shadow-card hover:shadow-card-hover flex flex-col transition-all">',
+        '<div class="flex items-center justify-between">',
+          '<span class="text-xs font-semibold text-slate-body">已结算推广币</span>',
+          '<div class="w-8 h-8 rounded-full bg-surface-subtle text-slate-body flex items-center justify-center"><i data-lucide="banknote" class="w-4 h-4"></i></div>',
+        '</div>',
+        '<div class="mt-3 text-3xl font-extrabold tracking-tight text-slate-title tabular-nums">' + fmt2(osum.settled) + '</div>',
+      '</div>',
+    '</div>'
+  ].join('');
+
+  var contentHtml = [
+    dimTabs,
+    isSettle ? '' : (isOrg ? orgCards : userCards),
 
     '<div class="rounded-[20px] bg-surface-card border border-surface-border p-6 shadow-card">',
-      (isFlow ? '<div class="pb-4 border-b border-surface-border-subtle">' + ordFilterBar() + '</div>' : ''),
-      '<div id="ord-list" class="space-y-3' + (isFlow ? ' mt-4' : '') + '">' + (isOrg ? safeOrgReqHtml() : (isFlow ? flowHtml : settleHtml)) + '</div>',
-      (isOrg || isFlow ? '' : pagerHtml(settlePg, 'goSettlePage')),
+      (isSettle
+        ? '<div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-surface-border-subtle">'
+            + '<div>'
+              + '<h3 class="font-bold text-base text-slate-title">结算明细</h3>'
+              + '<p class="text-xs text-slate-muted mt-0.5">用户订单与机构订单的历次结算记录</p>'
+            + '</div>'
+            + '<select onchange="setSettleKind(this.value)" class="bg-surface-subtle border border-surface-border rounded-full px-3 py-1.5 text-xs text-slate-title font-medium focus:outline-none cursor-pointer">'
+              + [['all', '全部类型'], ['USER', '用户订单'], ['ORG', '机构订单']].map(function(o) {
+                return '<option value="' + o[0] + '"' + (sk === o[0] ? ' selected' : '') + '>' + o[1] + '</option>';
+              }).join('')
+            + '</select>'
+          + '</div>'
+          + '<div class="mt-4 space-y-3">' + (settleHtml || '<div class="py-10 text-center text-xs text-slate-muted">暂无结算记录</div>') + '</div>'
+          + pagerHtml(settlePg, 'goSettlePage')
+        : (isOrg
+          ? safeOrgReqHtml()
+          : '<div class="pb-4 border-b border-surface-border-subtle">' + ordFilterBar() + '</div>'
+            + '<div id="ord-list" class="space-y-3 mt-4">' + flowHtml + '</div>')),
     '</div>'
   ].join('');
 

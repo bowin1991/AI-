@@ -901,6 +901,9 @@ const GLOBAL_CONFIG = {
   rebuy_cool_days: 90
 };
 
+// 单位配置：审核建档时选择归属单位，数据看板按单位分组统计
+let UNITS = ['赤道银河', '中部知光', '启点视界'];
+
 const CONFIG_LOGS = [
   { time: '2026-10-15 10:00', operator: '张博文', text: '初始化基准分成比例：内部 首购 15.0% / 续购 10.0%，外部 首购 30.0% / 续购 20.0%' }
 ];
@@ -1304,10 +1307,13 @@ function recalcPartner(p) {
 }
 function recalcAll() { PARTNERS.forEach(recalcPartner); }
 
-// 总销售额：该合伙人所带订单的实付合计，扣除已登记退款
-function partnerSales(p) {
+// 总销售额：该合伙人所带订单的实付合计，扣除已登记退款；kind 传 'user' / 'org' 时按订单类型拆分
+function partnerSales(p, kind) {
   let gmv = 0;
   p.orders.forEach(o => {
+    const isOrg = orderKind(o) === 'ORG';
+    if (kind === 'user' && isOrg) return;
+    if (kind === 'org' && !isOrg) return;
     const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
     gmv += Math.max(0, (o.pay_amount || 0) - refunded);
   });
@@ -2516,16 +2522,17 @@ function renderPartnerListView(container) {
             <th>手机号</th>
             <th>渠道</th>
             <th>推荐码</th>
-            <th>首购 / 续购比例</th>
-            <th>总销售额</th>
-            <th>累计总金额</th>
+            <th>个人订单首购比例</th>
+            <th>个人订单续购比例</th>
+            <th>个人订单总销售额</th>
+            <th>机构订单总销售额</th>
             <th>加入时间</th>
             <th class="col-sticky" style="text-align: right;">操作</th>
           </tr>
         </thead>
         <tbody>
           ${list.length === 0 ? `
-            <tr><td colspan="11" style="text-align:center; padding:48px; color:var(--muted-foreground);">暂无符合筛选条件的合伙人</td></tr>
+            <tr><td colspan="12" style="text-align:center; padding:48px; color:var(--muted-foreground);">暂无符合筛选条件的合伙人</td></tr>
           ` : pagedRows.map(p => `
             <tr>
               <td><span style="font-weight: 600;">${p.name}</span></td>
@@ -2539,9 +2546,10 @@ function renderPartnerListView(container) {
                 ${p.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部</span>' : '<span class="badge badge-neutral">外部</span>'}
               </td>
               <td><span class="code-badge">${p.code}</span>${p.status === 'FROZEN' ? '<div style="font-size:10.5px; color:var(--destructive); margin-top:2px;">已失效</div>' : ''}</td>
-              <td><strong class="num">${p.first_rate}%</strong> <span style="font-size:11px; color:var(--muted-foreground);">/ 续 ${p.renew_rate}%</span></td>
-              <td><strong class="num">¥${formatNum(partnerSales(p))}</strong></td>
-              <td><strong class="num">¥${fmtC(p.points.total)}</strong></td>
+              <td><strong class="num">${p.first_rate}%</strong></td>
+              <td><strong class="num">${p.renew_rate}%</strong></td>
+              <td><strong class="num">¥${formatNum(partnerSales(p, 'user'))}</strong></td>
+              <td><strong class="num">¥${formatNum(partnerSales(p, 'org'))}</strong></td>
               <td style="color: var(--muted-foreground); font-size: 12px;">${p.join_time.split(' ')[0]}</td>
               <td class="col-sticky" style="text-align: right;">
                 <button class="btn btn-outline btn-sm" onclick="navigate('partner/${p.id}/orders')">详情</button>
@@ -2563,7 +2571,10 @@ function renderPartnerListView(container) {
 // 3. 页面：合伙人详情穿透页 (PARTNER DETAIL)
 // ==========================================
 function renderPartnerDetailView(container, p, activeTab = 'orders') {
-  if (!['orders', 'settlements'].includes(activeTab)) activeTab = 'orders';
+  if (!['orders', 'orgs', 'settlements'].includes(activeTab)) activeTab = 'orders';
+  const tabPts = activeTab === 'orgs'
+    ? partnerTabPoints(p, 'org')
+    : (activeTab === 'settlements' ? p.points : partnerTabPoints(p, 'user'));
   container.innerHTML = `
     <!-- 顶部导航 -->
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px;">
@@ -2594,37 +2605,6 @@ function renderPartnerDetailView(container, p, activeTab = 'orders') {
       </div>
     </div>
 
-    <!-- 核心数据汇总卡片 -->
-    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 22px;">
-      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
-        <div style="font-size: 12px; color: var(--muted-foreground);">累计总金额 (扣除退款)</div>
-        <div style="font-size: 24px; font-weight: 700; margin-top: 4px;" class="num">¥${fmtC(p.points.total)}</div>
-        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">历史净产生佣金总额</div>
-      </div>
-      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
-        <div style="font-size: 12px; color: var(--muted-foreground);">当前可结算金额</div>
-        <div style="font-size: 24px; font-weight: 700; color: #15803D; margin-top: 4px;" class="num">¥${fmtC(p.points.withdrawable)}</div>
-        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">随时可线下打款核销</div>
-      </div>
-      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
-        <div style="font-size: 12px; color: var(--muted-foreground);">冻结中金额</div>
-        <div style="font-size: 24px; font-weight: 700; color: #A16207; margin-top: 4px;" class="num">¥${fmtC(p.points.frozen)}</div>
-        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">到期 T+7 自动解冻</div>
-      </div>
-      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
-        <div style="font-size: 12px; color: var(--muted-foreground);">累计已结算金额</div>
-        <div style="font-size: 24px; font-weight: 700; color: var(--foreground); margin-top: 4px;" class="num">¥${fmtC(p.points.settled)}</div>
-        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">财务已转账核销履约</div>
-      </div>
-      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
-        <div style="font-size: 12px; color: var(--muted-foreground);">待追回金额 (异常)</div>
-        <div style="font-size: 24px; font-weight: 700; color: ${p.points.unrecovered > 0 ? 'var(--destructive)' : 'var(--muted-foreground)'}; margin-top: 4px;" class="num">
-          ¥${fmtC(p.points.unrecovered)}
-        </div>
-        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">${p.points.unrecovered > 0 ? '需在下期打款中扣减' : '账目正常无欠款'}</div>
-      </div>
-    </div>
-
     <!-- 档案基础 KV 卡片 -->
     <div class="content-card" style="padding: 16px 20px; margin-bottom: 22px;">
       <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; font-size: 13px;">
@@ -2650,12 +2630,64 @@ function renderPartnerDetailView(container, p, activeTab = 'orders') {
     <!-- 分段明细选项卡 -->
     <div class="segmented-tabs">
       <button class="seg-tab-btn ${activeTab==='orders'?'active':''}" onclick="navigate('partner/${p.id}/orders')">
-        归属订单
+        个人订单
+      </button>
+      <button class="seg-tab-btn ${activeTab==='orgs'?'active':''}" onclick="navigate('partner/${p.id}/orgs')">
+        机构订单
       </button>
       <button class="seg-tab-btn ${activeTab==='settlements'?'active':''}" onclick="navigate('partner/${p.id}/settlements')">
         线下结算历史
       </button>
     </div>
+
+    <!-- 金额汇总卡片（随选项卡维度切换） -->
+    ${activeTab === 'settlements' ? '' : activeTab === 'orgs' ? `
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px;">
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">累计总金额 (机构订单)</div>
+        <div style="font-size: 24px; font-weight: 700; margin-top: 4px;" class="num">¥${fmtC(tabPts.total)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">按合同核定比例计算的佣金池</div>
+      </div>
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">当前可结算金额</div>
+        <div style="font-size: 24px; font-weight: 700; color: #15803D; margin-top: 4px;" class="num">¥${fmtC(tabPts.withdrawable)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">审批通过即可按订单结算</div>
+      </div>
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">累计已结算金额</div>
+        <div style="font-size: 24px; font-weight: 700; color: var(--foreground); margin-top: 4px;" class="num">¥${fmtC(tabPts.settled)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">财务已转账核销履约</div>
+      </div>
+    </div>` : `
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 22px;">
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">累计总金额 (扣除退款)</div>
+        <div style="font-size: 24px; font-weight: 700; margin-top: 4px;" class="num">¥${fmtC(tabPts.total)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">历史净产生佣金总额</div>
+      </div>
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">当前可结算金额</div>
+        <div style="font-size: 24px; font-weight: 700; color: #15803D; margin-top: 4px;" class="num">¥${fmtC(tabPts.withdrawable)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">随时可线下打款核销</div>
+      </div>
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">冻结中金额</div>
+        <div style="font-size: 24px; font-weight: 700; color: #A16207; margin-top: 4px;" class="num">¥${fmtC(tabPts.frozen)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">到期 T+7 自动解冻</div>
+      </div>
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">累计已结算金额</div>
+        <div style="font-size: 24px; font-weight: 700; color: var(--foreground); margin-top: 4px;" class="num">¥${fmtC(tabPts.settled)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">财务已转账核销履约</div>
+      </div>
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">待追回金额 (异常)</div>
+        <div style="font-size: 24px; font-weight: 700; color: ${tabPts.unrecovered > 0 ? 'var(--destructive)' : 'var(--muted-foreground)'}; margin-top: 4px;" class="num">
+          ¥${fmtC(tabPts.unrecovered)}
+        </div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">${tabPts.unrecovered > 0 ? '需在下期打款中扣减' : '账目正常无欠款'}</div>
+      </div>
+    </div>`}
 
     <!-- 表格内容 -->
     <div class="table-container">
@@ -2664,10 +2696,33 @@ function renderPartnerDetailView(container, p, activeTab = 'orders') {
   `;
 }
 
+// 按维度（个人订单 / 机构订单）汇总合伙人佣金，用于详情页选项卡下方的金额卡片
+function partnerTabPoints(p, kind) {
+  let w = 0, f = 0, s = 0, short = 0;
+  p.orders.forEach(o => {
+    const isOrg = orderKind(o) === 'ORG';
+    if ((kind === 'org') !== isOrg) return;
+    orderLines(o, p).forEach(l => {
+      s += l.settled;
+      if (kind === 'org') {
+        if (l.state !== 'SETTLED') w += l.remaining;
+      } else if (l.state === 'UNLOCKED') w += l.remaining;
+      else if (l.state === 'FROZEN') f += l.remaining;
+    });
+    if (kind !== 'org') short += (o._refundShort || 0);
+  });
+  return {
+    total: round2(w + f + s), withdrawable: round2(w), frozen: round2(f), settled: round2(s),
+    unrecovered: Math.max(0, round2(short - (p._offsetPaid || 0)))
+  };
+}
+
 function renderDetailTabTable(p, tab) {
-  if (tab === 'orders') {
-    const key = 'det-orders-' + p.id;
-    const rows = pagedList(key, p.orders);
+  if (tab === 'orders' || tab === 'orgs') {
+    const isOrgTab = tab === 'orgs';
+    const list = p.orders.filter(o => (orderKind(o) === 'ORG') === isOrgTab);
+    const key = 'det-' + tab + '-' + p.id;
+    const rows = pagedList(key, list);
     return `
       <table class="official-table">
         <thead>
@@ -2684,7 +2739,7 @@ function renderDetailTabTable(p, tab) {
           </tr>
         </thead>
         <tbody>
-          ${p.orders.length === 0 ? '<tr><td colspan="9" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无归属订单</td></tr>' : rows.map(o => {
+          ${list.length === 0 ? `<tr><td colspan="9" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无${isOrgTab ? '机构' : '个人'}订单</td></tr>` : rows.map(o => {
             const lines = orderLines(o, p);
             const netPoints = Math.max(0, o.points - (o._recover || 0));
             const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
@@ -2710,7 +2765,7 @@ function renderDetailTabTable(p, tab) {
           }).join('')}
         </tbody>
       </table>
-      ${pagerBar(key, p.orders.length)}
+      ${pagerBar(key, list.length)}
     `;
   }
 
@@ -3068,7 +3123,6 @@ function executeOrgSettle() {
 // ==========================================
 // 4.4 页面：数据看板 (DASHBOARD)
 // ==========================================
-const DASH_UNITS = ['赤道银河', '中部知光', '启点视界'];
 
 function dashMetrics(list) {
   let userGmv = 0, orgGmv = 0, userFee = 0, orgFee = 0, cust = 0, paying = 0, orgDeals = 0;
@@ -3120,7 +3174,7 @@ function renderDashboardView(container) {
       <div style="margin-top:4px; font-size:12px; color:var(--muted-foreground);">${sub}</div>
     </div>`;
 
-  const dashUnits = DASH_UNITS.concat(PARTNERS.some(p => DASH_UNITS.indexOf(p.unit) < 0) ? ['未分配'] : []);
+  const dashUnits = UNITS.concat(PARTNERS.some(p => UNITS.indexOf(p.unit) < 0) ? ['未分配'] : []);
   const unitCards = dashUnits.map(u => {
     const ps = PARTNERS.filter(p => p.unit === u);
     const d = dashMetrics(ps);
@@ -3553,6 +3607,15 @@ function openApproveModal(appId, isReapprove = false) {
           </div>
 
           <div class="form-group">
+            <label class="form-group-label">归属单位 <span class="req">*</span></label>
+            <select class="form-input-full" id="in-approve-unit" style="cursor: pointer;">
+              <option value="">请选择归属单位</option>
+              ${UNITS.map(u => `<option value="${u}">${u}</option>`).join('')}
+            </select>
+            <div class="form-hint-note">选项来自「系统设置 · 单位配置」，用于数据看板按单位统计；确定后不可修改。</div>
+          </div>
+
+          <div class="form-group">
             <label class="form-group-label">渠道类型 <span class="req">*</span></label>
             <div class="choice-cards-grid">
               <div class="choice-card-item selected" id="opt-ext" onclick="pickChannelType('EXTERNAL')">
@@ -3586,7 +3649,7 @@ function openApproveModal(appId, isReapprove = false) {
               <button class="btn btn-ghost btn-sm" style="height:22px; padding:0 6px;" onclick="document.getElementById('in-approve-code').value=Math.floor(1000+Math.random()*8999).toString().replace(/4/g,'6')">重新生成</button>
             </div>
             <input class="form-input-full num" type="text" maxlength="4" id="in-approve-code" value="${autoCode}" style="letter-spacing: 4px; font-weight: 700; text-align: center; font-size:16px;">
-            <div class="form-hint-note">下单结算页输入或短链带入的 4 位唯一代码。</div>
+            <div class="form-hint-note">下单结算页输入或短链带入的 4 位唯一代码，确定后不可修改。</div>
           </div>
         </div>
         <div class="modal-dialog-footer">
@@ -3625,10 +3688,12 @@ function confirmApprovePartner(appId) {
 
   const isInt = document.getElementById('opt-int').classList.contains('selected');
   const channel = isInt ? 'INTERNAL' : 'EXTERNAL';
+  const unit = document.getElementById('in-approve-unit').value;
   const firstRate = parseFloat(document.getElementById('in-approve-first-rate').value);
   const renewRate = parseFloat(document.getElementById('in-approve-renew-rate').value);
   const code = document.getElementById('in-approve-code').value.trim();
 
+  if (!unit) { alert('请选择归属单位'); return; }
   if (isNaN(firstRate) || firstRate < 0 || firstRate > 100 || isNaN(renewRate) || renewRate < 0 || renewRate > 100 || !Number.isInteger(firstRate) || !Number.isInteger(renewRate)) { alert('首购与续购比例需为 0~100 的整数'); return; }
   if (!/^\d{4}$/.test(code)) { alert('专属推荐码必须为 4 位纯数字'); return; }
   if (PARTNERS.some(p => p.code === code)) { alert('该推荐码已被其他合伙人占用'); return; }
@@ -3641,13 +3706,13 @@ function confirmApprovePartner(appId) {
     time: opTime,
     operator: '张博文',
     action: '审核通过',
-    detail: `设为${channel==='INTERNAL'?'内部渠道':'外部渠道'}，首购 ${firstRate}% / 续购 ${renewRate}%，推荐码 ${code}`
+    detail: `设为${channel==='INTERNAL'?'内部渠道':'外部渠道'}，归属单位 ${unit}，首购 ${firstRate}% / 续购 ${renewRate}%，推荐码 ${code}`
   });
 
   PARTNERS.unshift({
     id: 'PT-' + code,
     name: app.name,
-    unit: '未分配',
+    unit: unit,
     org: app.org,
     role: app.role,
     phone: app.phone,
@@ -3960,6 +4025,7 @@ function unfreezePartner(partnerId) {
 // 7. 页面：系统设置 (SETTINGS)
 let settingsEditing = { rates: false, freeze: false };
 let pendingSettings = null;
+let unitEditing = -1;
 
 function renderSettingsView(container) {
   const onR = settingsEditing.rates, onF = settingsEditing.freeze;
@@ -4018,6 +4084,29 @@ function renderSettingsView(container) {
       </div>
       ${onF ? editActions('freeze', 'requestSaveFreeze()') : ''}
     </div>
+
+    <div class="content-card" style="padding: 20px 22px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <div style="font-size: 14px; font-weight: 600;">单位配置</div>
+        <button class="btn btn-outline btn-sm" onclick="openAddUnitModal()">新增单位</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        ${UNITS.map((u, i) => {
+          if (unitEditing === i) {
+            return `<div style="display: flex; gap: 8px; align-items: center;">
+              <input class="form-input-full" id="set-unit-name-${i}" value="${u}" style="flex: 1;">
+              <button class="btn btn-outline btn-sm" style="flex: none;" onclick="cancelUnitEdit()">取消</button>
+              <button class="btn btn-primary btn-sm" style="flex: none;" onclick="saveUnitName(${i})">保存</button>
+            </div>`;
+          }
+          return `<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 12px;">
+            <div style="font-size: 13px;">${u}</div>
+            <button class="btn btn-ghost btn-sm" onclick="startUnitEdit(${i})">修改</button>
+          </div>`;
+        }).join('')}
+      </div>
+      ${PARTNERS.some(p => UNITS.indexOf(p.unit) < 0) ? `<div class="form-hint-note" style="color: var(--destructive); margin-top: 12px;">有 ${PARTNERS.filter(p => UNITS.indexOf(p.unit) < 0).length} 位合伙人的归属单位不在配置中，需在审核建档时重新指定。</div>` : ''}
+    </div>
   `;
 }
 
@@ -4029,6 +4118,70 @@ function startSettingsEdit(key) {
 function cancelSettingsEdit(key) {
   settingsEditing[key] = false;
   pendingSettings = null;
+  renderActiveView();
+}
+
+function startUnitEdit(i) {
+  unitEditing = i;
+  renderActiveView();
+}
+
+function cancelUnitEdit() {
+  unitEditing = -1;
+  renderActiveView();
+}
+
+function saveUnitName(i) {
+  const v = (document.getElementById('set-unit-name-' + i).value || '').trim();
+  const old = UNITS[i];
+  if (!v) { alert('单位名称不能为空'); return; }
+  if (UNITS.some((u, k) => u === v && k !== i)) { alert('该单位名称已存在'); return; }
+  if (v === old) { unitEditing = -1; renderActiveView(); return; }
+
+  UNITS[i] = v;
+  PARTNERS.forEach(p => { if (p.unit === old) p.unit = v; });
+  CONFIG_LOGS.unshift({ time: nowTime(), operator: '张博文', text: `单位改名：${old} → ${v}` });
+  unitEditing = -1;
+  toast(`单位已更名为「${v}」`);
+  renderActiveView();
+}
+
+function openAddUnitModal() {
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-mask show" id="modal-add-unit">
+      <div class="modal-dialog" style="max-width: 420px;">
+        <div class="modal-dialog-header">
+          <h3>新增单位</h3>
+          <button class="btn-ghost" style="padding: 4px;" onclick="closeModal('modal-add-unit')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-dialog-body">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-group-label">单位名称 <span class="req">*</span></label>
+            <input class="form-input-full" id="set-new-unit" placeholder="请输入单位名称" maxlength="20">
+          </div>
+        </div>
+        <div class="modal-dialog-footer">
+          <button class="btn btn-outline" onclick="closeModal('modal-add-unit')">取消</button>
+          <button class="btn btn-primary" onclick="addUnit()">确认新增</button>
+        </div>
+      </div>
+    </div>`;
+  const el = document.getElementById('set-new-unit');
+  if (el) el.focus();
+}
+
+function addUnit() {
+  const el = document.getElementById('set-new-unit');
+  const v = (el.value || '').trim();
+  if (!v) { alert('请输入单位名称'); return; }
+  if (UNITS.indexOf(v) >= 0) { alert('该单位已存在'); return; }
+
+  UNITS.push(v);
+  CONFIG_LOGS.unshift({ time: nowTime(), operator: '张博文', text: `新增单位：${v}` });
+  closeModal('modal-add-unit');
+  toast(`已新增单位「${v}」`);
   renderActiveView();
 }
 
