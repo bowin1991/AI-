@@ -1421,6 +1421,12 @@ function findOrder(orderId) {
   for (const p of PARTNERS) { const o = p.orders.find(x => x.id === orderId); if (o) return { p, o }; }
   return null;
 }
+// 订单详情入口：机构订单复用机构订单详情抽屉，其余走用户订单详情抽屉
+function showOrderDetail(orderId) {
+  const f = findOrder(orderId);
+  if (f && orderKind(f.o) === 'ORG') { openOrgOrderDetail(orderId); return; }
+  showOrderLines(orderId);
+}
 function showOrderLines(orderId) {
   const f = findOrder(orderId); if (!f) return;
   const { p, o } = f;
@@ -1433,8 +1439,8 @@ function showOrderLines(orderId) {
     <div class="drawer-mask show" id="drawer-lines" onclick="if(event.target===this)closeDrawer('drawer-lines')">
       <div class="drawer-panel" style="width:680px;">
         <div class="drawer-header">
-          <div><h3 style="font-size:15px; font-weight:600;">分期明细 · ${o.id}</h3>
-            <div style="font-size:12px; color:var(--muted-foreground); margin-top:2px;">${p.name} · ${o.kind === 'ORG' ? o.org_name : o.product} · 总佣金 ¥${fmtC(Math.abs(o.points))}</div></div>
+          <div><h3 style="font-size:15px; font-weight:600;">订单详情 · ${o.id}</h3>
+            <div style="font-size:12px; color:var(--muted-foreground); margin-top:2px;">${p.name} · ${o.kind === 'ORG' ? o.org_name : o.product} · ${o.created_at || o.start} · 总佣金 ¥${fmtC(Math.abs(o.points))}</div></div>
           <button class="btn-ghost" style="padding:4px;" onclick="closeDrawer('drawer-lines')">✕</button>
         </div>
         <div class="drawer-body">
@@ -2636,7 +2642,7 @@ function renderPartnerDetailView(container, p, activeTab = 'orders') {
         机构订单
       </button>
       <button class="seg-tab-btn ${activeTab==='settlements'?'active':''}" onclick="navigate('partner/${p.id}/settlements')">
-        线下结算历史
+        结算历史
       </button>
     </div>
 
@@ -2728,8 +2734,8 @@ function renderDetailTabTable(p, tab) {
         <thead>
           <tr>
             <th>订单编号</th>
-            <th>下单客户 / 机构</th>
-            <th>商品名称</th>
+            <th>${isOrgTab ? '机构名称' : '下单客户'}</th>
+            ${isOrgTab ? '' : '<th>商品名称</th>'}
             <th>订单状态</th>
             <th>订单金额</th>
             <th>分成比例</th>
@@ -2739,7 +2745,7 @@ function renderDetailTabTable(p, tab) {
           </tr>
         </thead>
         <tbody>
-          ${list.length === 0 ? `<tr><td colspan="9" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无${isOrgTab ? '机构' : '个人'}订单</td></tr>` : rows.map(o => {
+          ${list.length === 0 ? `<tr><td colspan="${isOrgTab ? 8 : 9}" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无${isOrgTab ? '机构' : '个人'}订单</td></tr>` : rows.map(o => {
             const lines = orderLines(o, p);
             const netPoints = Math.max(0, o.points - (o._recover || 0));
             const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
@@ -2752,14 +2758,14 @@ function renderDetailTabTable(p, tab) {
             return `<tr>
               <td><span class="code-badge">${o.id}</span></td>
               <td>${isOrg ? `<strong>${o.org_name}</strong>` : `<strong class="num">${o.customer_phone}</strong>`}</td>
-              <td style="font-size:12.5px;">${productName(o)}<div style="margin-top:3px;">${productTagHtml(o)}${o.months ? ` <span class="badge badge-neutral" style="font-size:10px;">${o.months} 个月服务期</span>` : ''}</div></td>
+              ${isOrg ? '' : `<td style="font-size:12.5px;">${productName(o)}<div style="margin-top:3px;">${productTagHtml(o)}</div></td>`}
               <td>${payBadge}</td>
               <td class="num">¥${formatNum(o.pay_amount - refunded)}${refunded > 0 ? `<div style="font-size:10.5px; color:var(--muted-foreground); margin-top:2px;">已退 ¥${formatNum(refunded)}</div>` : ''}</td>
               <td class="num">${o.rate}%</td>
               <td><strong class="num" style="color:${pc};">${netPoints > 0 ? '+' : ''}¥${fmtC(netPoints)}</strong></td>
               <td class="num" style="color:var(--muted-foreground); font-size:11.5px;">${o.created_at || o.start}</td>
               <td class="col-sticky" style="text-align:right; white-space:nowrap;">
-                ${lines.length ? `<button class="btn btn-outline btn-sm" onclick="showOrderLines('${o.id}')">分期明细</button>` : ''}
+                <button class="btn btn-outline btn-sm" onclick="showOrderDetail('${o.id}')">订单详情</button>
               </td>
             </tr>`;
           }).join('')}
@@ -2777,25 +2783,29 @@ function renderDetailTabTable(p, tab) {
         <thead>
           <tr>
             <th>结算单号</th>
-            <th>核销金额</th>
+            <th>结算来源</th>
+            <th>结算金额</th>
             <th>财务打款凭证号</th>
             <th>经办人</th>
             <th>核销时间</th>
-            <th>打款备注说明</th>
+            <th>打款备注</th>
           </tr>
         </thead>
         <tbody>
-          ${p.settlements.length === 0 ? '<tr><td colspan="6" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无核销记录</td></tr>' :
-          rows.map(s => `
+          ${p.settlements.length === 0 ? '<tr><td colspan="7" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无核销记录</td></tr>' :
+          rows.map(s => {
+            const hist = SETTLEMENT_HISTORY.find(h => h.settle_id === s.batch_no);
+            return `
             <tr>
               <td><span class="code-badge">${s.batch_no}</span></td>
-              <td><strong class="num" style="color: #15803D;">-¥${fmtC(s.points)}</strong></td>
+              <td>${hist && hist.source === 'ORG' ? '<span class="badge badge-blue">机构订单</span>' : '<span class="badge badge-neutral">用户订单</span>'}</td>
+              <td><strong class="num" style="color: #15803D;">¥${fmtC(s.points)}</strong></td>
               <td><span class="code-badge">${s.voucher}</span></td>
               <td>${s.operator}</td>
               <td style="color: var(--muted-foreground); font-size:12px;">${s.time}</td>
               <td style="color: var(--muted-foreground); font-size:12px;">${s.remark}</td>
             </tr>
-          `).join('')}
+          `; }).join('')}
         </tbody>
       </table>
       ${pagerBar(key, p.settlements.length)}
@@ -2927,11 +2937,11 @@ function renderSettlementsView(container) {
           <tbody>${pagedHistory.map(s => {
             return `<tr>
               <td><span class="code-badge">${s.settle_id}</span>${s.imported ? '<div><span class="badge badge-neutral" style="font-size:10.5px;">录入时已发放</span></div>' : ''}</td>
-              <td>${s.source === 'ORG' ? `<span class="badge badge-blue">机构订单</span><div style="font-size:11px; color:var(--muted-foreground); margin-top:3px;">${s.org_order_id || ''}</div>` : '<span class="badge badge-neutral">用户订单</span>'}</td>
+              <td>${s.source === 'ORG' ? '<span class="badge badge-blue">机构订单</span>' : '<span class="badge badge-neutral">用户订单</span>'}</td>
               <td><strong>${s.partner_name}</strong></td>
               <td><span class="num">${s.partner_phone}</span></td>
               <td>${s.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部</span>' : '<span class="badge badge-neutral">外部</span>'}</td>
-              <td><strong class="num" style="color:#15803D;">-¥${fmtC(s.points)}</strong></td>
+              <td><strong class="num" style="color:#15803D;">¥${fmtC(s.points)}</strong></td>
               <td>${s.voucher ? `<span class="code-badge">${s.voucher}</span>` : '<span style="color:var(--muted-foreground);">—</span>'}</td>
               <td>${s.operator}</td>
               <td style="color:var(--muted-foreground); font-size:12px;">${s.settle_time}</td>
