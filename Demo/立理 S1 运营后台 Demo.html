@@ -156,7 +156,7 @@ aside#app-sidebar {
   color: #52525B;
 }
 
-/* 侧边栏底部用户信息 (1:1 复刻官方张博文) */
+/* 侧边栏底部用户信息 (1:1 复刻官方陈嘉禾) */
 .sidebar-footer {
   padding: 14px 16px;
   border-top: 1px solid var(--border);
@@ -833,12 +833,12 @@ tbody tr:hover td.col-sticky { background: #FAFAFA; }
       </a>
     </div>
 
-    <!-- 用户信息卡片 (完全对应官方张博文) -->
+    <!-- 用户信息卡片 (完全对应官方陈嘉禾) -->
     <div class="sidebar-footer">
       <div class="user-profile-summary">
         <div class="user-avatar-circle">张</div>
         <div class="user-meta-texts">
-          <div class="user-meta-name">张博文</div>
+          <div class="user-meta-name">陈嘉禾</div>
           <div class="user-meta-role">zby</div>
         </div>
       </div>
@@ -867,7 +867,7 @@ tbody tr:hover td.col-sticky { background: #FAFAFA; }
         <button class="btn-round-icon" onclick="navigate('settings')" title="系统设置">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         </button>
-        <div class="user-avatar-circle" style="width:28px; height:28px; font-size:12px; cursor:pointer;" onclick="toast('当前管理员: 张博文')">张</div>
+        <div class="user-avatar-circle" style="width:28px; height:28px; font-size:12px; cursor:pointer;" onclick="toast('当前管理员: 陈嘉禾')">张</div>
       </div>
     </header>
 
@@ -905,7 +905,7 @@ const GLOBAL_CONFIG = {
 let UNITS = ['赤道银河', '中部知光', '启点视界'];
 
 const CONFIG_LOGS = [
-  { time: '2026-10-15 10:00', operator: '张博文', text: '初始化基准分成比例：内部 首购 15.0% / 续购 10.0%，外部 首购 30.0% / 续购 20.0%' }
+  { time: '2026-10-15 10:00', operator: '陈嘉禾', text: '初始化基准分成比例：内部 首购 15.0% / 续购 10.0%，外部 首购 30.0% / 续购 20.0%' }
 ];
 
 let APPLICATIONS = [
@@ -951,11 +951,11 @@ let APPLICATIONS = [
     apply_time: '2026-11-02 09:30',
     status: 'REJECTED',
     approve_time: '', approve_by: '',
-    reject_time: '2026-11-02 16:10', reject_by: '张博文',
+    reject_time: '2026-11-02 16:10', reject_by: '陈嘉禾',
     reject_reason: '申请材料未提供有效的学术媒体主页或高校凭证，暂不符合本期合伙人准入要求。',
     logs: [
       { time: '2026-11-02 09:30', operator: '申请人', action: '提交入驻申请', detail: '自主注册提交材料' },
-      { time: '2026-11-02 16:10', operator: '张博文', action: '拒绝申请', detail: '原因：申请材料未提供有效的学术媒体主页或高校凭证' }
+      { time: '2026-11-02 16:10', operator: '陈嘉禾', action: '拒绝申请', detail: '原因：申请材料未提供有效的学术媒体主页或高校凭证' }
     ]
   },
   {
@@ -967,12 +967,12 @@ let APPLICATIONS = [
     wx: 'prof_li_buaa',
     apply_time: '2026-10-18 10:15',
     status: 'APPROVED',
-    approve_time: '2026-10-18 14:22', approve_by: '张博文',
+    approve_time: '2026-10-18 14:22', approve_by: '陈嘉禾',
     reject_time: '', reject_by: '',
     reject_reason: '',
     logs: [
       { time: '2026-10-18 10:15', operator: '申请人', action: '提交入驻申请', detail: '申请材料通过初筛' },
-      { time: '2026-10-18 14:22', operator: '张博文', action: '审核通过', detail: '设为外部渠道，初始比例 30.0%，指定专属推荐码 8866' }
+      { time: '2026-10-18 14:22', operator: '陈嘉禾', action: '审核通过', detail: '设为外部渠道，初始比例 30.0%，指定专属推荐码 8866' }
     ]
   }
 ];
@@ -1029,7 +1029,7 @@ let PARTNERS = [
       { phone: '18600112233', bind_time: '2026-10-01 09:00', reg_time: '2026-10-01 09:12', plan: 'Pro 月卡', plan_status: 'EXPIRED', expire_at: '2026-11-01', orders_cnt: 1, gmv: 299.00 }
     ],
     logs: [
-      { time: '2026-10-18 14:22', operator: '张博文', action: '入驻审核通过', before: '申请审核中', after: '正式合伙人 (首购 30.0% / 续购 20.0%)', reason: '符合高校博主与学者准入标准' },
+      { time: '2026-10-18 14:22', operator: '陈嘉禾', action: '入驻审核通过', before: '申请审核中', after: '正式合伙人 (首购 30.0% / 续购 20.0%)', reason: '符合高校博主与学者准入标准' },
       { time: '2026-10-28 15:00', operator: '财务王敏', action: '线下结算核销', before: '可结算 ¥5,820', after: '可结算 ¥3,820', reason: '核销 ¥2,000，流水 BCM202610288892' }
     ]
   },
@@ -1063,7 +1063,7 @@ let PARTNERS = [
       { phone: '13611229988', bind_time: '2026-10-28 09:12', reg_time: '2026-10-28 09:20', plan: 'Max 年卡', plan_status: 'ACTIVE_YEAR', expire_at: '2027-11-02', orders_cnt: 1, gmv: 3999.00 }
     ],
     logs: [
-      { time: '2026-10-20 09:30', operator: '张博文', action: '入驻审核通过', before: '待审核', after: '正式合伙人 (首购 15.0% / 续购 10.0%)', reason: '内部员工推广渠道' }
+      { time: '2026-10-20 09:30', operator: '陈嘉禾', action: '入驻审核通过', before: '待审核', after: '正式合伙人 (首购 15.0% / 续购 10.0%)', reason: '内部员工推广渠道' }
     ]
   },
   {
@@ -1093,8 +1093,8 @@ let PARTNERS = [
       { phone: '18800998877', bind_time: '2026-10-23 11:00', reg_time: '2026-10-23 11:05', plan: 'Pro 月卡', plan_status: 'ACTIVE_MONTH', expire_at: '2026-11-23', orders_cnt: 1, gmv: 299.00 }
     ],
     logs: [
-      { time: '2026-10-22 16:00', operator: '张博文', action: '入驻审核通过', before: '待审核', after: '外部渠道 (首购 28.0% / 续购 18.0%)', reason: '外部特邀合作' },
-      { time: '2026-11-01 18:20', operator: '张博文', action: '冻结账号', before: '正常', after: '已冻结', reason: '合伙人存在异地高校社群虚假刷单争议，暂时冻结' }
+      { time: '2026-10-22 16:00', operator: '陈嘉禾', action: '入驻审核通过', before: '待审核', after: '外部渠道 (首购 28.0% / 续购 18.0%)', reason: '外部特邀合作' },
+      { time: '2026-11-01 18:20', operator: '陈嘉禾', action: '冻结账号', before: '正常', after: '已冻结', reason: '合伙人存在异地高校社群虚假刷单争议，暂时冻结' }
     ]
   },
   {
@@ -1124,8 +1124,8 @@ let PARTNERS = [
     ],
     customers: [],
     logs: [
-      { time: '2026-09-01 10:00', operator: '张博文', action: '入驻审核通过', before: '待审核', after: '外部渠道 (30.0%)', reason: '初始合作' },
-      { time: '2026-10-15 17:00', operator: '张博文', action: '冻结账号', before: '正常', after: '已冻结', reason: '长期未产生有效推广' }
+      { time: '2026-09-01 10:00', operator: '陈嘉禾', action: '入驻审核通过', before: '待审核', after: '外部渠道 (30.0%)', reason: '初始合作' },
+      { time: '2026-10-15 17:00', operator: '陈嘉禾', action: '冻结账号', before: '正常', after: '已冻结', reason: '长期未产生有效推广' }
     ]
   }
 ];
@@ -1342,16 +1342,16 @@ let ORG_REQUESTS = [
     status: 'PENDING', created_at: '2026-11-06 14:20', reviewed_at: '', reviewer: '', reject_reason: '', order_id: '', settled_amount: 0 },
   { id: 'ORGREQ-20261029-002', partner_id: 'PT-9902', partner_name: '韩磊', org: '南京大学人工智能学院', contract_no: 'LL-2026-1029-07',
     amount: 30000, rate: null, start: '2026-10-29', months: 6, remark: '', imgs: 1,
-    status: 'REJECTED', created_at: '2026-10-29 09:40', reviewed_at: '2026-11-02 10:15', reviewer: '张博文', reject_reason: '合同盖章页缺失，请补充后重新提交。', order_id: '', settled_amount: 0 },
+    status: 'REJECTED', created_at: '2026-10-29 09:40', reviewed_at: '2026-11-02 10:15', reviewer: '陈嘉禾', reject_reason: '合同盖章页缺失，请补充后重新提交。', order_id: '', settled_amount: 0 },
   { id: 'ORGREQ-20261103-003', partner_id: 'PT-8866', partner_name: '李维国', org: '复旦大学类脑智能研究院', contract_no: 'LL-2026-1103-02',
     amount: 80000, rate: 18, start: '2026-11-03', months: 12, remark: '', imgs: 2,
-    status: 'APPROVED', created_at: '2026-11-03 10:05', reviewed_at: '2026-11-03 15:20', reviewer: '张博文', reject_reason: '', order_id: 'ORG-20261103-001', settled_amount: 0 },
+    status: 'APPROVED', created_at: '2026-11-03 10:05', reviewed_at: '2026-11-03 15:20', reviewer: '陈嘉禾', reject_reason: '', order_id: 'ORG-20261103-001', settled_amount: 0 },
   { id: 'ORGREQ-20260928-004', partner_id: 'PT-8866', partner_name: '李维国', org: '上海交通大学医学院', contract_no: 'LL-2026-0928-05',
     amount: 60000, rate: 15, start: '2026-09-28', months: 12, remark: '首笔款已到账，剩余款项按合同执行', imgs: 1,
-    status: 'APPROVED', created_at: '2026-09-28 09:10', reviewed_at: '2026-09-28 16:40', reviewer: '张博文', reject_reason: '', order_id: 'ORG-20260928-002', settled_amount: 3600, received: 24000 },
+    status: 'APPROVED', created_at: '2026-09-28 09:10', reviewed_at: '2026-09-28 16:40', reviewer: '陈嘉禾', reject_reason: '', order_id: 'ORG-20260928-002', settled_amount: 3600, received: 24000 },
   { id: 'ORGREQ-20260815-005', partner_id: 'PT-8866', partner_name: '李维国', org: '浙江大学计算机学院', contract_no: 'LL-2026-0815-03',
     amount: 100000, rate: 20, start: '2026-08-15', months: 12, remark: '合同款项已全额到账，佣金结清', imgs: 3,
-    status: 'APPROVED', created_at: '2026-08-15 11:25', reviewed_at: '2026-08-15 17:10', reviewer: '张博文', reject_reason: '', order_id: 'ORG-20260815-003', settled_amount: 20000, received: 100000 }
+    status: 'APPROVED', created_at: '2026-08-15 11:25', reviewed_at: '2026-08-15 17:10', reviewer: '陈嘉禾', reject_reason: '', order_id: 'ORG-20260815-003', settled_amount: 20000, received: 100000 }
 ];
 // 已通过的申请单同步为机构订单：佣金池 = 合同金额 × 核定比例，按订单整笔结算，不设分期与回款登记
 function seedOrgRequests() {
@@ -1410,7 +1410,7 @@ function productTagHtml(o, extra) {
 }
 function lineStateBadge(l) {
   if (l.state === 'SETTLED') return '<span class="badge badge-neutral">已结算</span>';
-  if (l.state === 'SHORT') return `<span class="badge badge-danger">待追回</span>${l.short ? `<div style="font-size:10px; color:var(--destructive); margin-top:2px;">¥${fmtC(l.short)}</div>` : ''}`;
+  if (l.state === 'SHORT') return '<span class="badge badge-danger">待追回</span>';
   if (l.state === 'UNLOCKED') return '<span class="badge badge-success">可结算</span>';
   if (l.state === 'FROZEN') return '<span class="badge badge-warning">冻结中</span>';
   if (l.state === 'REFUND') return '<span class="badge badge-danger">退款扣除</span>';
@@ -1433,11 +1433,21 @@ function showOrderLines(orderId) {
   const ls = orderLines(o, p);
   const sum = st => ls.filter(l => l.state === st).reduce((a, l) => a + l.remaining, 0);
   const settled = ls.reduce((a, l) => a + l.settled, 0);
+  // 每期应得：退款扣减后的剩余金额；已打款需追回的期次按「本期佣金 − 待追回」计；被完全冲抵的期次为 0
+  const earnOf = l => {
+    if (l.state === 'SHORT') return round2(Math.max(0, l.amt - (l.short || 0)));
+    if (l.state === 'REFUND') return 0.00;
+    if (l.cut > 0) return l.remaining;
+    return l.amt;
+  };
+  const totalAmt = round2(ls.reduce((a, l) => a + l.amt, 0));
+  const totalEarn = round2(ls.reduce((a, l) => a + earnOf(l), 0));
+  const totalCut = round2(totalAmt - totalEarn);
   const netPts = Math.max(0, o.points - (o._recover || 0));
   const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
   document.getElementById('drawer-root').innerHTML = `
     <div class="drawer-mask show" id="drawer-lines" onclick="if(event.target===this)closeDrawer('drawer-lines')">
-      <div class="drawer-panel" style="width:680px;">
+      <div class="drawer-panel" style="width:880px; max-width:96vw;">
         <div class="drawer-header">
           <div><h3 style="font-size:15px; font-weight:600;">订单详情 · ${o.id}</h3>
             <div style="font-size:12px; color:var(--muted-foreground); margin-top:2px;">${p.name} · ${o.kind === 'ORG' ? o.org_name : o.product} · ${o.created_at || o.start} · 总佣金 ¥${fmtC(Math.abs(o.points))}</div></div>
@@ -1449,12 +1459,12 @@ function showOrderLines(orderId) {
               <span style="font-size:12px; color:var(--muted-foreground);">合同编号</span><span class="code-badge">${o.contract_no}</span>
             </div>` : ''}
             <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
-              <div><div style="font-size:11.5px; color:var(--muted-foreground);">订单金额</div><strong class="num">¥${formatNum(o.pay_amount - refunded)}</strong>${refunded > 0 ? `<div style="font-size:10.5px; color:var(--muted-foreground); margin-top:2px;">已退 ¥${formatNum(refunded)}</div>` : ''}</div>
+              <div><div style="font-size:11.5px; color:var(--muted-foreground);">订单金额</div><strong class="num">¥${formatNum(o.pay_amount)}</strong>${refunded > 0 ? `<div style="font-size:10.5px; color:var(--muted-foreground); margin-top:2px;">已退 ¥${formatNum(refunded)}</div>` : ''}</div>
               <div><div style="font-size:11.5px; color:var(--muted-foreground);">分成比例</div><div><strong class="num">${o.rate}%</strong><span style="margin-left:6px;">${productTagHtml(o)}</span></div></div>
               <div><div style="font-size:11.5px; color:var(--muted-foreground);">本单佣金${refunded > 0 ? '（退款后）' : ''}</div><div><strong class="num" style="color:${netPts > 0 ? '#15803D' : 'var(--muted-foreground)'};">¥${fmtC(netPts)}</strong></div></div>
             </div>
             ${refunded > 0 ? `<div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border); font-size:12px; color:var(--destructive);">
-              <strong>${(o.refunds || []).map(r => r.date).filter(Boolean).join('、')}${(o.refunds || []).some(r => r.date) ? ' · ' : ''}${refunded >= o.pay_amount ? '已全额退款' : '部分退款'} ¥${formatNum(refunded)}</strong>
+              <strong>${(o.refunds || []).map(r => r.date).filter(Boolean).join('、')}${(o.refunds || []).some(r => r.date) ? ' · ' : ''}${refunded >= o.pay_amount ? '已全额退款' : '部分退款'} ¥${formatNum(refunded)} · 剩余订单金额 ¥${formatNum(Math.max(0, o.pay_amount - refunded))}</strong>
             </div>` : ''}
           </div>
           <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px;">
@@ -1463,8 +1473,16 @@ function showOrderLines(orderId) {
             <div class="content-card" style="margin:0; padding:10px 14px;"><div style="font-size:11.5px; color:var(--muted-foreground);">已结算</div><strong class="num">¥${fmtC(settled)}</strong></div>
           </div>
           <div class="table-container"><table class="official-table">
-            <thead><tr><th>期次</th><th>服务期间</th><th>解冻日</th><th>金额</th><th>状态</th></tr></thead>
-            <tbody>${ls.map(l => `<tr><td>第 ${l.k}/${l.n} 期</td><td style="font-size:12px; color:var(--muted-foreground);">${l.period}</td><td>${l.unlock}</td><td class="num">${l.cut > 0 && l.remaining > 0 ? `¥${fmtC(l.remaining)}<div style="font-size:10.5px; color:var(--destructive); margin-top:2px;">已扣 ¥${fmtC(l.cut)}</div>` : `¥${fmtC(l.amt)}`}</td><td>${lineStateBadge(l)}</td></tr>`).join('')}</tbody>
+            <thead><tr><th>期次</th><th>服务期间</th><th>解冻日</th><th>每期应得</th><th>状态</th></tr></thead>
+            <tbody>${ls.map(l => {
+              const note = l.short > 0 ? `待追回 ¥${fmtC(l.short)}` : '';
+              return `<tr><td>第 ${l.k}/${l.n} 期</td><td style="font-size:12px; color:var(--muted-foreground);">${l.period}</td><td>${l.unlock}</td><td class="num">¥${fmtC(earnOf(l))}${note ? `<div style="font-size:10.5px; color:var(--destructive); margin-top:2px; font-weight:400;">${note}</div>` : ''}</td><td>${lineStateBadge(l)}</td></tr>`;
+            }).join('')}</tbody>
+            <tfoot><tr>
+              <td colspan="3" style="font-weight:600;">合计（${ls.length} 期）</td>
+              <td class="num" style="font-weight:700;">¥${fmtC(totalEarn)}${totalCut > 0 ? `<div style="font-size:10.5px; color:var(--muted-foreground); margin-top:2px; font-weight:400;">原 ¥${fmtC(totalAmt)} · 退款扣减 ¥${fmtC(totalCut)}</div>` : ''}</td>
+              <td></td>
+            </tr></tfoot>
           </table></div>
         </div>
       </div>
@@ -1653,7 +1671,7 @@ function openSettleSheet(pid) {
           <div class="form-group"><label class="form-group-label">打款备注说明</label><input class="form-input-full" id="sheet-rem" value="2026年11月度推广服务费，公对私转账付清"></div>
         </div>
         <div class="drawer-footer" style="justify-content:space-between;">
-          <div style="font-size:13px;">本次实结 <strong id="sheet-total" class="num" style="font-size:20px; color:#15803D;">¥${fmtC(total - dueOffset)}</strong> <span id="sheet-count" style="color:var(--muted-foreground); font-size:12px;">（已选 ${lines.length}/${lines.length} 条明细）</span><div id="sheet-offset" style="font-size:11.5px; color:#B91C1C; margin-top:2px;">${dueOffset > 0 ? `明细合计 ¥${fmtC(total)} · 扣减待追回 ¥${fmtC(dueOffset)}` : ''}</div></div>
+          <div style="font-size:13px;">本次实结 <strong id="sheet-total" class="num" style="font-size:20px; color:#15803D;">¥${fmtC(total - dueOffset)}</strong> <span id="sheet-count" style="color:var(--muted-foreground); font-size:12px;">（已选 ${lines.length}/${lines.length} 条明细）</span><div id="sheet-offset" style="font-size:11.5px; color:#B91C1C; margin-top:2px;">${dueOffset > 0 ? `可结算 ¥${fmtC(total)} − 待追回 ¥${fmtC(dueOffset)} = 本次实结 ¥${fmtC(total - dueOffset)}` : ''}</div></div>
           <div style="display:flex; gap:10px;">
             <button class="btn btn-outline" onclick="closeDrawer('drawer-settle')">取消</button>
             <button class="btn btn-primary" onclick="confirmSettleSheet()">确认结算并同步</button>
@@ -1668,7 +1686,7 @@ function updateSheetTotal() {
   const p = PARTNERS.find(x => x.id === SHEET.pid);
   const offset = p ? Math.min(p.points.unrecovered || 0, gross) : 0;
   document.getElementById('sheet-total').textContent = '¥' + fmtC(gross - offset);
-  document.getElementById('sheet-offset').textContent = offset > 0 ? `明细合计 ¥${fmtC(gross)} · 扣减待追回 ¥${fmtC(offset)}` : '';
+  document.getElementById('sheet-offset').textContent = offset > 0 ? `可结算 ¥${fmtC(gross)} − 待追回 ¥${fmtC(offset)} = 本次实结 ¥${fmtC(gross - offset)}` : '';
   document.getElementById('sheet-count').textContent = `（已选 ${sel.length}/${SHEET.lines.length} 条明细）`;
 }
 function toggleSheetLine(el) {
@@ -2047,7 +2065,7 @@ function confirmOrgApprove(reqId) {
   r.status = 'APPROVED';
   r.rate = rate;
   r.reviewed_at = now;
-  r.reviewer = '张博文';
+  r.reviewer = '陈嘉禾';
   r.reject_reason = '';
   r.order_id = orderId;
   r.settled_amount = 0;
@@ -2056,7 +2074,7 @@ function confirmOrgApprove(reqId) {
     status: 'ORG', unfreeze_at: '按结算释放', created_at: now, start: r.start, months: r.months,
     paid_out: 0, settled_amount: 0, received_amount: 0, remark: r.remark, is_upgrade: false, is_cool: false });
   p.flow.unshift({ time: now, order_id: orderId, type: '机构订单审核通过', points: '+¥' + fmtC(pool), status: `合同 ${r.contract_no}，待结算佣金 ¥${fmtC(pool)}` });
-  p.logs.unshift({ time: now, operator: '张博文', action: '审核机构订单', before: r.id, after: `${r.org} · ¥${formatNum(r.amount)} × ${rate}%`, reason: `核定比例 ${rate}%，总佣金 ¥${fmtC(pool)}，按订单维度结算` });
+  p.logs.unshift({ time: now, operator: '陈嘉禾', action: '审核机构订单', before: r.id, after: `${r.org} · ¥${formatNum(r.amount)} × ${rate}%`, reason: `核定比例 ${rate}%，总佣金 ¥${fmtC(pool)}，按订单维度结算` });
   recalcAll();
   closeDrawer('drawer-org-review');
   toast(`审核通过：${r.org}，核定 ${rate}%，总佣金 ¥${fmtC(pool)}`);
@@ -2071,10 +2089,10 @@ function confirmOrgReject(reqId) {
   const now = nowTime();
   r.status = 'REJECTED';
   r.reviewed_at = now;
-  r.reviewer = '张博文';
+  r.reviewer = '陈嘉禾';
   r.reject_reason = reason;
   const p = PARTNERS.find(x => x.id === r.partner_id);
-  if (p) p.logs.unshift({ time: now, operator: '张博文', action: '驳回机构订单', before: r.id, after: r.org, reason });
+  if (p) p.logs.unshift({ time: now, operator: '陈嘉禾', action: '驳回机构订单', before: r.id, after: r.org, reason });
   closeModal('modal-org-reject');
   closeDrawer('drawer-org-review');
   toast(`已驳回：${r.org}`);
@@ -2268,7 +2286,7 @@ function renderApplicationsView(container) {
           <tr>
             <th>申请人</th>
             <th>手机号</th>
-            <th>所属单位 / 学术机构</th>
+            <th>所属单位</th>
             <th>微信号</th>
             <th>申请时间</th>
             ${showTimeCol ? `<th>${timeColLabel}</th>` : ''}
@@ -2299,14 +2317,7 @@ function renderApplicationsView(container) {
               </td>
               ${showOperatorCol ? `<td>${item.status === 'APPROVED' ? (item.approve_by || '-') : item.status === 'REJECTED' ? (item.reject_by || '-') : ''}</td>` : ''}
               <td class="col-sticky" style="text-align: right;">
-                <button class="btn btn-outline btn-sm" onclick="openAppDetailDrawer('${item.id}')">详情</button>
-                ${item.status === 'PENDING' ? `
-                  <button class="btn btn-primary btn-sm" onclick="openApproveModal('${item.id}')">通过</button>
-                  <button class="btn btn-destructive btn-sm" onclick="openRejectModal('${item.id}')">拒绝</button>
-                ` : ''}
-                ${item.status === 'REJECTED' ? `
-                  <button class="btn btn-primary btn-sm" onclick="openApproveModal('${item.id}', true)">重新审核</button>
-                ` : ''}
+                <button class="btn btn-outline btn-sm" onclick="openAppDetailDrawer('${item.id}')">${item.status === 'PENDING' ? '审核' : '查看'}</button>
               </td>
             </tr>
           `).join('')}
@@ -2760,7 +2771,7 @@ function renderDetailTabTable(p, tab) {
               <td>${isOrg ? `<strong>${o.org_name}</strong>` : `<strong class="num">${o.customer_phone}</strong>`}</td>
               ${isOrg ? '' : `<td style="font-size:12.5px;">${productName(o)}<div style="margin-top:3px;">${productTagHtml(o)}</div></td>`}
               <td>${payBadge}</td>
-              <td class="num">¥${formatNum(o.pay_amount - refunded)}${refunded > 0 ? `<div style="font-size:10.5px; color:var(--muted-foreground); margin-top:2px;">已退 ¥${formatNum(refunded)}</div>` : ''}</td>
+              <td class="num">¥${formatNum(o.pay_amount)}${refunded > 0 ? `<div style="font-size:10.5px; color:var(--muted-foreground); margin-top:2px;">已退 ¥${formatNum(refunded)}</div>` : ''}</td>
               <td class="num">${o.rate}%</td>
               <td><strong class="num" style="color:${pc};">${netPoints > 0 ? '+' : ''}¥${fmtC(netPoints)}</strong></td>
               <td class="num" style="color:var(--muted-foreground); font-size:11.5px;">${o.created_at || o.start}</td>
@@ -3033,7 +3044,7 @@ function openOrgSettleDrawer(orderId) {
             </div>
             <div class="form-group">
               <label class="form-group-label">结算经办人</label>
-              <input class="input-control" id="org-settle-operator" value="张博文">
+              <input class="input-control" id="org-settle-operator" value="陈嘉禾">
             </div>
           </div>
           <div class="form-group" style="margin-bottom:0;">
@@ -3078,7 +3089,7 @@ function confirmOrgSettle(orderId) {
   const fee = Math.min(round2(received * (o.rate || 0) / 100), remainPool);
   const date = (typeof REF_DATE === 'string' ? REF_DATE : '2026-11-06');
   const voucher = document.getElementById('org-settle-voucher').value.trim();
-  const operator = document.getElementById('org-settle-operator').value.trim() || '张博文';
+  const operator = document.getElementById('org-settle-operator').value.trim() || '陈嘉禾';
   const remark = document.getElementById('org-settle-remark').value.trim();
   if (!(received > 0)) { toast('请输入本次到账回款金额'); return; }
   if (received > remainContract + 0.001) { toast('回款金额不能超过剩余未回款 ¥' + fmtC(remainContract)); return; }
@@ -3134,6 +3145,64 @@ function executeOrgSettle() {
 // 4.4 页面：数据看板 (DASHBOARD)
 // ==========================================
 
+// 看板「分单位数据」展示范围：默认不选，需手动勾选；选择结果持久化
+let dashUnitsSel = [];
+try { dashUnitsSel = JSON.parse(localStorage.getItem('ll_dash_units') || '[]') || []; } catch (e) { dashUnitsSel = []; }
+let dashUnitsDraft = [];
+function saveDashUnits() { try { localStorage.setItem('ll_dash_units', JSON.stringify(dashUnitsSel)); } catch (e) {} }
+function availDashUnits() { return UNITS.concat(PARTNERS.some(p => UNITS.indexOf(p.unit) < 0) ? ['未分配'] : []); }
+function unitCount(u) { return u === '未分配' ? PARTNERS.filter(p => UNITS.indexOf(p.unit) < 0).length : PARTNERS.filter(p => p.unit === u).length; }
+function openDashUnitModal() {
+  dashUnitsDraft = dashUnitsSel.slice();
+  const all = availDashUnits();
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-mask show" id="modal-dash-units" onclick="if(event.target===this)closeModal('modal-dash-units')">
+      <div class="modal-dialog" style="max-width: 440px;">
+        <div class="modal-dialog-header">
+          <h3>看板展示单位</h3>
+          <button class="btn-ghost" style="padding: 4px;" onclick="closeModal('modal-dash-units')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-dialog-body">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px;">
+            <span class="form-hint-note" style="margin:0;">仅勾选的单位会显示在分单位数据区</span>
+            <div style="display:flex; gap:4px; flex:none;">
+              <button class="btn btn-ghost btn-sm" onclick="dashUnitsAll(true)">全选</button>
+              <button class="btn btn-ghost btn-sm" onclick="dashUnitsAll(false)">清空</button>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            ${all.map(u => `<label style="display:flex; align-items:center; gap:10px; border:1px solid var(--border); border-radius:var(--radius-md); padding:10px 12px; cursor:pointer;">
+              <input type="checkbox" value="${u}" ${dashUnitsDraft.indexOf(u) >= 0 ? 'checked' : ''} onchange="toggleDashUnit(this)">
+              <span style="font-size:13px;">${u}</span>
+              <span class="num" style="margin-left:auto; font-size:12px; color:var(--muted-foreground);">${unitCount(u)} 位合伙人</span>
+            </label>`).join('')}
+          </div>
+        </div>
+        <div class="modal-dialog-footer">
+          <button class="btn btn-outline" onclick="closeModal('modal-dash-units')">取消</button>
+          <button class="btn btn-primary" onclick="confirmDashUnits()">确定</button>
+        </div>
+      </div>
+    </div>`;
+}
+function toggleDashUnit(cb) {
+  if (cb.checked) { if (dashUnitsDraft.indexOf(cb.value) < 0) dashUnitsDraft.push(cb.value); }
+  else dashUnitsDraft = dashUnitsDraft.filter(x => x !== cb.value);
+}
+function dashUnitsAll(on) {
+  dashUnitsDraft = on ? availDashUnits().slice() : [];
+  document.querySelectorAll('#modal-dash-units input[type=checkbox]').forEach(cb => { cb.checked = on; });
+}
+function confirmDashUnits() {
+  dashUnitsSel = dashUnitsDraft.slice();
+  saveDashUnits();
+  closeModal('modal-dash-units');
+  renderActiveView();
+}
+
+
 function dashMetrics(list) {
   let userGmv = 0, orgGmv = 0, userFee = 0, orgFee = 0, cust = 0, paying = 0, orgDeals = 0;
   list.forEach(p => {
@@ -3184,7 +3253,7 @@ function renderDashboardView(container) {
       <div style="margin-top:4px; font-size:12px; color:var(--muted-foreground);">${sub}</div>
     </div>`;
 
-  const dashUnits = UNITS.concat(PARTNERS.some(p => UNITS.indexOf(p.unit) < 0) ? ['未分配'] : []);
+  const dashUnits = availDashUnits().filter(u => dashUnitsSel.indexOf(u) >= 0);
   const unitCards = dashUnits.map(u => {
     const ps = PARTNERS.filter(p => p.unit === u);
     const d = dashMetrics(ps);
@@ -3194,7 +3263,10 @@ function renderDashboardView(container) {
           <span style="width:26px; height:26px; border-radius:8px; background:var(--muted); display:flex; align-items:center; justify-content:center; color:#3F3F46;">${ic(I.building)}</span>
           <span class="card-header-title">${u}</span>
         </div>
-        <span class="badge badge-neutral">${ps.length} 位合伙人</span>
+        <span class="badge badge-neutral" title="${ps.length} 位合伙人" style="display:inline-flex; align-items:center; gap:4px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span class="num">${ps.length}</span>
+        </span>
       </div>
       <div style="padding:14px 18px 16px;">
         <div style="font-size:12px; color:var(--muted-foreground);">总成交 GMV</div>
@@ -3281,11 +3353,22 @@ function renderDashboardView(container) {
 
     <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;">
       <h2 style="font-size:15px; font-weight:600;">分单位数据</h2>
-      <span style="font-size:12px; color:var(--muted-foreground);">口径与总表一致，按单位汇总</span>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:12px; color:var(--muted-foreground);">口径与总表一致，按单位汇总</span>
+        <button class="btn btn-outline btn-sm" style="display:inline-flex; align-items:center; gap:5px;" onclick="openDashUnitModal()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>设置</span>
+        </button>
+      </div>
     </div>
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
+    ${dashUnits.length ? `<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
       ${unitCards}
-    </div>
+    </div>` : `<div class="content-card" style="margin:0; padding:34px 20px; text-align:center;">
+      <div style="width:44px; height:44px; border-radius:12px; background:var(--muted); display:flex; align-items:center; justify-content:center; margin:0 auto 10px; color:#3F3F46;">${ic(I.building)}</div>
+      <div style="font-size:14px; font-weight:600;">尚未选择要展示的单位</div>
+      <div style="font-size:12px; color:var(--muted-foreground); margin-top:4px;">勾选单位后，将在此按单位汇总成交、客户与佣金数据</div>
+      <button class="btn btn-primary btn-sm" style="margin-top:14px;" onclick="openDashUnitModal()">选择单位</button>
+    </div>`}
   `;
 }
 
@@ -3357,7 +3440,7 @@ function renderOrdersView(container) {
               <td style="font-size:12.5px;">${productName(o)}<div style="margin-top:3px;">${productTagHtml(o)}</div></td>
               <td><strong>${p.name}</strong><div style="font-size:11.5px; color:var(--muted-foreground);">${p.channel_type === 'INTERNAL' ? '内部' : '外部'}渠道</div></td>
               <td>${payBadge}</td>
-              <td class="num">¥${formatNum(o.pay_amount - refunded)}${refunded > 0 ? `<div style="font-size:10.5px; color:var(--muted-foreground); margin-top:2px;">已退 ¥${formatNum(refunded)}</div>` : ''}</td>
+              <td class="num">¥${formatNum(o.pay_amount)}${refunded > 0 ? `<div style="font-size:10.5px; color:var(--muted-foreground); margin-top:2px;">已退 ¥${formatNum(refunded)}</div>` : ''}</td>
               <td class="num">${o.rate}%</td>
               <td><strong class="num" style="color:${pc};">${netPoints > 0 ? '+' : ''}¥${fmtC(netPoints)}</strong></td>
               <td class="num" style="color:var(--muted-foreground); font-size:11.5px;">${o.created_at}</td>
@@ -3590,87 +3673,7 @@ function renderReportsView(container) {
 // 弹窗与抽屉交互 (Modals & Drawer)
 // ==========================================
 
-// 1. 审核通过弹窗
-function openApproveModal(appId, isReapprove = false) {
-  const app = APPLICATIONS.find(a => a.id === appId);
-  if (!app) return;
-
-  const autoCode = Math.floor(1000 + Math.random() * 8999).toString().replace(/4/g, '8');
-
-  const root = document.getElementById('modal-root');
-  root.innerHTML = `
-    <div class="modal-mask show" id="modal-approve">
-      <div class="modal-dialog">
-        <div class="modal-dialog-header">
-          <h3>${isReapprove ? '重新审核 · 设为已通过' : '合伙人申请审核通过'}</h3>
-          <button class="btn-ghost" style="padding:4px;" onclick="closeModal('modal-approve')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-        </div>
-        <div class="modal-dialog-body">
-          <div style="background: #FAFAFA; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 18px; font-size: 13px;">
-            <div style="display:flex; justify-content:space-between;">
-              <span>申请人：<strong>${app.name}</strong></span>
-              <strong class="num">${app.phone}</strong>
-            </div>
-            <div style="color: var(--muted-foreground); margin-top: 4px;">所属单位：${app.org}</div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-group-label">归属单位 <span class="req">*</span></label>
-            <select class="form-input-full" id="in-approve-unit" style="cursor: pointer;">
-              <option value="">请选择归属单位</option>
-              ${UNITS.map(u => `<option value="${u}">${u}</option>`).join('')}
-            </select>
-            <div class="form-hint-note">选项来自「系统设置 · 单位配置」，用于数据看板按单位统计；确定后不可修改。</div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-group-label">渠道类型 <span class="req">*</span></label>
-            <div class="choice-cards-grid">
-              <div class="choice-card-item selected" id="opt-ext" onclick="pickChannelType('EXTERNAL')">
-                <input type="radio" name="ch" value="EXTERNAL" checked>
-                <span class="choice-title">外部渠道</span>
-              </div>
-              <div class="choice-card-item" id="opt-int" onclick="pickChannelType('INTERNAL')">
-                <input type="radio" name="ch" value="INTERNAL">
-                <span class="choice-title">内部渠道</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-group-label">分成比例（首购 / 续购）<span class="req">*</span></label>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-              <div style="display: flex; align-items: center; height: 36px; border: 1px solid var(--input); border-radius: var(--radius-md); background: #fff; padding: 0 12px; gap: 8px;">
-                <span style="flex: none; font-size: 12px; color: var(--muted-foreground);">首购</span>
-                <input class="num" type="number" step="1" min="0" max="100" id="in-approve-first-rate" value="${GLOBAL_CONFIG.external_first_rate}" style="flex: 1; min-width: 0; height: 100%; border: none; outline: none; background: transparent; font-family: inherit; font-size: 13px; text-align: right;">
-              </div>
-              <div style="display: flex; align-items: center; height: 36px; border: 1px solid var(--input); border-radius: var(--radius-md); background: #fff; padding: 0 12px; gap: 8px;">
-                <span style="flex: none; font-size: 12px; color: var(--muted-foreground);">续购</span>
-                <input class="num" type="number" step="1" min="0" max="100" id="in-approve-renew-rate" value="${GLOBAL_CONFIG.external_renew_rate}" style="flex: 1; min-width: 0; height: 100%; border: none; outline: none; background: transparent; font-family: inherit; font-size: 13px; text-align: right;">
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-              <label class="form-group-label" style="margin-bottom:0;">专属推荐码 (4位纯数字) <span class="req">*</span></label>
-              <button class="btn btn-ghost btn-sm" style="height:22px; padding:0 6px;" onclick="document.getElementById('in-approve-code').value=Math.floor(1000+Math.random()*8999).toString().replace(/4/g,'6')">重新生成</button>
-            </div>
-            <input class="form-input-full num" type="text" maxlength="4" id="in-approve-code" value="${autoCode}" style="letter-spacing: 4px; font-weight: 700; text-align: center; font-size:16px;">
-            <div class="form-hint-note">下单结算页输入或短链带入的 4 位唯一代码，确定后不可修改。</div>
-          </div>
-        </div>
-        <div class="modal-dialog-footer">
-          <button class="btn btn-outline" onclick="closeModal('modal-approve')">取消</button>
-          <button class="btn btn-primary" onclick="confirmApprovePartner('${app.id}')">确认通过</button>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
+// 1. 渠道类型切换（审核抽屉内使用）
 function pickChannelType(type) {
   const optExt = document.getElementById('opt-ext');
   const optInt = document.getElementById('opt-int');
@@ -3711,10 +3714,10 @@ function confirmApprovePartner(appId) {
   const opTime = nowTime();
   app.status = 'APPROVED';
   app.approve_time = opTime;
-  app.approve_by = '张博文';
+  app.approve_by = '陈嘉禾';
   app.logs.unshift({
     time: opTime,
-    operator: '张博文',
+    operator: '陈嘉禾',
     action: '审核通过',
     detail: `设为${channel==='INTERNAL'?'内部渠道':'外部渠道'}，归属单位 ${unit}，首购 ${firstRate}% / 续购 ${renewRate}%，推荐码 ${code}`
   });
@@ -3739,11 +3742,11 @@ function confirmApprovePartner(appId) {
     join_time: opTime,
     orders: [], flow: [], settlements: [], customers: [],
     logs: [
-      { time: opTime, operator: '张博文', action: '入驻建档', before: '待审核', after: '正常', reason: '资质审核通过' }
+      { time: opTime, operator: '陈嘉禾', action: '入驻建档', before: '待审核', after: '正常', reason: '资质审核通过' }
     ]
   });
 
-  closeModal('modal-approve');
+  closeDrawer('drawer-app');
   toast(`合伙人【${app.name}】审核通过！推荐码：${code}`);
   updateSidebarMenu();
   renderApplicationsView(document.getElementById('main-view-container'));
@@ -3786,10 +3789,10 @@ function confirmRejectPartner(appId) {
   const opTime = nowTime();
   app.status = 'REJECTED';
   app.reject_time = opTime;
-  app.reject_by = '张博文';
+  app.reject_by = '陈嘉禾';
   app.logs.unshift({
     time: opTime,
-    operator: '张博文',
+    operator: '陈嘉禾',
     action: '拒绝申请',
     detail: '操作人直接拒绝，未填写原因'
   });
@@ -3801,6 +3804,14 @@ function confirmRejectPartner(appId) {
 }
 
 // 3. 申请详情抽屉
+// 抽屉内的只读信息行
+function infoRow(label, value, mono) {
+  return `<div style="display:flex; justify-content:space-between; gap:14px; padding:9px 0; border-bottom:1px dashed var(--border); font-size:13px;">
+    <span style="flex:none; color:var(--muted-foreground);">${label}</span>
+    <span style="text-align:right; font-weight:500;" class="${mono ? 'num' : ''}">${value}</span>
+  </div>`;
+}
+
 function openAppDetailDrawer(appId) {
   const app = APPLICATIONS.find(a => a.id === appId);
   if (!app) return;
@@ -3811,7 +3822,7 @@ function openAppDetailDrawer(appId) {
       <div class="drawer-panel">
         <div class="drawer-header">
           <div style="display: flex; align-items: center; gap: 8px;">
-            <h3 style="font-size: 15px; font-weight: 600;">申请档案详情</h3>
+            <h3 style="font-size: 15px; font-weight: 600;">${app.status === 'PENDING' ? '审核申请' : '申请档案详情'}</h3>
             ${app.status==='PENDING'?'<span class="badge badge-warning">待审核</span>':''}
             ${app.status==='APPROVED'?'<span class="badge badge-success">已通过</span>':''}
             ${app.status==='REJECTED'?'<span class="badge badge-danger">已拒绝</span>':''}
@@ -3822,26 +3833,79 @@ function openAppDetailDrawer(appId) {
         </div>
 
         <div class="drawer-body">
+          <div style="font-size:13px; font-weight:600; margin-bottom:10px;">申请人填写信息</div>
+          <div style="border:1px solid var(--border); border-radius:var(--radius-md); background:#FAFAFA; padding:2px 14px; margin-bottom:18px;">
+            ${infoRow('申请人姓名', app.name)}
+            ${infoRow('申请手机号', app.phone, true)}
+            ${infoRow('所属单位', app.org)}
+            ${infoRow('微信号', app.wx || '—')}
+            ${infoRow('提交时间', app.apply_time || '—')}
+          </div>
+
+          ${app.status === 'PENDING' ? `
+          <div style="font-size:13px; font-weight:600; margin-bottom:10px;">审核设置</div>
           <div class="form-group">
-            <label class="form-group-label">真实姓名 <span class="req">*</span></label>
-            <input class="form-input-full" id="dr-in-name" value="${app.name}">
+            <label class="form-group-label">归属单位 <span class="req">*</span></label>
+            <select class="form-input-full" id="in-approve-unit" style="cursor: pointer;">
+              <option value="">请选择归属单位</option>
+              ${UNITS.map(u => `<option value="${u}">${u}</option>`).join('')}
+            </select>
+            <div class="form-hint-note">选项来自「系统设置 · 单位配置」，用于数据看板按单位统计；确定后不可修改。</div>
           </div>
 
           <div class="form-group">
-            <label class="form-group-label">所属单位 / 机构 <span class="req">*</span></label>
-            <input class="form-input-full" id="dr-in-org" value="${app.org}">
+            <label class="form-group-label">渠道类型 <span class="req">*</span></label>
+            <div class="choice-cards-grid">
+              <div class="choice-card-item selected" id="opt-ext" onclick="pickChannelType('EXTERNAL')">
+                <input type="radio" name="ch" value="EXTERNAL" checked>
+                <span class="choice-title">外部渠道</span>
+              </div>
+              <div class="choice-card-item" id="opt-int" onclick="pickChannelType('INTERNAL')">
+                <input type="radio" name="ch" value="INTERNAL">
+                <span class="choice-title">内部渠道</span>
+              </div>
+            </div>
           </div>
 
           <div class="form-group">
-            <label class="form-group-label">申请手机号 (账号标识，只读)</label>
-            <input class="form-input-full num" value="${app.phone}" disabled>
-            <div class="form-hint-note">合伙人前台登录凭据，不可更改。</div>
+            <label class="form-group-label">分成比例（首购 / 续购）<span class="req">*</span></label>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div style="display: flex; align-items: center; height: 36px; border: 1px solid var(--input); border-radius: var(--radius-md); background: #fff; padding: 0 12px; gap: 8px;">
+                <span style="flex: none; font-size: 12px; color: var(--muted-foreground);">首购</span>
+                <input class="num" type="number" step="1" min="0" max="100" id="in-approve-first-rate" value="${GLOBAL_CONFIG.external_first_rate}" style="flex: 1; min-width: 0; height: 100%; border: none; outline: none; background: transparent; font-family: inherit; font-size: 13px; text-align: right;">
+              </div>
+              <div style="display: flex; align-items: center; height: 36px; border: 1px solid var(--input); border-radius: var(--radius-md); background: #fff; padding: 0 12px; gap: 8px;">
+                <span style="flex: none; font-size: 12px; color: var(--muted-foreground);">续购</span>
+                <input class="num" type="number" step="1" min="0" max="100" id="in-approve-renew-rate" value="${GLOBAL_CONFIG.external_renew_rate}" style="flex: 1; min-width: 0; height: 100%; border: none; outline: none; background: transparent; font-family: inherit; font-size: 13px; text-align: right;">
+              </div>
+            </div>
           </div>
 
           <div class="form-group">
-            <label class="form-group-label">微信号</label>
-            <input class="form-input-full" id="dr-in-wx" value="${app.wx || ''}" placeholder="未填写">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label class="form-group-label" style="margin-bottom:0;">专属推荐码 (4位纯数字) <span class="req">*</span></label>
+              <button class="btn btn-ghost btn-sm" style="height:22px; padding:0 6px;" onclick="document.getElementById('in-approve-code').value=Math.floor(1000+Math.random()*8999).toString().replace(/4/g,'6')">重新生成</button>
+            </div>
+            <input class="form-input-full num" type="text" maxlength="4" id="in-approve-code" value="${Math.floor(1000 + Math.random() * 8999).toString().replace(/4/g, '8')}" style="letter-spacing: 4px; font-weight: 700; text-align: center; font-size:16px;">
+            <div class="form-hint-note">下单结算页输入或短链带入的 4 位唯一代码，确定后不可修改。</div>
           </div>
+          ` : `
+          <div style="font-size:13px; font-weight:600; margin-bottom:10px;">审核结果</div>
+          <div style="border:1px solid var(--border); border-radius:var(--radius-md); background:#FAFAFA; padding:2px 14px; margin-bottom:18px;">
+            ${app.status === 'APPROVED' ? `
+              ${infoRow('归属单位', (PARTNERS.find(x => x.phone === app.phone) || {}).unit || '—')}
+              ${infoRow('渠道类型', (PARTNERS.find(x => x.phone === app.phone) || {}).channel_type === 'INTERNAL' ? '内部渠道' : '外部渠道')}
+              ${infoRow('首购 / 续购比例', (PARTNERS.find(x => x.phone === app.phone) || {}).first_rate + '% / ' + (PARTNERS.find(x => x.phone === app.phone) || {}).renew_rate + '%')}
+              ${infoRow('专属推荐码', (PARTNERS.find(x => x.phone === app.phone) || {}).code || '—', true)}
+              ${infoRow('审核人', app.approve_by || '—')}
+              ${infoRow('审核时间', app.approve_time || '—')}
+            ` : `
+              ${infoRow('拒绝原因', app.reject_reason || '—')}
+              ${infoRow('审核人', app.reject_by || '—')}
+              ${infoRow('审核时间', app.reject_time || '—')}
+            `}
+          </div>
+          `}
 
           ${app.status === 'REJECTED' && app.reject_reason ? `
             <div style="background: #FEF2F2; border: 1px solid #FECACA; border-radius: var(--radius-md); padding: 10px 12px; margin-bottom: 16px; font-size: 12.5px; color: #991B1B;">
@@ -3852,33 +3916,17 @@ function openAppDetailDrawer(appId) {
 
         <div class="drawer-footer">
           <button class="btn btn-outline" onclick="closeDrawer('drawer-app')">取消</button>
-          <button class="btn btn-primary" onclick="saveAppInfo('${app.id}')">保存修改</button>
+          ${app.status === 'PENDING' ? `
+            <button class="btn btn-destructive" onclick="closeDrawer('drawer-app');openRejectModal('${app.id}')">拒绝</button>
+            <button class="btn btn-primary" onclick="confirmApprovePartner('${app.id}')">通过</button>
+          ` : ''}
+          ${app.status === 'REJECTED' ? `
+            <button class="btn btn-primary" onclick="confirmApprovePartner('${app.id}')">重新审核</button>
+          ` : ''}
         </div>
       </div>
     </div>
   `;
-}
-
-function saveAppInfo(appId) {
-  const app = APPLICATIONS.find(a => a.id === appId);
-  if (!app) return;
-  const name = document.getElementById('dr-in-name').value.trim();
-  const org = document.getElementById('dr-in-org').value.trim();
-  const wx = document.getElementById('dr-in-wx').value.trim();
-
-  if (!name || !org) { alert('姓名与单位必填'); return; }
-
-  app.name = name; app.org = org; app.wx = wx;
-  app.logs.unshift({
-    time: nowTime(),
-    operator: '张博文',
-    action: '资料信息维护',
-    detail: `修改为: ${name} / ${org}`
-  });
-
-  closeDrawer('drawer-app');
-  toast('资料已成功更新');
-  renderApplicationsView(document.getElementById('main-view-container'));
 }
 
 // 4. 修改比例弹窗
@@ -3945,7 +3993,7 @@ function confirmModifyRate(partnerId) {
   p.renew_rate = renewRate;
   p.logs.unshift({
     time: nowTime(),
-    operator: '张博文',
+    operator: '陈嘉禾',
     action: '分成比例调整',
     before: `首购 ${oldFirst}% / 续购 ${oldRenew}%`,
     after: `首购 ${firstRate}% / 续购 ${renewRate}%`
@@ -3999,7 +4047,7 @@ function confirmFreeze(partnerId) {
   p.freeze_reason = reason;
   p.logs.unshift({
     time: nowTime(),
-    operator: '张博文',
+    operator: '陈嘉禾',
     action: '冻结账号',
     before: '正常',
     after: '已冻结',
@@ -4020,7 +4068,7 @@ function unfreezePartner(partnerId) {
   p.freeze_reason = '';
   p.logs.unshift({
     time: nowTime(),
-    operator: '张博文',
+    operator: '陈嘉禾',
     action: '解冻账号',
     before: '已冻结',
     after: '正常',
@@ -4150,7 +4198,9 @@ function saveUnitName(i) {
 
   UNITS[i] = v;
   PARTNERS.forEach(p => { if (p.unit === old) p.unit = v; });
-  CONFIG_LOGS.unshift({ time: nowTime(), operator: '张博文', text: `单位改名：${old} → ${v}` });
+  const dk = dashUnitsSel.indexOf(old);
+  if (dk >= 0) { dashUnitsSel[dk] = v; saveDashUnits(); }
+  CONFIG_LOGS.unshift({ time: nowTime(), operator: '陈嘉禾', text: `单位改名：${old} → ${v}` });
   unitEditing = -1;
   toast(`单位已更名为「${v}」`);
   renderActiveView();
@@ -4189,7 +4239,7 @@ function addUnit() {
   if (UNITS.indexOf(v) >= 0) { alert('该单位已存在'); return; }
 
   UNITS.push(v);
-  CONFIG_LOGS.unshift({ time: nowTime(), operator: '张博文', text: `新增单位：${v}` });
+  CONFIG_LOGS.unshift({ time: nowTime(), operator: '陈嘉禾', text: `新增单位：${v}` });
   closeModal('modal-add-unit');
   toast(`已新增单位「${v}」`);
   renderActiveView();
@@ -4256,11 +4306,11 @@ function applySettingsChanges() {
     GLOBAL_CONFIG.internal_renew_rate = iR;
     GLOBAL_CONFIG.external_first_rate = eF;
     GLOBAL_CONFIG.external_renew_rate = eR;
-    CONFIG_LOGS.unshift({ time: nowTime(), operator: '张博文', text: `调整默认比例：${p.diffs.join('；')}` });
+    CONFIG_LOGS.unshift({ time: nowTime(), operator: '陈嘉禾', text: `调整默认比例：${p.diffs.join('；')}` });
     toast(`默认比例已更新：内部 ${iF}% / ${iR}%，外部 ${eF}% / ${eR}%`);
   } else {
     GLOBAL_CONFIG.unfreeze_days = p.values.days;
-    CONFIG_LOGS.unshift({ time: nowTime(), operator: '张博文', text: `调整冻结规则：T+${p.oldDays} → T+${p.values.days}` });
+    CONFIG_LOGS.unshift({ time: nowTime(), operator: '陈嘉禾', text: `调整冻结规则：T+${p.oldDays} → T+${p.values.days}` });
     toast(`冻结规则已更新：T+${p.values.days} 天`);
   }
   settingsEditing[p.type] = false;

@@ -339,7 +339,7 @@ var PWD = {
 
 // 运营账号（演示用，实际由后台配置）：字母开头，与手机号区分
 var OPS = {
-  'ops_admin': { pwd: 'Admin1234', name: '张博文', role: '超级管理员' },
+  'ops_admin': { pwd: 'Admin1234', name: '陈嘉禾', role: '超级管理员' },
   'ops_finance': { pwd: 'Finance1234', name: '李静', role: '财务' }
 };
 
@@ -1487,7 +1487,11 @@ function confirmOrgReject(id) {
 
 function $(id) { return document.getElementById(id); }
 function esc(s) { return String(s || '').replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-function go(h) { location.hash = h; }
+function go(h) {
+  // 目标路由与当前一致时，hashchange 不会触发，需手动重渲染（如演示助手切换同状态账号）
+  if ((location.hash || '#login').slice(1) === h) { route(); return; }
+  location.hash = h;
+}
 function phoneOk(p) { return /^1[3-9]\d{9}$/.test(p); }
 function pwdOk(v) { return v && v.length >= 8 && v.length <= 20 && /[A-Za-z]/.test(v) && /\d/.test(v); }
 function err(id, msg) { var e = $(id); if (e) e.textContent = msg || ''; }
@@ -1587,9 +1591,9 @@ function renderAuthLayout(title, subtitle, contentHtml) {
           '<div>',
             '<div class="font-extrabold text-base tracking-tight text-slate-title flex items-center">',
               '立理 S1 合伙人',
-              '<span class="ml-2 text-xs font-bold px-2 py-0.5 rounded-full bg-brand-50 text-brand-600 border border-brand-100">S1 分销版</span>',
+              '<span class="ml-2 text-xs font-bold px-2 py-0.5 rounded-full bg-brand-50 text-brand-600 border border-brand-100">分销平台</span>',
             '</div>',
-            '<p class="text-xs text-slate-muted font-medium">科研与专业知识工作者的高价值协作生态</p>',
+            '<p class="text-xs text-slate-muted font-medium">连接科研需求，创造专业价值</p>',
           '</div>',
         '</div>',
         '<div class="text-xs text-slate-muted">',
@@ -1717,10 +1721,6 @@ function renderDashboardLayout(cur, pageTitle, pageBadge, contentHtml) {
               '<i data-lucide="bell" class="w-4 h-4"></i>',
               '<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-brand-500 ring-2 ring-white"></span>',
             '</button>',
-            '<button onclick="go(\'promotion\')" class="flex items-center space-x-1.5 bg-brand-500 hover:bg-brand-600 text-white text-xs md:text-sm font-bold px-3.5 md:px-4 py-2 rounded-full shadow-sm shadow-brand-500/30 transition-all transform active:scale-95">',
-              '<i data-lucide="plus-circle" class="w-4 h-4"></i>',
-              '<span>推广物料</span>',
-            '</button>',
           '</div>',
         '</header>',
 
@@ -1753,10 +1753,10 @@ function pLogin() {
 
     '<div class="space-y-4 text-left">',
       '<div>',
-        '<label class="block text-xs font-semibold text-slate-body mb-1.5">手机号</label>',
+        '<label class="block text-xs font-semibold text-slate-body mb-1.5">手机号/账号</label>',
         '<div class="relative">',
           '<i data-lucide="user" class="w-4 h-4 text-slate-muted absolute left-3.5 top-1/2 -translate-y-1/2"></i>',
-          '<input id="l_phone" autocomplete="username" maxlength="32" placeholder="请输入 11 位手机号" class="w-full bg-surface-subtle text-slate-title text-sm rounded-xl pl-10 pr-4 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+          '<input id="l_phone" autocomplete="username" maxlength="32" placeholder="请输入11位手机号/账号" class="w-full bg-surface-subtle text-slate-title text-sm rounded-xl pl-10 pr-4 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
         '</div>',
         '<div class="text-xs text-rose-600 mt-1 min-h-[16px]" id="e_lp"></div>',
       '</div>',
@@ -1805,7 +1805,7 @@ function pLogin() {
         '</div>',
         '<button type="button" onclick="S.done=false;S.pending=\'\';go(\'apply\')" class="py-2 px-3.5 rounded-full bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs shadow-xs hover:shadow-brand-500/20 transition-all flex items-center space-x-1 whitespace-nowrap flex-shrink-0 group">',
           '<i data-lucide="user-plus" class="w-3.5 h-3.5"></i>',
-          '<span>立即申请加入</span>',
+          '<span>立即申请</span>',
           '<i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>',
         '</button>',
       '</div>',
@@ -1927,26 +1927,26 @@ function pApply() {
     '<div class="space-y-3.5 text-left text-xs">',
       '<div>',
         '<label class="block font-semibold text-slate-body mb-1">真实姓名 <span class="text-rose-500">*</span></label>',
-        '<input id="a_name" placeholder="请输入您的真实姓名" class="w-full bg-surface-subtle text-slate-title rounded-xl px-3.5 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+        '<input id="a_name" placeholder="请填写您的真实姓名" class="w-full bg-surface-subtle text-slate-title rounded-xl px-3.5 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
         '<div class="text-xs text-rose-600 mt-0.5 min-h-[14px]" id="e_name"></div>',
       '</div>',
 
       '<div>',
-        '<label class="block font-semibold text-slate-body mb-1">所属单位 / 院校机构 <span class="text-rose-500">*</span></label>',
-        '<input id="a_org" placeholder="如：清华大学某某实验室 / 某某科技公司" class="w-full bg-surface-subtle text-slate-title rounded-xl px-3.5 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+        '<label class="block font-semibold text-slate-body mb-1">所属单位 <span class="text-rose-500">*</span></label>',
+        '<input id="a_org" placeholder="请准确填写完整的单位名称" class="w-full bg-surface-subtle text-slate-title rounded-xl px-3.5 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
         '<div class="text-xs text-rose-600 mt-0.5 min-h-[14px]" id="e_org"></div>',
       '</div>',
 
       '<div>',
         '<label class="block font-semibold text-slate-body mb-1">手机号码 <span class="text-rose-500">*</span></label>',
-        '<input id="a_phone" inputmode="numeric" maxlength="11" placeholder="接收审核结果通知的手机号" class="w-full bg-surface-subtle text-slate-title rounded-xl px-3.5 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+        '<input id="a_phone" inputmode="numeric" maxlength="11" placeholder="请输入常见手机号码" class="w-full bg-surface-subtle text-slate-title rounded-xl px-3.5 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
         '<div class="text-xs text-rose-600 mt-0.5 min-h-[14px]" id="e_phone"></div>',
       '</div>',
 
       '<div>',
         '<label class="block font-semibold text-slate-body mb-1">短信验证码 <span class="text-rose-500">*</span></label>',
         '<div class="flex space-x-2">',
-          '<input id="a_code" inputmode="numeric" maxlength="6" placeholder="6 位验证码" class="w-full bg-surface-subtle text-slate-title rounded-xl px-3.5 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+          '<input id="a_code" inputmode="numeric" maxlength="6" placeholder="请输入短信验证码" class="w-full bg-surface-subtle text-slate-title rounded-xl px-3.5 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
           '<button type="button" id="a_send" onclick="sendCode(\'a_send\',\'a_phone\',\'e_phone\')" class="px-3.5 py-2.5 rounded-xl border border-surface-border bg-white text-xs font-semibold text-slate-title hover:bg-surface-subtle transition-all whitespace-nowrap">获取验证码</button>',
         '</div>',
         '<div class="text-xs text-rose-600 mt-0.5 min-h-[14px]" id="e_code"></div>',
@@ -1955,7 +1955,7 @@ function pApply() {
       '<div>',
         '<label class="block font-semibold text-slate-body mb-1">登录密码 <span class="text-rose-500">*</span></label>',
         '<div class="relative">',
-          '<input id="a_pwd" type="password" placeholder="8–20 位，需包含字母和数字" class="w-full bg-surface-subtle text-slate-title rounded-xl pl-3.5 pr-11 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+          '<input id="a_pwd" type="password" placeholder="请输入 8-20 位包含字母与数字的登录密码" class="w-full bg-surface-subtle text-slate-title rounded-xl pl-3.5 pr-11 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
           '<button type="button" aria-label="显示或隐藏密码" onclick="togglePwdVisibility(\'a_pwd\', this)" class="absolute right-0 top-0 bottom-0 px-3.5 flex items-center justify-center text-slate-muted hover:text-slate-title">',
             '<i data-lucide="eye" class="w-4 h-4"></i>',
           '</button>',
@@ -1965,7 +1965,7 @@ function pApply() {
 
       '<div>',
         '<label class="block font-semibold text-slate-body mb-1">微信号 <span class="text-slate-muted font-normal">（选填）</span></label>',
-        '<input id="a_wx" placeholder="填写便于运营顾问对接学术生态扶持政策" class="w-full bg-surface-subtle text-slate-title rounded-xl px-3.5 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+        '<input id="a_wx" placeholder="用于官方对接" class="w-full bg-surface-subtle text-slate-title rounded-xl px-3.5 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
         '<div class="text-xs text-rose-600 mt-0.5 min-h-[14px]" id="e_wx"></div>',
       '</div>',
 
@@ -1978,7 +1978,7 @@ function pApply() {
     '</div>'
   ].join('');
 
-  $('app').innerHTML = renderAuthLayout('申请成为立理 S1 合伙人', '立理 S1 是面向科研与知识工作的 Agent 工作台。成为合伙人后享专属物料与丰厚分佣。', formHtml);
+  $('app').innerHTML = renderAuthLayout('申请成为立理 S1 合伙人', '', formHtml);
   if (S.pending && $('a_phone')) $('a_phone').value = S.pending;
   renderIcons();
 }
@@ -2089,7 +2089,7 @@ function pStatus() {
           (isRej ? '申请未通过审核' : '合伙人申请审核中'),
         '</div>',
         '<p class="text-xs text-slate-body mt-3 leading-relaxed max-w-sm mx-auto">',
-          (isRej ? '很遗憾，您的合伙人资质暂未达到立理 S1 开放要求。' : '您的申请材料已进入运营团队评审流程，官方团队将尽快完成审核，请保持电话畅通并耐心等待。'),
+          (isRej ? '很遗憾，您的合伙人资质暂未达到立理 S1 开放要求。' : '申请已提交！ 我们将尽快完成审核，可登陆查询审核进展'),
         '</p>',
       '</div>',
 
@@ -2355,7 +2355,6 @@ function pCust() {
           '<div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center"><i data-lucide="user-plus" class="w-4 h-4"></i></div>',
         '</div>',
         '<div class="mt-2 text-3xl font-extrabold tracking-tight text-emerald-600 tabular-nums">' + mn + '</div>',
-        '<p class="text-xs text-slate-muted mt-1">通过扫码新增</p>',
       '</div>',
     '</div>',
 
@@ -2373,12 +2372,12 @@ function pCust() {
           '</div>',
 
           '<div class="flex items-center bg-surface-subtle border border-surface-border rounded-full p-0.5 text-xs">',
-            '<select onchange="S.sort=this.value;S.cp=1;pCust()" class="bg-transparent text-slate-title text-xs font-medium pl-3 pr-2 py-1 focus:outline-none cursor-pointer">',
-              sorts.map(function(s){ return '<option value="' + s[0] + '"' + (S.sort === s[0] ? ' selected' : '') + '>' + s[1] + '</option>'; }).join(''),
-            '</select>',
             '<button onclick="S.dir=S.dir===\'asc\'?\'desc\':\'asc\';S.cp=1;pCust()" class="px-2 py-1 rounded-full bg-white text-slate-body hover:text-slate-title font-semibold shadow-2xs flex items-center space-x-1" title="切换升降序">',
               '<span>' + (S.dir === 'asc' ? '↑ 升序' : '↓ 降序') + '</span>',
             '</button>',
+            '<select onchange="S.sort=this.value;S.cp=1;pCust()" class="bg-transparent text-slate-title text-xs font-medium pl-3 pr-2 py-1 focus:outline-none cursor-pointer">',
+              sorts.map(function(s){ return '<option value="' + s[0] + '"' + (S.sort === s[0] ? ' selected' : '') + '>' + s[1] + '</option>'; }).join(''),
+            '</select>',
           '</div>',
 
           '<select onchange="S.filter=this.value;S.cp=1;pCust()" class="bg-surface-subtle border border-surface-border rounded-full px-3 py-1.5 text-xs text-slate-title font-medium focus:outline-none cursor-pointer">',
