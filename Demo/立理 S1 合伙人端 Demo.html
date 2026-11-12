@@ -590,7 +590,7 @@ function calcOrder(o) {
 
 function getSum() {
   var u = 0, f = 0, st = 0, shortTotal = 0, offset = 0;
-  // 只统计用户订单（机构合同订单走机构订单维度，单独核算，避免口径互串）
+  // 只统计个人订单（机构合同订单走机构订单维度，单独核算，避免口径互串）
   ORDERS.filter(function(o) { return o.kind !== 'orgc'; }).forEach(function(o) {
     var c = calcOrder(o); u += c.settleable; f += c.frozen; st += c.settled; shortTotal += c.short;
   });
@@ -639,7 +639,7 @@ function goCustPage(n) { S.cp = n; pCust(); }
 function goOrdPage(n) { S.op = n; pComm(); }
 function goSettlePage(n) { S.sp = n; pComm(); }
 
-// 用户订单：搜索（订单号 / 手机号 / 产品名 / 机构名称）+ 状态筛选
+// 个人订单：搜索（订单号 / 手机号 / 产品名 / 机构名称）+ 状态筛选
 function stateOfCalc(c) {
   if (c.eff === 0) return 'REFUNDED';
   var valid = c.ins.filter(function(x) { return x.amt > 0; });
@@ -686,7 +686,7 @@ function ordFilterBar() {
 }
 function ordListInner() {
   var d = ordFiltered();
-  if (!d.all.length) return '<div class="py-10 text-center text-xs text-slate-muted">暂无用户订单</div>';
+  if (!d.all.length) return '<div class="py-10 text-center text-xs text-slate-muted">暂无个人订单</div>';
   if (!d.list.length) return '<div class="py-10 text-center text-xs text-slate-muted">没有匹配条件的订单</div>';
   var pg = paged(d.list, S.op);
   return ordersHtml(pg.items) + pagerHtml(pg, 'goOrdPage');
@@ -2543,7 +2543,7 @@ function delTag(idx) {
 }
 
 // ==================== 页面 7: 推广币中心 (pComm) ====================
-// 维度口径：用户订单（分期解冻，有冻结/待抵扣）与机构订单（回款释放，无冻结/待抵扣）完全隔离
+// 维度口径：个人订单（分期解冻，有冻结/待抵扣）与机构订单（回款释放，无冻结/待抵扣）完全隔离
 function getOrgSum() {
   var pool = 0, settled = 0, due = 0;
   loadOrgReqs().forEach(function(r) {
@@ -2575,11 +2575,11 @@ function pComm() {
   var settleHtml = settlePg.items.map(function(r) {
     var isOrg = r.kind === 'ORG';
     var typeCls = isOrg ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-white text-slate-body border border-surface-border';
-    var badge = '<span class="px-2 py-0.5 rounded-full text-xs font-semibold ' + typeCls + '">' + (isOrg ? '机构订单' : '用户订单') + '</span>';
+    var badge = '<span class="px-2 py-0.5 rounded-full text-xs font-semibold ' + typeCls + '">' + (isOrg ? '机构订单' : '个人订单') + '</span>';
     var mainLabel = '本次结算推广币';
     var subLine = isOrg
       ? esc(r.org || '') + ' · ' + esc(r.order_id || '')
-      : '含 ' + (r.count || 1) + ' 笔用户订单';
+      : '含 ' + (r.count || 1) + ' 笔个人订单';
     return [
       '<div class="p-4 rounded-2xl bg-surface-subtle border border-surface-border">',
         '<div class="flex flex-wrap items-center gap-2">',
@@ -2601,11 +2601,11 @@ function pComm() {
   var dimTabs = [
     '<div class="flex flex-wrap items-center justify-between gap-3">',
       '<div class="bg-surface-subtle p-1 rounded-full border border-surface-border flex items-center text-xs font-semibold">',
-        '<button onclick="setDim(\'flow\')" class="px-4 py-1.5 rounded-full transition-all ' + (isFlow ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">用户订单</button>',
+        '<button onclick="setDim(\'flow\')" class="px-4 py-1.5 rounded-full transition-all ' + (isFlow ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">个人订单</button>',
         '<button onclick="setDim(\'org\')" class="px-4 py-1.5 rounded-full transition-all ' + (isOrg ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">机构订单</button>',
         '<button onclick="setDim(\'settle\')" class="px-4 py-1.5 rounded-full transition-all ' + (isSettle ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">结算明细</button>',
       '</div>',
-      '<div class="text-xs text-slate-muted hidden sm:block">' + (isSettle ? '用户订单与机构订单的历次结算记录' : (isOrg ? '按合同回款释放推广币，无冻结与待抵扣' : '按履约周期分期解冻，含冻结与退款待抵扣')) + '</div>',
+      '<div class="text-xs text-slate-muted hidden sm:block">' + (isSettle ? '个人订单与机构订单的历次结算记录' : (isOrg ? '按合同回款释放推广币，无冻结与待抵扣' : '按履约周期分期解冻，含冻结与退款待抵扣')) + '</div>',
     '</div>'
   ].join('');
 
@@ -2705,10 +2705,10 @@ function pComm() {
         ? '<div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-surface-border-subtle">'
             + '<div>'
               + '<h3 class="font-bold text-base text-slate-title">结算明细</h3>'
-              + '<p class="text-xs text-slate-muted mt-0.5">用户订单与机构订单的历次结算记录</p>'
+              + '<p class="text-xs text-slate-muted mt-0.5">个人订单与机构订单的历次结算记录</p>'
             + '</div>'
             + '<select onchange="setSettleKind(this.value)" class="bg-surface-subtle border border-surface-border rounded-full px-3 py-1.5 text-xs text-slate-title font-medium focus:outline-none cursor-pointer">'
-              + [['all', '全部类型'], ['USER', '用户订单'], ['ORG', '机构订单']].map(function(o) {
+              + [['all', '全部类型'], ['USER', '个人订单'], ['ORG', '机构订单']].map(function(o) {
                 return '<option value="' + o[0] + '"' + (sk === o[0] ? ' selected' : '') + '>' + o[1] + '</option>';
               }).join('')
             + '</select>'

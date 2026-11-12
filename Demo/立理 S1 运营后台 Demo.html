@@ -1422,7 +1422,7 @@ function findOrder(orderId) {
   for (const p of PARTNERS) { const o = p.orders.find(x => x.id === orderId); if (o) return { p, o }; }
   return null;
 }
-// 订单详情入口：机构订单复用机构订单详情抽屉，其余走用户订单详情抽屉
+// 订单详情入口：机构订单复用机构订单详情抽屉，其余走个人订单详情抽屉
 function showOrderDetail(orderId) {
   const f = findOrder(orderId);
   if (f && orderKind(f.o) === 'ORG') { openOrgOrderDetail(orderId); return; }
@@ -2810,7 +2810,7 @@ function renderDetailTabTable(p, tab) {
             return `
             <tr>
               <td><span class="code-badge">${s.batch_no}</span></td>
-              <td>${hist && hist.source === 'ORG' ? '<span class="badge badge-blue">机构订单</span>' : '<span class="badge badge-neutral">用户订单</span>'}</td>
+              <td>${hist && hist.source === 'ORG' ? '<span class="badge badge-blue">机构订单</span>' : '<span class="badge badge-neutral">个人订单</span>'}</td>
               <td><strong class="num" style="color: #15803D;">¥${fmtC(s.points)}</strong></td>
               <td><span class="code-badge">${s.voucher}</span></td>
               <td>${s.operator}</td>
@@ -2949,7 +2949,7 @@ function renderSettlementsView(container) {
           <tbody>${pagedHistory.map(s => {
             return `<tr>
               <td><span class="code-badge">${s.settle_id}</span>${s.imported ? '<div><span class="badge badge-neutral" style="font-size:10.5px;">录入时已发放</span></div>' : ''}</td>
-              <td>${s.source === 'ORG' ? '<span class="badge badge-blue">机构订单</span>' : '<span class="badge badge-neutral">用户订单</span>'}</td>
+              <td>${s.source === 'ORG' ? '<span class="badge badge-blue">机构订单</span>' : '<span class="badge badge-neutral">个人订单</span>'}</td>
               <td><strong>${s.partner_name}</strong></td>
               <td><span class="num">${s.partner_phone}</span></td>
               <td>${s.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部</span>' : '<span class="badge badge-neutral">外部</span>'}</td>
@@ -2975,7 +2975,7 @@ function renderSettlementsView(container) {
       <div>${headerBtn}</div>
     </div>
     <div class="segmented-tabs">
-      ${tabBtn('pending', '待结算用户订单')}
+      ${tabBtn('pending', '待结算个人订单')}
       ${tabBtn('org', '待结算机构订单')}
       ${tabBtn('history', '结算历史')}
     </div>
@@ -3287,11 +3287,11 @@ function renderDashboardView(container) {
         <div style="font-size:12px; color:var(--muted-foreground);">总成交 GMV</div>
         <div class="num" style="font-size:22px; font-weight:700; letter-spacing:-0.02em; margin-top:2px;">¥${formatNum(d.gmv)}</div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;">
-          ${mini('用户成交', '¥' + formatNum(d.userGmv))}
+          ${mini('个人成交', '¥' + formatNum(d.userGmv))}
           ${mini('机构成交', '¥' + formatNum(d.orgGmv))}
           ${mini('客户数 / 签单', d.cust + ' / ' + d.paying)}
           ${mini('机构签单数', d.orgDeals + ' 单')}
-          ${mini('用户客单价', '¥' + formatNum(d.userAov))}
+          ${mini('个人客单价', '¥' + formatNum(d.userAov))}
           ${mini('机构客单价', '¥' + formatNum(d.orgAov))}
         </div>
         <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border);">
@@ -3300,7 +3300,7 @@ function renderDashboardView(container) {
             <span class="num" style="font-size:15px; font-weight:700;">¥${formatNum(d.fee)}</span>
           </div>
           <div style="display:flex; justify-content:space-between; font-size:11.5px; color:var(--muted-foreground); margin-top:3px;">
-            <span>用户订单 ¥${formatNum(d.userFee)}</span><span>机构订单 ¥${formatNum(d.orgFee)}</span>
+            <span>个人订单 ¥${formatNum(d.userFee)}</span><span>机构订单 ¥${formatNum(d.orgFee)}</span>
           </div>
         </div>
       </div>
@@ -3333,7 +3333,7 @@ function renderDashboardView(container) {
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:18px;">
           <div>
-            <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--muted-foreground);"><span>用户成交 GMV</span><span class="num">${userShare}%</span></div>
+            <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--muted-foreground);"><span>个人成交 GMV</span><span class="num">${userShare}%</span></div>
             <div class="num" style="font-size:18px; font-weight:700; margin-top:2px;">¥${formatNum(m.userGmv)}</div>
           </div>
           <div>
@@ -3357,7 +3357,7 @@ function renderDashboardView(container) {
         </div>
         <div style="margin-top:16px; display:flex; flex-direction:column; gap:8px;">
           <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#FAFAFA; border:1px solid var(--border); border-radius:8px;">
-            <span style="font-size:12px; color:var(--muted-foreground);">用户订单佣金</span>
+            <span style="font-size:12px; color:var(--muted-foreground);">个人订单佣金</span>
             <span class="num" style="font-size:13px; font-weight:600;">¥${formatNum(m.userFee)}</span>
           </div>
           <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#FAFAFA; border:1px solid var(--border); border-radius:8px;">
@@ -3370,7 +3370,7 @@ function renderDashboardView(container) {
 
     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:26px;">
       ${tile('客户总数 / 签单客户数', m.cust + ' / ' + m.paying, '签单转化率 ' + conv + '%', ic(I.users), true)}
-      ${tile('用户单客客单价', '¥' + formatNum(m.userAov), '用户 GMV ÷ 签单客户数', ic(I.user))}
+      ${tile('个人单客客单价', '¥' + formatNum(m.userAov), '个人 GMV ÷ 签单客户数', ic(I.user))}
       ${tile('机构单客客单价', '¥' + formatNum(m.orgAov), '机构 GMV ÷ 机构签单数', ic(I.building))}
       ${tile('机构签单数', m.orgDeals + ' 单', '已签约机构合同数', ic(I.receipt))}
     </div>
@@ -3523,7 +3523,7 @@ function renderOrdersView(container) {
       </div>
     </div>
     <div class="segmented-tabs">
-      ${tabBtn('user', '用户订单')}
+      ${tabBtn('user', '个人订单')}
       ${tabBtn('org', '机构订单')}
     </div>
     ${body}
