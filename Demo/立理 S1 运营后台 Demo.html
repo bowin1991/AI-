@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>立理 S1 分销管理系统 — 合伙人管理</title>
+<link rel="icon" href="data:,">
 <style>
 /* 
  * 立理 S1 官方统一设计规范 (Tailwind CSS v4 + shadcn/ui 官方逆向提取版)
@@ -3203,11 +3204,25 @@ function confirmDashUnits() {
 }
 
 
+// 看板时间范围：单个起止时间选择器，默认整年
+let dashRange = { start: '2026-01-01', end: '2026-12-31' };
+const DASH_TODAY = '2026-11-06';
+function dashRangeBounds() {
+  const s = dashRange.start || DASH_TODAY, e = dashRange.end || DASH_TODAY;
+  const start = s <= e ? s : e, end = s <= e ? e : s;
+  const full = /^\d{4}-01-01$/.test(start) && /^\d{4}-12-31$/.test(end) && start.slice(0, 4) === end.slice(0, 4);
+  return { start, end, full, label: start + ' ~ ' + end };
+}
+function setDashRange(k, v) { if (v) dashRange[k] = v; renderActiveView(); }
+
 function dashMetrics(list) {
+  const b = dashRangeBounds();
+  const inR = s => { const d = String(s || '').slice(0, 10); return d >= b.start && d <= b.end; };
   let userGmv = 0, orgGmv = 0, userFee = 0, orgFee = 0, cust = 0, paying = 0, orgDeals = 0;
   list.forEach(p => {
-    cust += p.customers_count || 0;
-    (p.orders || []).forEach(o => {
+    const cs = p.customers || [];
+    cust += cs.length ? cs.filter(c => inR(c.reg_time)).length : (b.full ? (p.customers_count || 0) : 0);
+    (p.orders || []).filter(o => inR(o.created_at)).forEach(o => {
       const refunded = (o.refunds || []).reduce((a, r) => a + (r.amount || 0), 0);
       const net = Math.max(0, round2((o.pay_amount || 0) - refunded));
       const fee = Math.max(0, round2(net * (o.rate || 0) / 100));
@@ -3293,9 +3308,18 @@ function renderDashboardView(container) {
   }).join('');
 
   container.innerHTML = `
-    <div style="margin-bottom:20px;">
-      <h1 style="font-size:22px; font-weight:700; letter-spacing:-0.02em;">数据看板</h1>
-      <div style="font-size:12.5px; color:var(--muted-foreground); margin-top:4px;">截止 2026-11-06 · 成交与佣金口径均按订单实付金额扣除退款</div>
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:20px;">
+      <div>
+        <h1 style="font-size:22px; font-weight:700; letter-spacing:-0.02em;">数据看板</h1>
+        <div style="font-size:12.5px; color:var(--muted-foreground); margin-top:4px;">${dashRangeBounds().label} · 截止 ${DASH_TODAY} · 成交与佣金口径均按订单实付金额扣除退款</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:6px; height:34px; padding:0 10px; background:#FFFFFF; border:1px solid var(--input); border-radius:var(--radius-md);">
+        <input type="date" value="${dashRange.start}" max="2099-12-31" onchange="setDashRange('start', this.value)" title="开始日期"
+          style="border:0; outline:none; background:transparent; font-size:13px; color:var(--foreground); font-family:inherit; width:126px; cursor:pointer;">
+        <span style="font-size:12px; color:var(--muted-foreground);">~</span>
+        <input type="date" value="${dashRange.end}" max="2099-12-31" onchange="setDashRange('end', this.value)" title="结束日期"
+          style="border:0; outline:none; background:transparent; font-size:13px; color:var(--foreground); font-family:inherit; width:126px; cursor:pointer;">
+      </div>
     </div>
 
     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:16px; margin-bottom:16px;">
@@ -3305,7 +3329,7 @@ function renderDashboardView(container) {
             <div style="font-size:13px; color:var(--muted-foreground);">总成交 GMV</div>
             <div class="num" style="font-size:40px; font-weight:800; letter-spacing:-0.03em; margin-top:6px;">¥${formatNum(m.gmv)}</div>
           </div>
-          <span class="badge badge-neutral">累计</span>
+          <span class="badge badge-neutral">${dashRangeBounds().full ? '累计' : '区间'}</span>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:18px;">
           <div>
@@ -3445,7 +3469,7 @@ function renderOrdersView(container) {
               <td><strong class="num" style="color:${pc};">${netPoints > 0 ? '+' : ''}¥${fmtC(netPoints)}</strong></td>
               <td class="num" style="color:var(--muted-foreground); font-size:11.5px;">${o.created_at}</td>
               <td class="col-sticky" style="text-align:right; white-space:nowrap;">
-                ${lines.length ? `<button class="btn btn-outline btn-sm" onclick="showOrderLines('${o.id}')">分期明细</button>` : ''}
+                ${lines.length ? `<button class="btn btn-outline btn-sm" onclick="showOrderLines('${o.id}')">订单详情</button>` : ''}
               </td></tr>`; }).join('')}
           </tbody>
         </table>
@@ -4291,13 +4315,14 @@ function openSettingsConfirm(title, diffs) {
         </div>
         <div class="modal-dialog-footer">
           <button class="btn btn-outline" onclick="closeModal('modal-set-confirm')">取消</button>
-          <button class="btn btn-primary" onclick="applySettingsChanges()">确认保存</button>
+          <button class="btn btn-outline" onclick="applySettingsChanges()">确认保存</button>
+          <button class="btn btn-primary" onclick="applySettingsChanges(true)">保存并立即应用</button>
         </div>
       </div>
     </div>`;
 }
 
-function applySettingsChanges() {
+function applySettingsChanges(immediate) {
   const p = pendingSettings;
   if (!p) return;
   if (p.type === 'rates') {
@@ -4318,6 +4343,10 @@ function applySettingsChanges() {
   closeModal('modal-set-confirm');
   recalcAll();
   renderActiveView();
+  if (immediate) {
+    CONFIG_LOGS.unshift({ time: nowTime(), operator: '陈嘉禾', text: '新规则已立即应用，重算在途订单与待结算数据' });
+    toast('已保存并立即应用，在途订单与待结算数据已按新规则重算');
+  }
 }
 
 // 通用助手函数
