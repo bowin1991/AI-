@@ -135,13 +135,6 @@ function renderApplicationsView(container) {
 
     <!-- 筛选卡片 (1:1 官方筛选用户样式) -->
     <div class="filter-card">
-      <div class="filter-title-row">
-        <span class="filter-title">筛选申请</span>
-        <button class="btn btn-outline btn-sm" onclick="appKw=''; renderApplicationsView(document.getElementById('main-view-container'))">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-          重置
-        </button>
-      </div>
       <div class="filter-inputs-grid">
         <div class="filter-field" style="flex: 2; min-width: 260px;">
           <span class="field-label">关键词</span>
@@ -167,6 +160,7 @@ function renderApplicationsView(container) {
           </button>
           ${appPickerOpen ? dateRangePickerHtml() : ''}
         </div>
+        <button class="btn btn-outline" onclick="appKw=''; renderApplicationsView(document.getElementById('main-view-container'))">重置</button>
       </div>
     </div>
 
