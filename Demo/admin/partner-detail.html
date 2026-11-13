@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>合伙人档案详情 - 立理 S1 分销管理系统</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<div id="app-layout">
+  <!-- 官方侧边栏 (1:1 复刻) -->
+  <aside id="app-sidebar">
+    <div class="sidebar-brand">
+      <div>
+        <div class="brand-title">
+          立理 <span class="brand-badge">S1</span>
+        </div>
+        <div class="brand-sub">分销管理系统</div>
+      </div>
+    </div>
+
+    <div class="sidebar-menu-wrap">
+      <div class="menu-group-header">管理后台</div>
+      <a class="sidebar-menu-item" href="dashboard.html" id="nav-dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        数据看板
+      </a>
+      <a class="sidebar-menu-item" href="applications.html" id="nav-applications">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        申请审核
+      </a>
+      <a class="sidebar-menu-item" href="partners.html" id="nav-list">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        合伙人管理
+      </a>
+      <a class="sidebar-menu-item" href="orders.html" id="nav-orders">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        订单管理
+      </a>
+      <a class="sidebar-menu-item" href="settlements.html" id="nav-settlements">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="14" x2="6.01" y2="14"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        结算管理
+      </a>
+      <a class="sidebar-menu-item" href="reports.html" id="nav-reports">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        数据报表
+      </a>
+      <a class="sidebar-menu-item" href="settings.html" id="nav-settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        系统设置
+      </a>
+    </div>
+
+    <!-- 用户信息卡片 -->
+    <div class="sidebar-footer">
+      <div class="user-profile-summary">
+        <div class="user-avatar-circle">张</div>
+        <div class="user-meta-texts">
+          <div class="user-meta-name">陈嘉禾</div>
+          <div class="user-meta-role">超级管理员</div>
+        </div>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--muted-foreground);"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </aside>
+
+  <!-- 主体工作区 -->
+  <main id="app-main">
+    <!-- 官方顶栏 -->
+    <header id="app-header">
+      <div class="header-left">
+        <button class="btn-icon-square" title="Toggle Sidebar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+        </button>
+      </div>
+      <div class="header-right">
+        <div class="search-pill-box" onclick="toast('快捷搜索合伙人或订单 (⌘ K)')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>搜索</span>
+          <span class="kbd-badge">⌘ K</span>
+        </div>
+        <button class="btn-round-icon" onclick="navigate('settings')" title="系统设置">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <div class="user-avatar-circle" style="width:28px; height:28px; font-size:12px; cursor:pointer;" onclick="toast('当前管理员: 陈嘉禾 (超级管理员)')">张</div>
+      </div>
+    </header>
+
+    <!-- 动态视图区域 -->
+    <div id="main-view-container"></div>
+  </main>
+</div>
+
+<!-- Toast 组件 -->
+<div id="app-toast">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-text">操作已完成</span>
+</div>
+
+<!-- 弹窗容器 -->
+<div id="modal-root"></div>
+
+<!-- 抽屉容器 -->
+<div id="drawer-root"></div>
+
+  <script src="js/common.js"></script>
+  <script>
+function renderPartnerDetailView(container, p, activeTab = 'orders') {
+  if (!['orders', 'orgs', 'settlements'].includes(activeTab)) activeTab = 'orders';
+  const tabPts = activeTab === 'orgs'
+    ? partnerTabPoints(p, 'org')
+    : (activeTab === 'settlements' ? p.points : partnerTabPoints(p, 'user'));
+  container.innerHTML = `
+    <!-- 顶部导航 -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px;">
+      <div>
+        <div style="font-size: 12px; color: var(--muted-foreground); margin-bottom: 4px;">
+          <a onclick="navigate('list')" style="color: var(--muted-foreground); text-decoration:none; cursor:pointer;">合伙人管理</a>
+          <span style="margin: 0 4px">/</span>
+          <span>档案详情</span>
+        </div>
+        <h1 style="font-size: 24px; font-weight: 700; color: var(--foreground); display: flex; align-items: center; gap: 10px;">
+          ${p.name}
+          ${p.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部渠道</span>' : '<span class="badge badge-neutral">外部渠道</span>'}
+          ${p.status === 'NORMAL' ? '<span class="badge badge-success">正常</span>' : ''}
+          ${p.status === 'FROZEN' ? '<span class="badge badge-warning">已冻结</span>' : ''}
+        </h1>
+        <div style="font-size: 13px; color: var(--muted-foreground); margin-top: 4px;">
+          ${p.org} · 加入时间: ${p.join_time}
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-outline btn-sm" onclick="openModifyRateModal('${p.id}')">修改分成比例</button>
+        ${p.status === 'NORMAL' ? `
+          <button class="btn btn-outline btn-sm" style="color:#A16207;" onclick="openFreezeModal('${p.id}')">冻结账号</button>
+        ` : `
+          <button class="btn btn-outline btn-sm" style="color:#15803D;" onclick="unfreezePartner('${p.id}')">解冻恢复</button>
+        `}
+      </div>
+    </div>
+
+    <!-- 档案基础 KV 卡片 -->
+    <div class="content-card" style="padding: 16px 20px; margin-bottom: 22px;">
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; font-size: 13px;">
+        <div>
+          <span style="color: var(--muted-foreground); font-size: 12px; display:block; margin-bottom:2px;">手机号码</span>
+          <strong class="num">${p.phone}</strong>
+        </div>
+        <div>
+          <span style="color: var(--muted-foreground); font-size: 12px; display:block; margin-bottom:2px;">专属推荐码 (4位)</span>
+          <span class="code-badge">${p.code}</span>
+        </div>
+        <div>
+          <span style="color: var(--muted-foreground); font-size: 12px; display:block; margin-bottom:2px;">当前分成比例（首购 / 续购）</span>
+          <strong class="num">${p.first_rate}% / ${p.renew_rate}%</strong>
+        </div>
+        <div>
+          <span style="color: var(--muted-foreground); font-size: 12px; display:block; margin-bottom:2px;">微信号</span>
+          <span>${p.wx || '-'}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 分段明细选项卡 -->
+    <div class="segmented-tabs">
+      <button class="seg-tab-btn ${activeTab==='orders'?'active':''}" onclick="navigate('partner/${p.id}/orders')">
+        个人订单
+      </button>
+      <button class="seg-tab-btn ${activeTab==='orgs'?'active':''}" onclick="navigate('partner/${p.id}/orgs')">
+        机构订单
+      </button>
+      <button class="seg-tab-btn ${activeTab==='settlements'?'active':''}" onclick="navigate('partner/${p.id}/settlements')">
+        结算历史
+      </button>
+    </div>
+
+    <!-- 金额汇总卡片（随选项卡维度切换） -->
+    ${activeTab === 'settlements' ? '' : activeTab === 'orgs' ? `
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px;">
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">累计总金额 (机构订单)</div>
+        <div style="font-size: 24px; font-weight: 700; margin-top: 4px;" class="num">¥${fmtC(tabPts.total)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">按合同核定比例计算的佣金池</div>
+      </div>
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">当前可结算金额</div>
+        <div style="font-size: 24px; font-weight: 700; color: #15803D; margin-top: 4px;" class="num">¥${fmtC(tabPts.withdrawable)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">审批通过即可按订单结算</div>
+      </div>
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">累计已结算金额</div>
+        <div style="font-size: 24px; font-weight: 700; color: var(--foreground); margin-top: 4px;" class="num">¥${fmtC(tabPts.settled)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">财务已转账核销履约</div>
+      </div>
+    </div>` : `
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 22px;">
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">累计总金额 (扣除退款)</div>
+        <div style="font-size: 24px; font-weight: 700; margin-top: 4px;" class="num">¥${fmtC(tabPts.total)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">历史净产生佣金总额</div>
+      </div>
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">当前可结算金额</div>
+        <div style="font-size: 24px; font-weight: 700; color: #15803D; margin-top: 4px;" class="num">¥${fmtC(tabPts.withdrawable)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">随时可线下打款核销</div>
+      </div>
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">冻结中金额</div>
+        <div style="font-size: 24px; font-weight: 700; color: #A16207; margin-top: 4px;" class="num">¥${fmtC(tabPts.frozen)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">到期 T+7 自动解冻</div>
+      </div>
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">累计已结算金额</div>
+        <div style="font-size: 24px; font-weight: 700; color: var(--foreground); margin-top: 4px;" class="num">¥${fmtC(tabPts.settled)}</div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">财务已转账核销履约</div>
+      </div>
+      <div class="content-card" style="margin-bottom:0; padding:16px 18px;">
+        <div style="font-size: 12px; color: var(--muted-foreground);">待追回金额 (异常)</div>
+        <div style="font-size: 24px; font-weight: 700; color: ${tabPts.unrecovered > 0 ? 'var(--destructive)' : 'var(--muted-foreground)'}; margin-top: 4px;" class="num">
+          ¥${fmtC(tabPts.unrecovered)}
+        </div>
+        <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 4px;">${tabPts.unrecovered > 0 ? '需在下期打款中扣减' : '账目正常无欠款'}</div>
+      </div>
+    </div>`}
+
+    <!-- 表格内容 -->
+    <div class="table-container">
+      ${renderDetailTabTable(p, activeTab)}
+    </div>
+  `;
+}
+
+// 按维度（个人订单 / 机构订单）汇总合伙人佣金，用于详情页选项卡下方的金额卡片
+function partnerTabPoints(p, kind) {
+  let w = 0, f = 0, s = 0, short = 0;
+  p.orders.forEach(o => {
+    const isOrg = orderKind(o) === 'ORG';
+    if ((kind === 'org') !== isOrg) return;
+    orderLines(o, p).forEach(l => {
+      s += l.settled;
+      if (kind === 'org') {
+        if (l.state !== 'SETTLED') w += l.remaining;
+      } else if (l.state === 'UNLOCKED') w += l.remaining;
+      else if (l.state === 'FROZEN') f += l.remaining;
+    });
+    if (kind !== 'org') short += (o._refundShort || 0);
+  });
+  return {
+    total: round2(w + f + s), withdrawable: round2(w), frozen: round2(f), settled: round2(s),
+    unrecovered: Math.max(0, round2(short - (p._offsetPaid || 0)))
+  };
+}
+
+function renderDetailTabTable(p, tab) {
+  if (tab === 'orders' || tab === 'orgs') {
+    const isOrgTab = tab === 'orgs';
+    const list = p.orders.filter(o => (orderKind(o) === 'ORG') === isOrgTab);
+    const key = 'det-' + tab + '-' + p.id;
+    const rows = pagedList(key, list);
+    return `
+      <table class="official-table">
+        <thead>
+          <tr>
+            <th>订单编号</th>
+            <th>${isOrgTab ? '机构名称' : '下单客户'}</th>
+            ${isOrgTab ? '' : '<th>商品名称</th>'}
+            <th>订单状态</th>
+            <th>订单金额</th>
+            <th>分成比例</th>
+            <th>本单佣金</th>
+            <th>下单时间</th>
+            <th class="col-sticky" style="text-align:right;">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${list.length === 0 ? `<tr><td colspan="${isOrgTab ? 8 : 9}" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无${isOrgTab ? '机构' : '个人'}订单</td></tr>` : rows.map(o => {
+            const lines = orderLines(o, p);
+            const netPoints = Math.max(0, o.points - (o._recover || 0));
+            const refunded = (o.refunds || []).reduce((a, r) => a + r.amount, 0);
+            const pc = netPoints > 0 ? '#15803D' : 'var(--muted-foreground)';
+            const isRefund = refunded > 0 || o.status === 'VOID_REFUND';
+            const payBadge = isRefund
+              ? '<span class="badge badge-danger" style="font-size:10.5px;">已退款</span>'
+              : '<span class="badge badge-success" style="font-size:10.5px;">已支付</span>';
+            const isOrg = o.kind === 'ORG';
+            return `<tr>
+              <td><span class="code-badge">${o.id}</span></td>
+              <td>${isOrg ? `<strong>${o.org_name}</strong>` : `<strong class="num">${o.customer_phone}</strong>`}</td>
+              ${isOrg ? '' : `<td style="font-size:12.5px;">${productName(o)}<div style="margin-top:3px;">${productTagHtml(o)}</div></td>`}
+              <td>${payBadge}</td>
+              <td class="num">¥${formatNum(o.pay_amount)}${refunded > 0 ? `<div style="font-size:10.5px; color:var(--muted-foreground); margin-top:2px;">已退 ¥${formatNum(refunded)}</div>` : ''}</td>
+              <td class="num">${o.rate}%</td>
+              <td><strong class="num" style="color:${pc};">${netPoints > 0 ? '+' : ''}¥${fmtC(netPoints)}</strong></td>
+              <td class="num" style="color:var(--muted-foreground); font-size:11.5px;">${o.created_at || o.start}</td>
+              <td class="col-sticky" style="text-align:right; white-space:nowrap;">
+                <button class="btn btn-outline btn-sm" onclick="showOrderDetail('${o.id}')">订单详情</button>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+      ${pagerBar(key, list.length)}
+    `;
+  }
+
+  if (tab === 'settlements') {
+    const key = 'det-settle-' + p.id;
+    const rows = pagedList(key, p.settlements);
+    return `
+      <table class="official-table">
+        <thead>
+          <tr>
+            <th>结算单号</th>
+            <th>结算来源</th>
+            <th>结算金额</th>
+            <th>财务打款凭证号</th>
+            <th>经办人</th>
+            <th>核销时间</th>
+            <th>打款备注</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${p.settlements.length === 0 ? '<tr><td colspan="7" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无核销记录</td></tr>' :
+          rows.map(s => {
+            const hist = SETTLEMENT_HISTORY.find(h => h.settle_id === s.batch_no);
+            return `
+            <tr>
+              <td><span class="code-badge">${s.batch_no}</span></td>
+              <td>${hist && hist.source === 'ORG' ? '<span class="badge badge-blue">机构订单</span>' : '<span class="badge badge-neutral">个人订单</span>'}</td>
+              <td><strong class="num" style="color: #15803D;">¥${fmtC(s.points)}</strong></td>
+              <td><span class="code-badge">${s.voucher}</span></td>
+              <td>${s.operator}</td>
+              <td style="color: var(--muted-foreground); font-size:12px;">${s.time}</td>
+              <td style="color: var(--muted-foreground); font-size:12px;">${s.remark}</td>
+            </tr>
+          `; }).join('')}
+        </tbody>
+      </table>
+      ${pagerBar(key, p.settlements.length)}
+    `;
+  }
+
+  return '';
+}
+
+
+function renderCurrentPage() {
+  
+var params = new URLSearchParams(location.search);
+var pId = params.get('partnerId') || (PARTNERS[0] ? PARTNERS[0].id : 'p1');
+var pTab = params.get('tab') || 'orders';
+var currentPartner = PARTNERS.find(function(it){ return it.id === pId; }) || PARTNERS[0];
+renderPartnerDetailView(document.getElementById("main-view-container"), currentPartner, pTab);
+
+}
+
+function startPage() {
+  initAdminNav('nav-list');
+  renderCurrentPage();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startPage);
+} else {
+  startPage();
+}
+  </script>
+</body>
+</html>

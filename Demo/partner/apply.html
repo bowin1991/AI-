@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>合伙人申请 - 立理 S1 合伙人端</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/partner.css">
+</head>
+<body class="bg-surface-canvas text-slate-title antialiased selection:bg-brand-100 selection:text-brand-600 font-sans min-h-screen">
+
+  <!-- 根挂载容器 -->
+  <div id="app" class="min-h-screen flex flex-col"></div>
+
+  <!-- 全局 Toast 提示组件 -->
+  <div id="toast">
+    <div class="flex items-center space-x-2.5 bg-slate-title text-white text-xs font-semibold px-4 py-3 rounded-full shadow-dropdown max-w-sm border border-white/10">
+      <i data-lucide="check-circle" class="w-4 h-4 text-brand-400 flex-shrink-0"></i>
+      <span id="toast-text" class="truncate text-white">提示信息</span>
+    </div>
+  </div>
+
+  <!-- ==================== 右下角独立演示控制助手 (FLOATING DEMO TOOLKIT) ==================== -->
+  <div id="demo-toolkit" class="fixed bottom-5 right-5 z-40 flex flex-col items-end text-[#111827]">
+    <!-- 展开的操作面板 -->
+    <div id="demo-toolkit-panel" class="bg-white rounded-[20px] border border-[#E8ECF2] p-4 shadow-dropdown w-80 text-left transition-all mb-2.5">
+      <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-[#F1F3F7]">
+        <div class="flex items-center space-x-1.5">
+          <div class="w-6 h-6 rounded-lg bg-[#FFF5F0] text-[#FF5C28] flex items-center justify-center shadow-2xs"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i></div>
+          <span class="font-bold text-xs text-[#111827]">演示控制助手</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-[#FAFAFC] text-[#4B5563] border border-[#E8ECF2] font-medium">Demo</span>
+        </div>
+        <button type="button" onclick="toggleDemoToolkit(false)" class="text-[#4B5563] hover:text-[#111827] p-1 rounded-md text-xs" title="收起面板">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+
+      <!-- 快捷切换测试账号 -->
+      <div class="space-y-1.5 mb-3">
+        <div class="text-xs font-semibold text-[#4B5563] flex items-center justify-between">
+          <span>快捷切换测试身份:</span>
+          <span class="text-[#4B5563]">密码: Test1234</span>
+        </div>
+        <div class="grid grid-cols-2 gap-1.5 text-xs">
+          <button type="button" onclick="demoSwitchAccount('13800000003')" class="p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+            <div class="font-bold text-[#111827] group-hover:text-[#FF5C28]">13800000003</div>
+            <div class="text-emerald-600 font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 flex-shrink-0"></span>已通过 (正式)</div>
+          </button>
+          <button type="button" onclick="demoSwitchAccount('13800000001')" class="p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+            <div class="font-bold text-[#111827] group-hover:text-[#FF5C28]">13800000001</div>
+            <div class="text-amber-600 font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1 flex-shrink-0"></span>审核中 (Pending)</div>
+          </button>
+          <button type="button" onclick="demoSwitchAccount('13800000002')" class="p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+            <div class="font-bold text-[#111827] group-hover:text-[#FF5C28]">13800000002</div>
+            <div class="text-rose-600 font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1 flex-shrink-0"></span>已拒绝 (Rejected)</div>
+          </button>
+          <button type="button" onclick="demoSwitchAccount('13800000004')" class="p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+            <div class="font-bold text-[#111827] group-hover:text-[#FF5C28]">13800000004</div>
+            <div class="text-[#4B5563] font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1 flex-shrink-0"></span>已冻结 (Frozen)</div>
+          </button>
+        </div>
+        <button type="button" onclick="demoFillOps()" class="mt-1.5 w-full p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+          <div class="font-bold text-[#111827] group-hover:text-[#FF5C28] text-xs">运营账号 ops_admin</div>
+          <div class="text-[#4B5563] font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mr-1 flex-shrink-0"></span>密码 Admin1234（进入运营工作台）</div>
+        </button>
+      </div>
+
+      <!-- 快速模拟审核通过 -->
+      <div class="pt-2.5 border-t border-[#F1F3F7] flex flex-col space-y-1.5">
+        <button type="button" onclick="simulateApprove()" class="w-full py-2 px-3 rounded-full bg-[#FF5C28] hover:bg-[#E04816] text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center space-x-1">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>模拟运营审核通过 (直达工作台)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 收起状态下的浮动胶囊入口按钮 -->
+    <button id="demo-toolkit-btn" onclick="toggleDemoToolkit()" class="flex items-center space-x-2 bg-[#111827] hover:bg-[#FF5C28] text-white text-xs font-bold px-3.5 py-2.5 rounded-full shadow-dropdown border border-white/10 transition-all hover:scale-105 group">
+      <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+      <i data-lucide="sparkles" class="w-3.5 h-3.5 text-brand-400"></i><span>演示助手</span>
+    </button>
+
+  <script src="js/common.js"></script>
+  <script>
+function pApply() {
+  if (S.done) {
+    var successHtml = [
+      '<div class="text-center py-6">',
+        '<div class="w-16 h-16 rounded-3xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-4 border border-emerald-100 shadow-sm">',
+          '<i data-lucide="check" class="w-8 h-8 stroke-[3]"></i>',
+        '</div>',
+        '<h3 class="text-xl font-bold text-slate-title">申请已成功提交</h3>',
+        '<p class="text-xs text-slate-body mt-2 leading-relaxed max-w-xs mx-auto">官方运营团队将尽快完成审核，请保持电话畅通。</p>',
+        '<div class="mt-8 space-y-2">',
+          '<button type="button" onclick="go(\'login\')" class="w-full py-3 rounded-full bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold shadow-sm shadow-brand-500/30 transition-all">前往登录页查看状态</button>',
+        '</div>',
+      '</div>'
+    ].join('');
+    $('app').innerHTML = renderAuthLayout('合伙人申请', '立理 S1 学术生态共建计划', successHtml);
+    renderIcons();
+    return;
+  }
+
+  var formHtml = [
+    '<div class="space-y-3.5 text-left text-xs">',
+      '<div>',
+        '<label class="block font-semibold text-slate-body mb-1">真实姓名 <span class="text-rose-500">*</span></label>',
+        '<input id="a_name" placeholder="请填写您的真实姓名" class="w-full bg-surface-subtle text-slate-title rounded-xl px-3.5 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+        '<div class="text-xs text-rose-600 mt-0.5 min-h-[14px]" id="e_name"></div>',
+      '</div>',
+
+      '<div>',
+        '<label class="block font-semibold text-slate-body mb-1">所属单位 <span class="text-rose-500">*</span></label>',
+        '<input id="a_org" placeholder="请准确填写完整的单位名称" class="w-full bg-surface-subtle text-slate-title rounded-xl px-3.5 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+        '<div class="text-xs text-rose-600 mt-0.5 min-h-[14px]" id="e_org"></div>',
+      '</div>',
+
+      '<div>',
+        '<label class="block font-semibold text-slate-body mb-1">手机号码 <span class="text-rose-500">*</span></label>',
+        '<input id="a_phone" inputmode="numeric" maxlength="11" placeholder="请输入常见手机号码" class="w-full bg-surface-subtle text-slate-title rounded-xl px-3.5 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+        '<div class="text-xs text-rose-600 mt-0.5 min-h-[14px]" id="e_phone"></div>',
+      '</div>',
+
+      '<div>',
+        '<label class="block font-semibold text-slate-body mb-1">短信验证码 <span class="text-rose-500">*</span></label>',
+        '<div class="flex space-x-2">',
+          '<input id="a_code" inputmode="numeric" maxlength="6" placeholder="请输入短信验证码" class="w-full bg-surface-subtle text-slate-title rounded-xl px-3.5 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+          '<button type="button" id="a_send" onclick="sendCode(\'a_send\',\'a_phone\',\'e_phone\')" class="px-3.5 py-2.5 rounded-xl border border-surface-border bg-white text-xs font-semibold text-slate-title hover:bg-surface-subtle transition-all whitespace-nowrap">获取验证码</button>',
+        '</div>',
+        '<div class="text-xs text-rose-600 mt-0.5 min-h-[14px]" id="e_code"></div>',
+      '</div>',
+
+      '<div>',
+        '<label class="block font-semibold text-slate-body mb-1">登录密码 <span class="text-rose-500">*</span></label>',
+        '<div class="relative">',
+          '<input id="a_pwd" type="password" placeholder="请输入 8-20 位包含字母与数字的登录密码" class="w-full bg-surface-subtle text-slate-title rounded-xl pl-3.5 pr-11 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+          '<button type="button" aria-label="显示或隐藏密码" onclick="togglePwdVisibility(\'a_pwd\', this)" class="absolute right-0 top-0 bottom-0 px-3.5 flex items-center justify-center text-slate-muted hover:text-slate-title">',
+            '<i data-lucide="eye" class="w-4 h-4"></i>',
+          '</button>',
+        '</div>',
+        '<div class="text-xs text-rose-600 mt-0.5 min-h-[14px]" id="e_pwd"></div>',
+      '</div>',
+
+      '<div>',
+        '<label class="block font-semibold text-slate-body mb-1">微信号 <span class="text-slate-muted font-normal">（选填）</span></label>',
+        '<input id="a_wx" placeholder="用于官方对接" class="w-full bg-surface-subtle text-slate-title rounded-xl px-3.5 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+        '<div class="text-xs text-rose-600 mt-0.5 min-h-[14px]" id="e_wx"></div>',
+      '</div>',
+
+      '<button type="button" onclick="submitApply()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm py-3 rounded-full shadow-sm shadow-brand-500/30 transition-all transform active:scale-95 mt-4">提交入驻申请</button>',
+    '</div>',
+
+    '<div class="mt-4 text-center">',
+      '<span class="text-xs text-slate-muted">已有申请？</span> ',
+      '<button type="button" onclick="go(\'login\')" class="text-xs font-bold text-brand-600 hover:text-brand-700">返回登录查看</button>',
+    '</div>'
+  ].join('');
+
+  $('app').innerHTML = renderAuthLayout('申请成为立理 S1 合伙人', '', formHtml);
+  if (S.pending && $('a_phone')) $('a_phone').value = S.pending;
+  renderIcons();
+}
+
+function submitApply() {
+  var ok = true, v = function(id){ return ($(id).value || '').trim(); };
+  function chk(cond, errId, msg) { if (cond) { err(errId, ''); } else { err(errId, msg); ok = false; } }
+  chk(v('a_name').length >= 2 && v('a_name').length <= 20, 'e_name', '请输入 2–20 个字符的真实姓名');
+  chk(v('a_org').length >= 2 && v('a_org').length <= 50, 'e_org', '请输入 2–50 个字符的所属单位');
+  chk(phoneOk(v('a_phone')), 'e_phone', '请输入有效的 11 位大陆手机号码');
+  chk(/^\d{6}$/.test(v('a_code')), 'e_code', '请输入 6 位数字验证码');
+  chk(pwdOk($('a_pwd').value), 'e_pwd', '密码需 8–20 位，且包含英文字母与数字组合');
+  chk(!v('a_wx') || /^[A-Za-z0-9_-]{6,30}$/.test(v('a_wx')), 'e_wx', '微信号 6–30 位，仅限字母数字下划线减号');
+
+  if (!ok) return;
+
+  var phone = v('a_phone');
+  if (PHONES[phone]) {
+    err('e_phone', '该手机号已有申请记录，请登录查看状态');
+    toast('该手机号已有申请记录');
+    return;
+  }
+
+  APP[phone] = { name: v('a_name'), org: v('a_org'), wx: v('a_wx'), time: nowStr() };
+  PHONES[phone] = 'PENDING';
+  PWD[phone] = $('a_pwd').value;
+  S.done = true;
+  toast('申请提交成功！');
+  pApply();
+}
+
+// ==================== 页面 3: 忘记密码 (pForgot) ====================
+
+function renderCurrentPage() {
+  pApply();
+}
+
+function startPage() {
+  initAuth(false);
+  renderCurrentPage();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startPage);
+} else {
+  startPage();
+}
+  </script>
+</body>
+</html>

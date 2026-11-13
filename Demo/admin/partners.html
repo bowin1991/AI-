@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>合伙人管理 - 立理 S1 分销管理系统</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<div id="app-layout">
+  <!-- 官方侧边栏 (1:1 复刻) -->
+  <aside id="app-sidebar">
+    <div class="sidebar-brand">
+      <div>
+        <div class="brand-title">
+          立理 <span class="brand-badge">S1</span>
+        </div>
+        <div class="brand-sub">分销管理系统</div>
+      </div>
+    </div>
+
+    <div class="sidebar-menu-wrap">
+      <div class="menu-group-header">管理后台</div>
+      <a class="sidebar-menu-item" href="dashboard.html" id="nav-dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        数据看板
+      </a>
+      <a class="sidebar-menu-item" href="applications.html" id="nav-applications">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        申请审核
+      </a>
+      <a class="sidebar-menu-item" href="partners.html" id="nav-list">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        合伙人管理
+      </a>
+      <a class="sidebar-menu-item" href="orders.html" id="nav-orders">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        订单管理
+      </a>
+      <a class="sidebar-menu-item" href="settlements.html" id="nav-settlements">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="14" x2="6.01" y2="14"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        结算管理
+      </a>
+      <a class="sidebar-menu-item" href="reports.html" id="nav-reports">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        数据报表
+      </a>
+      <a class="sidebar-menu-item" href="settings.html" id="nav-settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        系统设置
+      </a>
+    </div>
+
+    <!-- 用户信息卡片 -->
+    <div class="sidebar-footer">
+      <div class="user-profile-summary">
+        <div class="user-avatar-circle">张</div>
+        <div class="user-meta-texts">
+          <div class="user-meta-name">陈嘉禾</div>
+          <div class="user-meta-role">超级管理员</div>
+        </div>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--muted-foreground);"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </aside>
+
+  <!-- 主体工作区 -->
+  <main id="app-main">
+    <!-- 官方顶栏 -->
+    <header id="app-header">
+      <div class="header-left">
+        <button class="btn-icon-square" title="Toggle Sidebar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+        </button>
+      </div>
+      <div class="header-right">
+        <div class="search-pill-box" onclick="toast('快捷搜索合伙人或订单 (⌘ K)')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>搜索</span>
+          <span class="kbd-badge">⌘ K</span>
+        </div>
+        <button class="btn-round-icon" onclick="navigate('settings')" title="系统设置">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <div class="user-avatar-circle" style="width:28px; height:28px; font-size:12px; cursor:pointer;" onclick="toast('当前管理员: 陈嘉禾 (超级管理员)')">张</div>
+      </div>
+    </header>
+
+    <!-- 动态视图区域 -->
+    <div id="main-view-container"></div>
+  </main>
+</div>
+
+<!-- Toast 组件 -->
+<div id="app-toast">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-text">操作已完成</span>
+</div>
+
+<!-- 弹窗容器 -->
+<div id="modal-root"></div>
+
+<!-- 抽屉容器 -->
+<div id="drawer-root"></div>
+
+  <script src="js/common.js"></script>
+  <script>
+function renderPartnerListView(container) {
+  let list = PARTNERS.filter(p => {
+    if (listChannel !== 'ALL' && p.channel_type !== listChannel) return false;
+    if (listStatus !== 'ALL' && p.status !== listStatus) return false;
+    if (listKw) {
+      const kw = listKw.toLowerCase();
+      return p.name.toLowerCase().includes(kw) || p.phone.includes(kw) || p.code.includes(kw) || p.org.toLowerCase().includes(kw);
+    }
+    return true;
+  });
+
+  const pagedRows = pagedList('partners', list);
+
+  container.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px;">
+      <div>
+        <h1 style="font-size: 24px; font-weight: 700; color: var(--foreground); letter-spacing: -0.02em;">合伙人管理</h1>
+      </div>
+    </div>
+
+    <!-- 筛选卡片 -->
+    <div class="filter-card">
+      <div class="filter-title-row">
+        <span class="filter-title">筛选合伙人</span>
+        <button class="btn btn-outline btn-sm" onclick="listKw=''; listChannel='ALL'; listStatus='ALL'; resetPage('partners'); renderPartnerListView(document.getElementById('main-view-container'))">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          重置
+        </button>
+      </div>
+      <div class="filter-inputs-grid">
+        <div class="filter-field" style="flex: 2; min-width: 240px;">
+          <span class="field-label">关键词</span>
+          <input class="input-control" type="text" placeholder="合伙人姓名、完整手机号、4位推荐码、机构" value="${listKw}" oninput="listKw=this.value; resetPage('partners'); renderPartnerListView(document.getElementById('main-view-container'))">
+        </div>
+        <div class="filter-field" style="flex: 1;">
+          <span class="field-label">渠道类型</span>
+          <select class="input-control" onchange="listChannel=this.value; resetPage('partners'); renderPartnerListView(document.getElementById('main-view-container'))">
+            <option value="ALL" ${listChannel==='ALL'?'selected':''}>全部渠道</option>
+            <option value="INTERNAL" ${listChannel==='INTERNAL'?'selected':''}>内部渠道 (员工/顾问)</option>
+            <option value="EXTERNAL" ${listChannel==='EXTERNAL'?'selected':''}>外部渠道 (高校/博主)</option>
+          </select>
+        </div>
+        <div class="filter-field" style="flex: 1;">
+          <span class="field-label">账号状态</span>
+          <select class="input-control" onchange="listStatus=this.value; resetPage('partners'); renderPartnerListView(document.getElementById('main-view-container'))">
+            <option value="ALL" ${listStatus==='ALL'?'selected':''}>全部状态</option>
+            <option value="NORMAL" ${listStatus==='NORMAL'?'selected':''}>正常</option>
+            <option value="FROZEN" ${listStatus==='FROZEN'?'selected':''}>已冻结</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 数据表格 -->
+    <div class="table-container">
+      <table class="official-table">
+        <thead>
+          <tr>
+            <th>合伙人姓名</th>
+            <th>账号状态</th>
+            <th>单位</th>
+            <th>手机号</th>
+            <th>渠道</th>
+            <th>推荐码</th>
+            <th>个人订单首购比例</th>
+            <th>个人订单续购比例</th>
+            <th>个人订单总销售额</th>
+            <th>机构订单总销售额</th>
+            <th>加入时间</th>
+            <th class="col-sticky" style="text-align: right;">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${list.length === 0 ? `
+            <tr><td colspan="12" style="text-align:center; padding:48px; color:var(--muted-foreground);">暂无符合筛选条件的合伙人</td></tr>
+          ` : pagedRows.map(p => `
+            <tr>
+              <td><span style="font-weight: 600;">${p.name}</span></td>
+              <td>
+                ${p.status === 'NORMAL' ? '<span class="badge badge-success">正常</span>' : ''}
+                ${p.status === 'FROZEN' ? '<span class="badge badge-warning" title="'+p.freeze_reason+'">已冻结</span>' : ''}
+              </td>
+              <td><div style="font-size: 12px; color: var(--muted-foreground); max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.org}</div></td>
+              <td><strong class="num">${p.phone}</strong></td>
+              <td>
+                ${p.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部</span>' : '<span class="badge badge-neutral">外部</span>'}
+              </td>
+              <td><span class="code-badge">${p.code}</span>${p.status === 'FROZEN' ? '<div style="font-size:10.5px; color:var(--destructive); margin-top:2px;">已失效</div>' : ''}</td>
+              <td><strong class="num">${p.first_rate}%</strong></td>
+              <td><strong class="num">${p.renew_rate}%</strong></td>
+              <td><strong class="num">¥${formatNum(partnerSales(p, 'user'))}</strong></td>
+              <td><strong class="num">¥${formatNum(partnerSales(p, 'org'))}</strong></td>
+              <td style="color: var(--muted-foreground); font-size: 12px;">${p.join_time.split(' ')[0]}</td>
+              <td class="col-sticky" style="text-align: right;">
+                <button class="btn btn-outline btn-sm" onclick="navigate('partner/${p.id}/orders')">详情</button>
+                <button class="btn btn-outline btn-sm" onclick="openModifyRateModal('${p.id}')">改比例</button>
+                ${p.status === 'FROZEN' ? `
+                  <button class="btn btn-outline btn-sm" style="color: #15803D;" onclick="unfreezePartner('${p.id}')">解冻</button>
+                ` : ''}
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      ${pagerBar('partners', list.length)}
+    </div>
+  `;
+}
+
+// ==========================================
+// 3. 页面：合伙人详情穿透页 (PARTNER DETAIL)
+// ==========================================
+
+function renderCurrentPage() {
+  renderPartnerListView(document.getElementById("main-view-container"));
+}
+
+function startPage() {
+  initAdminNav('nav-list');
+  renderCurrentPage();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startPage);
+} else {
+  startPage();
+}
+  </script>
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>我的客户 - 立理 S1 合伙人端</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/partner.css">
+</head>
+<body class="bg-surface-canvas text-slate-title antialiased selection:bg-brand-100 selection:text-brand-600 font-sans min-h-screen">
+
+  <!-- 根挂载容器 -->
+  <div id="app" class="min-h-screen flex flex-col"></div>
+
+  <!-- 全局 Toast 提示组件 -->
+  <div id="toast">
+    <div class="flex items-center space-x-2.5 bg-slate-title text-white text-xs font-semibold px-4 py-3 rounded-full shadow-dropdown max-w-sm border border-white/10">
+      <i data-lucide="check-circle" class="w-4 h-4 text-brand-400 flex-shrink-0"></i>
+      <span id="toast-text" class="truncate text-white">提示信息</span>
+    </div>
+  </div>
+
+  <!-- ==================== 右下角独立演示控制助手 (FLOATING DEMO TOOLKIT) ==================== -->
+  <div id="demo-toolkit" class="fixed bottom-5 right-5 z-40 flex flex-col items-end text-[#111827]">
+    <!-- 展开的操作面板 -->
+    <div id="demo-toolkit-panel" class="bg-white rounded-[20px] border border-[#E8ECF2] p-4 shadow-dropdown w-80 text-left transition-all mb-2.5">
+      <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-[#F1F3F7]">
+        <div class="flex items-center space-x-1.5">
+          <div class="w-6 h-6 rounded-lg bg-[#FFF5F0] text-[#FF5C28] flex items-center justify-center shadow-2xs"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i></div>
+          <span class="font-bold text-xs text-[#111827]">演示控制助手</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-[#FAFAFC] text-[#4B5563] border border-[#E8ECF2] font-medium">Demo</span>
+        </div>
+        <button type="button" onclick="toggleDemoToolkit(false)" class="text-[#4B5563] hover:text-[#111827] p-1 rounded-md text-xs" title="收起面板">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+
+      <!-- 快捷切换测试账号 -->
+      <div class="space-y-1.5 mb-3">
+        <div class="text-xs font-semibold text-[#4B5563] flex items-center justify-between">
+          <span>快捷切换测试身份:</span>
+          <span class="text-[#4B5563]">密码: Test1234</span>
+        </div>
+        <div class="grid grid-cols-2 gap-1.5 text-xs">
+          <button type="button" onclick="demoSwitchAccount('13800000003')" class="p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+            <div class="font-bold text-[#111827] group-hover:text-[#FF5C28]">13800000003</div>
+            <div class="text-emerald-600 font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 flex-shrink-0"></span>已通过 (正式)</div>
+          </button>
+          <button type="button" onclick="demoSwitchAccount('13800000001')" class="p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+            <div class="font-bold text-[#111827] group-hover:text-[#FF5C28]">13800000001</div>
+            <div class="text-amber-600 font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1 flex-shrink-0"></span>审核中 (Pending)</div>
+          </button>
+          <button type="button" onclick="demoSwitchAccount('13800000002')" class="p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+            <div class="font-bold text-[#111827] group-hover:text-[#FF5C28]">13800000002</div>
+            <div class="text-rose-600 font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1 flex-shrink-0"></span>已拒绝 (Rejected)</div>
+          </button>
+          <button type="button" onclick="demoSwitchAccount('13800000004')" class="p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+            <div class="font-bold text-[#111827] group-hover:text-[#FF5C28]">13800000004</div>
+            <div class="text-[#4B5563] font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1 flex-shrink-0"></span>已冻结 (Frozen)</div>
+          </button>
+        </div>
+        <button type="button" onclick="demoFillOps()" class="mt-1.5 w-full p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+          <div class="font-bold text-[#111827] group-hover:text-[#FF5C28] text-xs">运营账号 ops_admin</div>
+          <div class="text-[#4B5563] font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mr-1 flex-shrink-0"></span>密码 Admin1234（进入运营工作台）</div>
+        </button>
+      </div>
+
+      <!-- 快速模拟审核通过 -->
+      <div class="pt-2.5 border-t border-[#F1F3F7] flex flex-col space-y-1.5">
+        <button type="button" onclick="simulateApprove()" class="w-full py-2 px-3 rounded-full bg-[#FF5C28] hover:bg-[#E04816] text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center space-x-1">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>模拟运营审核通过 (直达工作台)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 收起状态下的浮动胶囊入口按钮 -->
+    <button id="demo-toolkit-btn" onclick="toggleDemoToolkit()" class="flex items-center space-x-2 bg-[#111827] hover:bg-[#FF5C28] text-white text-xs font-bold px-3.5 py-2.5 rounded-full shadow-dropdown border border-white/10 transition-all hover:scale-105 group">
+      <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+      <i data-lucide="sparkles" class="w-3.5 h-3.5 text-brand-400"></i><span>演示助手</span>
+    </button>
+
+  <script src="js/common.js"></script>
+  <script>
+function pCust() {
+  var map = { exp: 4, reg: 2, add: 1 }, k = map[S.sort];
+  
+  var list = CUST.filter(function(c) {
+    var matchStatus = (S.filter === 'all' || c[3] === S.filter);
+    var matchTag = (!S.tf || S.tf === 'all' || c[6] === S.tf);
+    var matchQuery = true;
+    if (S.query) {
+      var q = S.query.toLowerCase();
+      var cStr = (c[0] + ' ' + (c[5]||'') + ' ' + (c[6]||'')).toLowerCase();
+      matchQuery = cStr.indexOf(q) >= 0;
+    }
+    return matchStatus && matchTag && matchQuery;
+  });
+
+  list.sort(function(a, b) {
+    var x = a[k], y = b[k];
+    if (!x && !y) return 0;
+    if (!x) return 1;
+    if (!y) return -1;
+    return (x < y ? -1 : x > y ? 1 : 0) * (S.dir === 'asc' ? 1 : -1);
+  });
+
+  var mo = nowStr().slice(0, 7);
+  var mn = CUST.filter(function(c){ return c[1].slice(0, 7) === mo; }).length;
+
+  var sorts = [['exp', '会员到期时间'], ['reg', '注册时间'], ['add', '绑定时间']];
+  var f = [['all', '全部状态'], ['month', '月卡生效中'], ['year', '年卡生效中'], ['none', '未开通'], ['expired', '已过期']];
+
+  var pg = paged(list, S.cp);
+
+  var field = function(label, val, cls) {
+    return '<div class="min-w-0"><div class="text-[11px] text-slate-muted">' + label + '</div><div class="tabular-nums truncate ' + cls + '">' + val + '</div></div>';
+  };
+
+  var rowsHtml = pg.items.map(function(c) {
+    var originalIndex = CUST.indexOf(c);
+    var stInfo = ST[c[3]] || { text: '未知', badge: 'bg-surface-subtle text-slate-muted' };
+    
+    var remarkHtml = '';
+    if (S.edit === originalIndex) {
+      remarkHtml = [
+        '<div class="flex items-center space-x-1">',
+          '<input id="rm" maxlength="50" value="' + esc(c[5] || '') + '" placeholder="输入备注，回车保存" class="w-full bg-white text-slate-title text-xs rounded-lg px-2 py-1 border border-brand-500 focus:outline-none" onkeydown="if(event.key===\'Enter\')saveRem(' + originalIndex + ');if(event.key===\'Escape\'){S.edit=-1;pCust()}" onblur="saveRem(' + originalIndex + ')">',
+        '</div>'
+      ].join('');
+    } else {
+      remarkHtml = [
+        '<div onclick="editRem(' + originalIndex + ')" class="cursor-pointer group flex items-center space-x-1.5 py-1 text-xs text-slate-title hover:text-brand-600 transition-colors">',
+          '<span>' + (c[5] ? esc(c[5]) : '<span class="text-slate-muted italic">添加备注</span>') + '</span>',
+          '<i data-lucide="pencil" class="w-3 h-3 text-slate-muted group-hover:text-brand-500 opacity-60"></i>',
+        '</div>'
+      ].join('');
+    }
+
+    // 卡片式：手机号与状态徽标同行紧邻，时间信息两列铺开，备注独立一行，移动端自适应
+    return [
+      '<div class="rounded-2xl bg-surface-subtle border border-surface-border p-4 hover:border-brand-200 transition-colors">',
+        '<div class="flex items-center flex-wrap gap-2">',
+          '<div class="text-sm font-bold text-slate-title tabular-nums">' + esc(c[0]) + '</div>',
+          '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs flex-none ' + stInfo.badge + '">' + stInfo.text + '</span>',
+        '</div>',
+        '<div class="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-x-3 gap-y-2 text-xs">',
+          field('到期时间', c[4] || '-', c[4] ? 'font-medium text-slate-title' : 'text-slate-muted'),
+          field('注册时间', c[2], 'text-slate-body'),
+          field('绑定时间', c[1], 'text-slate-body'),
+        '</div>',
+        '<div class="mt-3 pt-2.5 border-t border-surface-border-subtle">' + remarkHtml + '</div>',
+      '</div>'
+    ].join('');
+  }).join('');
+
+  var contentHtml = [
+    '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">',
+      '<div class="rounded-[20px] bg-surface-card border border-surface-border p-5 shadow-card">',
+        '<div class="flex items-center justify-between">',
+          '<span class="text-xs font-semibold text-slate-body">客户总数</span>',
+          '<div class="w-8 h-8 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center"><i data-lucide="users" class="w-4 h-4"></i></div>',
+        '</div>',
+        '<div class="mt-2 text-3xl font-extrabold tracking-tight text-slate-title tabular-nums">' + CUST.length + '</div>',
+      '</div>',
+      '<div class="rounded-[20px] bg-surface-card border border-surface-border p-5 shadow-card">',
+        '<div class="flex items-center justify-between">',
+          '<span class="text-xs font-semibold text-slate-body">本月新增客户</span>',
+          '<div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center"><i data-lucide="user-plus" class="w-4 h-4"></i></div>',
+        '</div>',
+        '<div class="mt-2 text-3xl font-extrabold tracking-tight text-emerald-600 tabular-nums">' + mn + '</div>',
+      '</div>',
+    '</div>',
+
+    '<div class="rounded-[20px] bg-surface-card border border-surface-border p-6 shadow-card">',
+      '<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">',
+        '<div>',
+          '<h3 class="font-bold text-base text-slate-title">客户跟进明细</h3>',
+        '</div>',
+
+        '<div class="flex flex-wrap items-center gap-2.5">',
+          '<div class="relative w-44">',
+            '<i data-lucide="search" class="w-3.5 h-3.5 text-slate-muted absolute left-3 top-1/2 -translate-y-1/2"></i>',
+            '<input type="text" value="' + esc(S.query) + '" oninput="S.query=this.value.trim();S.cp=1;pCust()" placeholder="搜索手机号/备注..." class="w-full bg-surface-subtle text-slate-title text-xs rounded-full pl-8 pr-3 py-1.5 border border-surface-border focus:outline-none focus:border-brand-500">',
+          '</div>',
+
+          '<div class="flex items-center bg-surface-subtle border border-surface-border rounded-full pl-1 pr-1.5 text-xs">',
+            '<button onclick="S.dir=S.dir===\'asc\'?\'desc\':\'asc\';S.cp=1;pCust()" class="w-7 h-7 flex items-center justify-center rounded-full text-slate-body hover:text-brand-600 transition-colors" title="' + (S.dir === 'asc' ? '当前升序，点击切换为降序' : '当前降序，点击切换为升序') + '" aria-label="切换排序方向">',
+              '<i data-lucide="' + (S.dir === 'asc' ? 'arrow-up' : 'arrow-down') + '" class="w-3.5 h-3.5"></i>',
+            '</button>',
+            '<span class="w-px h-3.5 bg-surface-border"></span>',
+            '<select onchange="S.sort=this.value;S.cp=1;pCust()" class="bg-transparent text-slate-title text-xs font-medium pl-2 pr-1.5 py-1.5 focus:outline-none cursor-pointer">',
+              sorts.map(function(s){ return '<option value="' + s[0] + '"' + (S.sort === s[0] ? ' selected' : '') + '>' + s[1] + '</option>'; }).join(''),
+            '</select>',
+          '</div>',
+
+          '<select onchange="S.filter=this.value;S.cp=1;pCust()" class="bg-surface-subtle border border-surface-border rounded-full px-3 py-1.5 text-xs text-slate-title font-medium focus:outline-none cursor-pointer">',
+            f.map(function(s){ return '<option value="' + s[0] + '"' + (S.filter === s[0] ? ' selected' : '') + '>' + s[1] + '</option>'; }).join(''),
+          '</select>',
+
+          ((S.filter !== 'all' || S.query) ? [
+            '<button onclick="S.filter=\'all\';S.tf=\'all\';S.query=\'\';S.cp=1;pCust()" class="text-xs font-bold text-brand-600 hover:text-brand-700 px-2 py-1">清除筛选</button>'
+          ].join('') : ''),
+        '</div>',
+      '</div>',
+
+      (list.length
+        ? '<div class="grid grid-cols-1 gap-3">' + rowsHtml + '</div>'
+        : '<div class="py-10 text-center text-xs text-slate-muted">没有匹配条件的客户数据</div>'),
+
+      pagerHtml(pg, 'goCustPage'),
+    '</div>'
+  ].join('');
+
+  $('app').innerHTML = renderDashboardLayout('customers', '我的客户', '客户看板', contentHtml);
+  renderIcons();
+
+  if (S.edit >= 0) {
+    var rmInput = $('rm');
+    if (rmInput) {
+      rmInput.focus();
+      rmInput.setSelectionRange(rmInput.value.length, rmInput.value.length);
+    }
+  }
+}
+
+function editRem(i) {
+  S.edit = i;
+  pCust();
+}
+
+function saveRem(i) {
+  if (S.edit !== i) return;
+  var rmInput = $('rm');
+  if (!rmInput) return;
+  var val = rmInput.value.trim().slice(0, 50);
+  S.edit = -1;
+  if (val !== (CUST[i][5] || '')) {
+    CUST[i][5] = val;
+    toast('客户备注已保存');
+  }
+  pCust();
+}
+
+function openTag(i) {
+  S.tagFor = i;
+  showTagModal('');
+}
+
+function showTagModal(errMsg) {
+  var old = $('tag-modal'); if (old) old.remove();
+  var c = CUST[S.tagFor];
+  if (!c) return;
+  var customCount = TAGS.custom.length;
+
+  var chipsHtml = allTags().map(function(t, idx) {
+    var isSelected = c[6] === t;
+    var isCustom = idx >= 3;
+    return [
+      '<span class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all ' + 
+        (isSelected ? 'bg-brand-500 text-white shadow-xs' : 'bg-surface-subtle text-slate-body hover:bg-surface-border/50 border border-surface-border') + '" onclick="pickTag(' + idx + ')">',
+        '<span>' + esc(t) + '</span>',
+        (isCustom ? '<b onclick="event.stopPropagation();delTag(' + idx + ')" class="hover:text-rose-500 ml-1 p-0.5" title="删除自定义标签">×</b>' : ''),
+      '</span>'
+    ].join('');
+  }).join('');
+
+  var m = document.createElement('div');
+  m.id = 'tag-modal';
+  m.className = 'fixed inset-0 bg-slate-title/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in';
+  m.innerHTML = [
+    '<div class="bg-surface-card rounded-[24px] border border-surface-border p-6 max-w-sm w-full shadow-dropdown text-left">',
+      '<div class="flex items-center justify-between mb-2">',
+        '<h3 class="font-bold text-base text-slate-title">设置客户标签</h3>',
+        '<button type="button" onclick="$(\'tag-modal\').remove()" class="text-slate-muted hover:text-slate-title p-1 rounded-lg">✕</button>',
+      '</div>',
+      '<p class="text-xs text-slate-muted mb-4">为 <span class="font-bold text-slate-title">' + esc(c[0]) + '</span> 标记客情阶段（单选，仅本人可见）</p>',
+      
+      '<div class="flex flex-wrap gap-2 mb-4">' + chipsHtml + '</div>',
+
+      '<div class="text-xs text-slate-muted mb-3 flex items-center justify-between">',
+        '<span>自定义标签使用量: ' + customCount + ' / 10</span>',
+        '<span>删除自定义标签后客户将恢复为一般</span>',
+      '</div>',
+
+      (customCount < 10 ? [
+        '<div class="flex space-x-2">',
+          '<input id="nt" maxlength="8" placeholder="新建标签（最多8字）" class="flex-1 bg-surface-subtle text-slate-title text-xs rounded-xl px-3 py-2 border border-surface-border focus:outline-none focus:border-brand-500">',
+          '<button type="button" onclick="addTag()" class="px-3 py-2 rounded-xl bg-slate-title text-white text-xs font-bold hover:bg-slate-800 transition-all">添加</button>',
+        '</div>'
+      ].join('') : '<div class="text-xs text-amber-600">已达 10 个自定义标签上限</div>'),
+
+      (errMsg ? '<div class="text-xs text-rose-600 mt-2">' + errMsg + '</div>' : ''),
+
+      '<div class="mt-5 pt-3 border-t border-surface-border-subtle text-right">',
+        '<button type="button" onclick="$(\'tag-modal\').remove()" class="px-4 py-1.5 rounded-full border border-surface-border text-xs font-semibold text-slate-body hover:bg-surface-subtle">完成</button>',
+      '</div>',
+    '</div>'
+  ].join('');
+
+  document.body.appendChild(m);
+  renderIcons();
+}
+
+function pickTag(idx) {
+  var tag = allTags()[idx];
+  CUST[S.tagFor][6] = tag;
+  var m = $('tag-modal'); if (m) m.remove();
+  toast('已设置标签为：' + tag);
+  pCust();
+}
+
+function addTag() {
+  var nt = $('nt'); if (!nt) return;
+  var val = nt.value.trim();
+  if (!val) { showTagModal('请输入标签名称'); return; }
+  if (allTags().indexOf(val) >= 0) { showTagModal('该标签已存在'); return; }
+  TAGS.custom.push(val);
+  CUST[S.tagFor][6] = val;
+  var m = $('tag-modal'); if (m) m.remove();
+  toast('已新建标签并应用');
+  pCust();
+}
+
+function delTag(idx) {
+  var tag = allTags()[idx];
+  TAGS.custom.splice(idx - 3, 1);
+  CUST.forEach(function(c){ if (c[6] === tag) c[6] = '一般'; });
+  if (S.tf === tag) S.tf = 'all';
+  toast('标签已删除');
+  showTagModal('');
+  pCust();
+}
+
+
+function renderCurrentPage() {
+  pCust();
+}
+
+function startPage() {
+  initAuth(true);
+  renderCurrentPage();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startPage);
+} else {
+  startPage();
+}
+  </script>
+</body>
+</html>

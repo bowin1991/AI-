@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>系统设置 - 立理 S1 分销管理系统</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<div id="app-layout">
+  <!-- 官方侧边栏 (1:1 复刻) -->
+  <aside id="app-sidebar">
+    <div class="sidebar-brand">
+      <div>
+        <div class="brand-title">
+          立理 <span class="brand-badge">S1</span>
+        </div>
+        <div class="brand-sub">分销管理系统</div>
+      </div>
+    </div>
+
+    <div class="sidebar-menu-wrap">
+      <div class="menu-group-header">管理后台</div>
+      <a class="sidebar-menu-item" href="dashboard.html" id="nav-dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        数据看板
+      </a>
+      <a class="sidebar-menu-item" href="applications.html" id="nav-applications">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        申请审核
+      </a>
+      <a class="sidebar-menu-item" href="partners.html" id="nav-list">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        合伙人管理
+      </a>
+      <a class="sidebar-menu-item" href="orders.html" id="nav-orders">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        订单管理
+      </a>
+      <a class="sidebar-menu-item" href="settlements.html" id="nav-settlements">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="14" x2="6.01" y2="14"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        结算管理
+      </a>
+      <a class="sidebar-menu-item" href="reports.html" id="nav-reports">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        数据报表
+      </a>
+      <a class="sidebar-menu-item" href="settings.html" id="nav-settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        系统设置
+      </a>
+    </div>
+
+    <!-- 用户信息卡片 -->
+    <div class="sidebar-footer">
+      <div class="user-profile-summary">
+        <div class="user-avatar-circle">张</div>
+        <div class="user-meta-texts">
+          <div class="user-meta-name">陈嘉禾</div>
+          <div class="user-meta-role">超级管理员</div>
+        </div>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--muted-foreground);"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </aside>
+
+  <!-- 主体工作区 -->
+  <main id="app-main">
+    <!-- 官方顶栏 -->
+    <header id="app-header">
+      <div class="header-left">
+        <button class="btn-icon-square" title="Toggle Sidebar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+        </button>
+      </div>
+      <div class="header-right">
+        <div class="search-pill-box" onclick="toast('快捷搜索合伙人或订单 (⌘ K)')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>搜索</span>
+          <span class="kbd-badge">⌘ K</span>
+        </div>
+        <button class="btn-round-icon" onclick="navigate('settings')" title="系统设置">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <div class="user-avatar-circle" style="width:28px; height:28px; font-size:12px; cursor:pointer;" onclick="toast('当前管理员: 陈嘉禾 (超级管理员)')">张</div>
+      </div>
+    </header>
+
+    <!-- 动态视图区域 -->
+    <div id="main-view-container"></div>
+  </main>
+</div>
+
+<!-- Toast 组件 -->
+<div id="app-toast">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-text">操作已完成</span>
+</div>
+
+<!-- 弹窗容器 -->
+<div id="modal-root"></div>
+
+<!-- 抽屉容器 -->
+<div id="drawer-root"></div>
+
+  <script src="js/common.js"></script>
+  <script>
+function renderSettingsView(container) {
+  const onR = settingsEditing.rates, onF = settingsEditing.freeze;
+  const boxStyle = on => `display: flex; align-items: center; height: 36px; border: 1px solid ${on ? 'var(--input)' : 'var(--border)'}; border-radius: var(--radius-md); background: ${on ? '#fff' : '#F4F4F5'}; padding: 0 12px; gap: 8px;`;
+  const numInput = (id, label, value, on) => `
+    <div style="${boxStyle(on)}">
+      <span style="flex: none; font-size: 12px; color: var(--muted-foreground);">${label}</span>
+      <input class="num" type="number" step="1" min="0" max="100" id="${id}" value="${value}" ${on ? '' : 'disabled'} style="flex: 1; min-width: 0; height: 100%; border: none; outline: none; background: transparent; font-family: inherit; font-size: 13px; text-align: right; color: ${on ? 'var(--foreground)' : 'var(--muted-foreground)'};">
+    </div>`;
+  const editActions = (key, saveFn) => `
+    <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+      <button class="btn btn-outline" onclick="cancelSettingsEdit('${key}')">取消</button>
+      <button class="btn btn-primary" onclick="${saveFn}">保存</button>
+    </div>`;
+
+  container.innerHTML = `
+    <div style="margin-bottom: 22px;">
+      <h1 style="font-size: 24px; font-weight: 700; color: var(--foreground); letter-spacing: -0.02em;">系统设置</h1>
+    </div>
+
+    <div class="content-card" style="padding: 20px 22px; margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 14px; font-weight: 600;">默认分成比例</div>
+        ${onR ? '' : `<button class="btn btn-outline btn-sm" onclick="startSettingsEdit('rates')">修改</button>`}
+      </div>
+      <div class="form-hint-note" style="margin: 4px 0 16px;">保存后同步为全系统所有管理者审核、建档时带出的默认比例；仅对后续新合伙人生效，已有合伙人比例保持不变。</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-group-label">内部渠道默认比例（%）</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            ${numInput('set-in-first', '首购', GLOBAL_CONFIG.internal_first_rate, onR)}
+            ${numInput('set-in-renew', '续购', GLOBAL_CONFIG.internal_renew_rate, onR)}
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-group-label">外部渠道默认比例（%）</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            ${numInput('set-ext-first', '首购', GLOBAL_CONFIG.external_first_rate, onR)}
+            ${numInput('set-ext-renew', '续购', GLOBAL_CONFIG.external_renew_rate, onR)}
+          </div>
+        </div>
+      </div>
+      ${onR ? editActions('rates', 'requestSaveRates()') : ''}
+    </div>
+
+    <div class="content-card" style="padding: 20px 22px; margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 14px; font-weight: 600;">冻结规则</div>
+        ${onF ? '' : `<button class="btn btn-outline btn-sm" onclick="startSettingsEdit('freeze')">修改</button>`}
+      </div>
+      <div class="form-hint-note" style="margin: 4px 0 16px;">推广币解冻日 = 服务期结束日 + N 天（防退款观察期）。修改并保存后，全系统按新规则重算解冻日与冻结中金额。</div>
+      <div class="form-group" style="max-width: 280px; margin-bottom: 0;">
+        <label class="form-group-label">冻结观察期 T+N（天）</label>
+        <input class="form-input-full num" type="number" step="1" min="0" max="60" id="set-unfreeze-days" value="${GLOBAL_CONFIG.unfreeze_days}" ${onF ? '' : 'disabled'}>
+        <div class="form-hint-note">当前规则：T+${GLOBAL_CONFIG.unfreeze_days} 天。默认 7 天，可调整 0-60 天。</div>
+      </div>
+      ${onF ? editActions('freeze', 'requestSaveFreeze()') : ''}
+    </div>
+
+    <div class="content-card" style="padding: 20px 22px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <div style="font-size: 14px; font-weight: 600;">单位配置</div>
+        <button class="btn btn-outline btn-sm" onclick="openAddUnitModal()">新增单位</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        ${UNITS.map((u, i) => {
+          if (unitEditing === i) {
+            return `<div style="display: flex; gap: 8px; align-items: center;">
+              <input class="form-input-full" id="set-unit-name-${i}" value="${u}" style="flex: 1;">
+              <button class="btn btn-outline btn-sm" style="flex: none;" onclick="cancelUnitEdit()">取消</button>
+              <button class="btn btn-primary btn-sm" style="flex: none;" onclick="saveUnitName(${i})">保存</button>
+            </div>`;
+          }
+          return `<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 12px;">
+            <div style="font-size: 13px;">${u}</div>
+            <button class="btn btn-ghost btn-sm" onclick="startUnitEdit(${i})">修改</button>
+          </div>`;
+        }).join('')}
+      </div>
+      ${PARTNERS.some(p => UNITS.indexOf(p.unit) < 0) ? `<div class="form-hint-note" style="color: var(--destructive); margin-top: 12px;">有 ${PARTNERS.filter(p => UNITS.indexOf(p.unit) < 0).length} 位合伙人的归属单位不在配置中，需在审核建档时重新指定。</div>` : ''}
+    </div>
+  `;
+}
+
+function startSettingsEdit(key) {
+  settingsEditing[key] = true;
+  renderActiveView();
+}
+
+function cancelSettingsEdit(key) {
+  settingsEditing[key] = false;
+  pendingSettings = null;
+  renderActiveView();
+}
+
+function startUnitEdit(i) {
+  unitEditing = i;
+  renderActiveView();
+}
+
+function cancelUnitEdit() {
+  unitEditing = -1;
+  renderActiveView();
+}
+
+function saveUnitName(i) {
+  const v = (document.getElementById('set-unit-name-' + i).value || '').trim();
+  const old = UNITS[i];
+  if (!v) { alert('单位名称不能为空'); return; }
+  if (UNITS.some((u, k) => u === v && k !== i)) { alert('该单位名称已存在'); return; }
+  if (v === old) { unitEditing = -1; renderActiveView(); return; }
+
+  UNITS[i] = v;
+  PARTNERS.forEach(p => { if (p.unit === old) p.unit = v; });
+  const dk = dashUnitsSel.indexOf(old);
+  if (dk >= 0) { dashUnitsSel[dk] = v; saveDashUnits(); }
+  CONFIG_LOGS.unshift({ time: nowTime(), operator: '陈嘉禾', text: `单位改名：${old} → ${v}` });
+  unitEditing = -1;
+  toast(`单位已更名为「${v}」`);
+  renderActiveView();
+}
+
+function openAddUnitModal() {
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-mask show" id="modal-add-unit">
+      <div class="modal-dialog" style="max-width: 420px;">
+        <div class="modal-dialog-header">
+          <h3>新增单位</h3>
+          <button class="btn-ghost" style="padding: 4px;" onclick="closeModal('modal-add-unit')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-dialog-body">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-group-label">单位名称 <span class="req">*</span></label>
+            <input class="form-input-full" id="set-new-unit" placeholder="请输入单位名称" maxlength="20">
+          </div>
+        </div>
+        <div class="modal-dialog-footer">
+          <button class="btn btn-outline" onclick="closeModal('modal-add-unit')">取消</button>
+          <button class="btn btn-primary" onclick="addUnit()">确认新增</button>
+        </div>
+      </div>
+    </div>`;
+  const el = document.getElementById('set-new-unit');
+  if (el) el.focus();
+}
+
+function addUnit() {
+  const el = document.getElementById('set-new-unit');
+  const v = (el.value || '').trim();
+  if (!v) { alert('请输入单位名称'); return; }
+  if (UNITS.indexOf(v) >= 0) { alert('该单位已存在'); return; }
+
+  UNITS.push(v);
+  CONFIG_LOGS.unshift({ time: nowTime(), operator: '陈嘉禾', text: `新增单位：${v}` });
+  closeModal('modal-add-unit');
+  toast(`已新增单位「${v}」`);
+  renderActiveView();
+}
+
+function requestSaveRates() {
+  const iF = parseFloat(document.getElementById('set-in-first').value);
+  const iR = parseFloat(document.getElementById('set-in-renew').value);
+  const eF = parseFloat(document.getElementById('set-ext-first').value);
+  const eR = parseFloat(document.getElementById('set-ext-renew').value);
+  if ([iF, iR, eF, eR].some(v => isNaN(v) || v < 0 || v > 100 || !Number.isInteger(v))) { alert('首购与续购比例需为 0~100 的整数'); return; }
+
+  const diffs = [];
+  if (iF !== GLOBAL_CONFIG.internal_first_rate) diffs.push(`内部 首购 ${GLOBAL_CONFIG.internal_first_rate}% → ${iF}%`);
+  if (iR !== GLOBAL_CONFIG.internal_renew_rate) diffs.push(`内部 续购 ${GLOBAL_CONFIG.internal_renew_rate}% → ${iR}%`);
+  if (eF !== GLOBAL_CONFIG.external_first_rate) diffs.push(`外部 首购 ${GLOBAL_CONFIG.external_first_rate}% → ${eF}%`);
+  if (eR !== GLOBAL_CONFIG.external_renew_rate) diffs.push(`外部 续购 ${GLOBAL_CONFIG.external_renew_rate}% → ${eR}%`);
+  if (!diffs.length) { settingsEditing.rates = false; toast('未修改任何配置'); renderActiveView(); return; }
+
+  pendingSettings = { type: 'rates', values: { iF, iR, eF, eR }, diffs };
+  openSettingsConfirm('默认分成比例', diffs);
+}
+
+function requestSaveFreeze() {
+  const days = parseInt(document.getElementById('set-unfreeze-days').value, 10);
+  if (isNaN(days) || days < 0 || days > 60) { alert('请输入有效的冻结观察期天数 (0~60 天)'); return; }
+
+  const diffs = [];
+  if (days !== GLOBAL_CONFIG.unfreeze_days) diffs.push(`冻结观察期 T+${GLOBAL_CONFIG.unfreeze_days} → T+${days}`);
+  if (!diffs.length) { settingsEditing.freeze = false; toast('未修改任何配置'); renderActiveView(); return; }
+
+  pendingSettings = { type: 'freeze', values: { days }, oldDays: GLOBAL_CONFIG.unfreeze_days, diffs };
+  openSettingsConfirm('冻结规则', diffs);
+}
+
+function openSettingsConfirm(title, diffs) {
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-mask show" id="modal-set-confirm">
+      <div class="modal-dialog" style="max-width: 440px;">
+        <div class="modal-dialog-header">
+          <h3>确认修改 · ${title}</h3>
+          <button class="btn-ghost" style="padding: 4px;" onclick="closeModal('modal-set-confirm')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-dialog-body">
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 12px;">以下配置将被变更，请确认无误后保存：</p>
+          ${diffs.map(d => `<div style="font-size: 13px; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 8px;">${d}</div>`).join('')}
+        </div>
+        <div class="modal-dialog-footer">
+          <button class="btn btn-outline" onclick="closeModal('modal-set-confirm')">取消</button>
+          <button class="btn btn-outline" onclick="applySettingsChanges()">确认保存</button>
+          <button class="btn btn-primary" onclick="applySettingsChanges(true)">保存并立即应用</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function applySettingsChanges(immediate) {
+  const p = pendingSettings;
+  if (!p) return;
+  if (p.type === 'rates') {
+    const { iF, iR, eF, eR } = p.values;
+    GLOBAL_CONFIG.internal_first_rate = iF;
+    GLOBAL_CONFIG.internal_renew_rate = iR;
+    GLOBAL_CONFIG.external_first_rate = eF;
+    GLOBAL_CONFIG.external_renew_rate = eR;
+    CONFIG_LOGS.unshift({ time: nowTime(), operator: '陈嘉禾', text: `调整默认比例：${p.diffs.join('；')}` });
+    toast(`默认比例已更新：内部 ${iF}% / ${iR}%，外部 ${eF}% / ${eR}%`);
+  } else {
+    GLOBAL_CONFIG.unfreeze_days = p.values.days;
+    CONFIG_LOGS.unshift({ time: nowTime(), operator: '陈嘉禾', text: `调整冻结规则：T+${p.oldDays} → T+${p.values.days}` });
+    toast(`冻结规则已更新：T+${p.values.days} 天`);
+  }
+  settingsEditing[p.type] = false;
+  pendingSettings = null;
+  closeModal('modal-set-confirm');
+  recalcAll();
+  renderActiveView();
+  if (immediate) {
+    CONFIG_LOGS.unshift({ time: nowTime(), operator: '陈嘉禾', text: '新规则已立即应用，重算在途订单与待结算数据' });
+    toast('已保存并立即应用，在途订单与待结算数据已按新规则重算');
+  }
+}
+
+function renderCurrentPage() {
+  renderSettingsView(document.getElementById("main-view-container"));
+}
+
+function startPage() {
+  initAdminNav('nav-settings');
+  renderCurrentPage();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startPage);
+} else {
+  startPage();
+}
+  </script>
+</body>
+</html>

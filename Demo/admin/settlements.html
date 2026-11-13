@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>结算管理 - 立理 S1 分销管理系统</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<div id="app-layout">
+  <!-- 官方侧边栏 (1:1 复刻) -->
+  <aside id="app-sidebar">
+    <div class="sidebar-brand">
+      <div>
+        <div class="brand-title">
+          立理 <span class="brand-badge">S1</span>
+        </div>
+        <div class="brand-sub">分销管理系统</div>
+      </div>
+    </div>
+
+    <div class="sidebar-menu-wrap">
+      <div class="menu-group-header">管理后台</div>
+      <a class="sidebar-menu-item" href="dashboard.html" id="nav-dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        数据看板
+      </a>
+      <a class="sidebar-menu-item" href="applications.html" id="nav-applications">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        申请审核
+      </a>
+      <a class="sidebar-menu-item" href="partners.html" id="nav-list">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        合伙人管理
+      </a>
+      <a class="sidebar-menu-item" href="orders.html" id="nav-orders">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        订单管理
+      </a>
+      <a class="sidebar-menu-item" href="settlements.html" id="nav-settlements">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="14" x2="6.01" y2="14"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        结算管理
+      </a>
+      <a class="sidebar-menu-item" href="reports.html" id="nav-reports">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        数据报表
+      </a>
+      <a class="sidebar-menu-item" href="settings.html" id="nav-settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        系统设置
+      </a>
+    </div>
+
+    <!-- 用户信息卡片 -->
+    <div class="sidebar-footer">
+      <div class="user-profile-summary">
+        <div class="user-avatar-circle">张</div>
+        <div class="user-meta-texts">
+          <div class="user-meta-name">陈嘉禾</div>
+          <div class="user-meta-role">超级管理员</div>
+        </div>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--muted-foreground);"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </aside>
+
+  <!-- 主体工作区 -->
+  <main id="app-main">
+    <!-- 官方顶栏 -->
+    <header id="app-header">
+      <div class="header-left">
+        <button class="btn-icon-square" title="Toggle Sidebar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+        </button>
+      </div>
+      <div class="header-right">
+        <div class="search-pill-box" onclick="toast('快捷搜索合伙人或订单 (⌘ K)')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>搜索</span>
+          <span class="kbd-badge">⌘ K</span>
+        </div>
+        <button class="btn-round-icon" onclick="navigate('settings')" title="系统设置">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <div class="user-avatar-circle" style="width:28px; height:28px; font-size:12px; cursor:pointer;" onclick="toast('当前管理员: 陈嘉禾 (超级管理员)')">张</div>
+      </div>
+    </header>
+
+    <!-- 动态视图区域 -->
+    <div id="main-view-container"></div>
+  </main>
+</div>
+
+<!-- Toast 组件 -->
+<div id="app-toast">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-text">操作已完成</span>
+</div>
+
+<!-- 弹窗容器 -->
+<div id="modal-root"></div>
+
+<!-- 抽屉容器 -->
+<div id="drawer-root"></div>
+
+  <script src="js/common.js"></script>
+  <script>
+function renderSettlementsView(container) {
+  const ukw = settleKw.trim().toLowerCase();
+  const pendingPartners = PARTNERS.filter(p => p.points.withdrawable > 0)
+    .filter(p => settleChannel === 'ALL' || p.channel_type === settleChannel)
+    .filter(p => !ukw || p.name.toLowerCase().includes(ukw) || String(p.phone).includes(ukw));
+  const okw = settleOrgKw.trim();
+  const orgPending = allOrgOrders().filter(({ o }) => orgRemainOf(o) > 0)
+    .filter(({ p }) => settleOrgChannel === 'ALL' || p.channel_type === settleOrgChannel)
+    .filter(({ p, o }) => !okw || String(o.org_name || '').includes(okw) || p.name.includes(okw))
+    .sort((a, b) => orgRemainOf(b.o) - orgRemainOf(a.o));
+  const tabBtn = (key, label) => `<button class="seg-tab-btn ${settleSubTab === key ? 'active' : ''}" onclick="settleSubTab='${key}'; renderSettlementsView(document.getElementById('main-view-container'))">${label}</button>`;
+  const headerBtn = '';
+
+  let body = '';
+  if (settleSubTab === 'pending') {
+    const pagedPending = pagedList('settle-pending', pendingPartners);
+    body = `
+      ${settleFilterBar('pending')}
+      <div class="table-container">
+        <table class="official-table">
+          <thead><tr>
+            <th>合伙人姓名</th><th>单位</th><th>手机号</th><th>渠道</th><th>账号状态</th><th>可结算金额</th><th>最早解冻日</th>
+            <th class="col-sticky" style="text-align:right;">操作</th>
+          </tr></thead>
+          <tbody>
+            ${pendingPartners.length === 0 ? '<tr><td colspan="8" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无可结算明细</td></tr>' : pagedPending.map(p => {
+              const ls = partnerLines(p).filter(l => l.state === 'UNLOCKED');
+              const earliest = ls.map(l => l.unlock).sort()[0];
+              return `<tr>
+                <td><strong>${p.name}</strong></td>
+                <td style="font-size:12px; color:var(--muted-foreground);">${p.org}</td>
+                <td><span class="num">${p.phone}</span></td>
+                <td>${p.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部</span>' : '<span class="badge badge-neutral">外部</span>'}</td>
+                <td>${p.status === 'NORMAL' ? '<span class="badge badge-success">正常</span>' : '<span class="badge badge-warning" title="账号已冻结，请审慎核销">已冻结</span>'}</td>
+                <td><strong class="num" style="color:#15803D; font-size:15px;">¥${fmtC(p.points.withdrawable)}</strong></td>
+                <td style="color:var(--muted-foreground); font-size:12px;">${earliest}</td>
+                <td class="col-sticky" style="text-align:right;">${p.status === 'FROZEN'
+                  ? `<button class="btn btn-outline btn-sm" disabled title="该合伙人账号已冻结，请先解冻账号">不可结算</button>`
+                  : `<button class="btn btn-primary btn-sm" onclick="openSettleSheet('${p.id}')">核对并结算</button>`}</td>
+              </tr>`; }).join('')}
+          </tbody>
+        </table>
+        ${pagerBar('settle-pending', pendingPartners.length)}
+      </div>`;
+  } else if (settleSubTab === 'org') {
+    const pagedOrg = pagedList('settle-org', orgPending);
+    body = `
+      ${settleFilterBar('org')}
+      <div class="table-container">
+        <table class="official-table">
+          <thead><tr><th>订单编号</th><th>机构名称</th><th>归属合伙人</th><th>渠道</th><th>合同金额</th><th>核定比例</th><th>总佣金</th><th>已结算</th><th>待结算</th><th>结算进度</th><th class="col-sticky" style="text-align:right;">操作</th></tr></thead>
+          <tbody>${orgPending.length === 0 ? '<tr><td colspan="11" style="text-align:center; padding:32px; color:var(--muted-foreground);">暂无待结算的机构订单</td></tr>' : pagedOrg.map(({ p, o }) => {
+            const pool = round2(o.points || 0), settled = orgSettledOf(o), remain = orgRemainOf(o);
+            const pct = pool > 0 ? Math.min(100, Math.round(settled / pool * 100)) : 0;
+            return `<tr>
+              <td><span class="code-badge">${o.id}</span></td>
+              <td><strong>${esc(o.org_name || '-')}</strong></td>
+              <td><strong>${p.name}</strong></td>
+              <td>${p.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部</span>' : '<span class="badge badge-neutral">外部</span>'}</td>
+              <td class="num">¥${formatNum(o.pay_amount)}</td>
+              <td class="num">${o.rate}%</td>
+              <td><strong class="num" style="color:#15803D;">¥${fmtC(pool)}</strong></td>
+              <td class="num">¥${fmtC(settled)}</td>
+              <td><strong class="num" style="color:#A16207;">¥${fmtC(remain)}</strong></td>
+              <td style="min-width:120px;"><div class="org-progress"><span style="width:${pct}%"></span></div><div style="font-size:11px; color:var(--muted-foreground); margin-top:4px;">${pct}%</div></td>
+              <td class="col-sticky" style="text-align:right; white-space:nowrap;">
+                <button class="btn btn-primary btn-sm" onclick="openOrgSettleDrawer('${o.id}')">结算</button>
+                <button class="btn btn-outline btn-sm" onclick="openOrgOrderDetail('${o.id}')">订单详情</button>
+              </td></tr>`;
+          }).join('')}</tbody>
+        </table>
+        ${pagerBar('settle-org', orgPending.length)}
+      </div>`;
+  } else {
+    const pagedHistory = pagedList('settle-history', SETTLEMENT_HISTORY);
+    body = `
+      <div class="table-container">
+        <table class="official-table">
+          <thead><tr><th>结算单号</th><th>结算来源</th><th>合伙人姓名</th><th>手机号</th><th>渠道</th><th>结算金额</th><th>财务打款凭证号</th><th>经办人</th><th>核销时间</th><th>打款备注</th><th class="col-sticky" style="text-align:right;">操作</th></tr></thead>
+          <tbody>${pagedHistory.map(s => {
+            return `<tr>
+              <td><span class="code-badge">${s.settle_id}</span>${s.imported ? '<div><span class="badge badge-neutral" style="font-size:10.5px;">录入时已发放</span></div>' : ''}</td>
+              <td>${s.source === 'ORG' ? '<span class="badge badge-blue">机构订单</span>' : '<span class="badge badge-neutral">个人订单</span>'}</td>
+              <td><strong>${s.partner_name}</strong></td>
+              <td><span class="num">${s.partner_phone}</span></td>
+              <td>${s.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部</span>' : '<span class="badge badge-neutral">外部</span>'}</td>
+              <td><strong class="num" style="color:#15803D;">¥${fmtC(s.points)}</strong></td>
+              <td>${s.voucher ? `<span class="code-badge">${s.voucher}</span>` : '<span style="color:var(--muted-foreground);">—</span>'}</td>
+              <td>${s.operator}</td>
+              <td style="color:var(--muted-foreground); font-size:12px;">${s.settle_time}</td>
+              <td style="color:var(--muted-foreground); font-size:12px; max-width:200px;" title="${esc(s.remark)}">${esc(s.remark)}</td>
+              <td class="col-sticky" style="text-align:right; white-space:nowrap;">
+                <button class="btn btn-outline btn-sm" onclick="openSettleDetail('${s.settle_id}')">查看明细</button>
+              </td></tr>`; }).join('')}
+          </tbody>
+        </table>
+        ${pagerBar('settle-history', SETTLEMENT_HISTORY.length)}
+      </div>`;
+  }
+
+  container.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:22px;">
+      <div>
+        <h1 style="font-size:24px; font-weight:700; color:var(--foreground); letter-spacing:-0.02em;">结算管理</h1>
+      </div>
+      <div>${headerBtn}</div>
+    </div>
+    <div class="segmented-tabs">
+      ${tabBtn('pending', '待结算个人订单')}
+      ${tabBtn('org', '待结算机构订单')}
+      ${tabBtn('history', '结算历史')}
+    </div>
+    ${body}
+  `;
+}
+
+function findOrgOrder(orderId) {
+  for (const p of PARTNERS) {
+    const o = p.orders.find(x => x.id === orderId && orderKind(x) === 'ORG');
+    if (o) return { p, o };
+  }
+  return null;
+}
+
+function openOrgOrderDetail(orderId) {
+  const req = ORG_REQUESTS.find(x => x.order_id === orderId);
+  if (req) { openOrgReviewDrawer(req.id); return; }
+  toast('该机构订单为历史数据，请在合伙人详情中查看');
+}
+
+function openOrgSettleDrawer(orderId) {
+  const found = findOrgOrder(orderId); if (!found) return;
+  const { p, o } = found;
+  const pool = round2(o.points || 0), settled = orgSettledOf(o), remainPool = orgRemainOf(o);
+  const contract = round2(o.pay_amount || 0), received = orgReceivedOf(o);
+  const remainContract = Math.max(0, round2(contract - received));
+  const today = (typeof REF_DATE === 'string' ? REF_DATE : '2026-11-06');
+  document.getElementById('drawer-root').innerHTML = `
+    <div class="drawer-mask show" id="drawer-org-settle" onclick="if(event.target===this)closeDrawer('drawer-org-settle')">
+      <div class="drawer-panel" style="width:760px;">
+        <div class="drawer-header">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <h3 style="font-size:15px; font-weight:600;">结算核对单 · ${esc(o.org_name)}</h3>
+            <span class="code-badge">${o.id}</span>
+            ${p.channel_type === 'INTERNAL' ? '<span class="badge badge-blue">内部渠道</span>' : '<span class="badge badge-neutral">外部渠道</span>'}
+          </div>
+          <button class="btn-ghost" style="padding:4px;" onclick="closeDrawer('drawer-org-settle')">✕</button>
+        </div>
+        <div class="drawer-body">
+          <div style="font-size:12.5px; color:var(--muted-foreground); margin-bottom:12px;">${p.name} · 核定比例 ${o.rate}%</div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:10px;">
+            <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">合同金额</div><strong class="num">¥${fmtC(contract)}</strong></div>
+            <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">累计已回款</div><strong class="num">¥${fmtC(received)}</strong></div>
+            <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">剩余未回款</div><strong class="num">¥${fmtC(remainContract)}</strong></div>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px;">
+            <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">总佣金</div><strong class="num" style="color:#15803D;">¥${fmtC(pool)}</strong></div>
+            <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">已结算佣金</div><strong class="num">¥${fmtC(settled)}</strong></div>
+            <div class="content-card" style="margin:0; padding:10px 12px;"><div style="font-size:11.5px; color:var(--muted-foreground);">待结算佣金</div><strong class="num" style="color:#A16207;">¥${fmtC(remainPool)}</strong></div>
+          </div>
+          <div class="form-group">
+            <label class="form-group-label">本次到账回款金额<span class="req">*</span></label>
+            <input class="input-control num" id="org-settle-received" type="number" min="0" step="0.01" max="${remainContract}" value="" placeholder="请输入本次实际到账金额"
+              data-rate="${o.rate}" data-remain="${remainPool}" oninput="calcOrgSettleFee()">
+            <div style="font-size:11.5px; color:var(--muted-foreground); margin-top:4px;">按银行实际到账填写，最高 ¥${fmtC(remainContract)}（剩余未回款）</div>
+          </div>
+          <div class="form-group">
+            <label class="form-group-label">本次应结算佣金</label>
+            <div id="org-settle-fee" class="num" style="height:34px; display:flex; align-items:center; padding:0 10px; background:#F4F4F5; border:1px solid var(--border); border-radius:var(--radius-md); font-weight:600; color:#15803D;">¥0.00</div>
+          </div>
+          <div id="org-settle-fee-note" style="font-size:11.5px; color:var(--muted-foreground); margin:-4px 0 12px;"></div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-group">
+              <label class="form-group-label">打款凭证号</label>
+              <input class="input-control" id="org-settle-voucher" placeholder="选填，如 BCM202611060012">
+            </div>
+            <div class="form-group">
+              <label class="form-group-label">结算经办人</label>
+              <input class="input-control" id="org-settle-operator" value="陈嘉禾">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-group-label">打款备注</label>
+            <textarea class="form-textarea-full" id="org-settle-remark" placeholder="如：机构首笔款 24000 到账，按 15% 结算"></textarea>
+          </div>
+        </div>
+        <div class="drawer-footer" style="justify-content:space-between;">
+          <div style="font-size:13px;">本次结算 <strong id="org-settle-final" class="num" style="font-size:20px; color:#15803D;">¥0.00</strong></div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-outline" onclick="closeDrawer('drawer-org-settle')">取消</button>
+            <button class="btn btn-primary" onclick="confirmOrgSettle('${o.id}')">确认结算并同步</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  calcOrgSettleFee();
+}
+
+function calcOrgSettleFee() {
+  const el = document.getElementById('org-settle-received'); if (!el) return;
+  const amt = Math.max(0, parseFloat(el.value) || 0);
+  const rate = parseFloat(el.dataset.rate) || 0;
+  const remainPool = parseFloat(el.dataset.remain) || 0;
+  const raw = round2(amt * rate / 100);
+  const fee = Math.min(raw, remainPool);
+  document.getElementById('org-settle-fee').textContent = '¥' + fmtC(fee);
+  document.getElementById('org-settle-final').textContent = '¥' + fmtC(fee);
+  document.getElementById('org-settle-fee-note').textContent = amt <= 0
+    ? ''
+    : (raw > remainPool
+      ? `按比例应为 ¥${fmtC(raw)}，受总佣金上限限制，本次按 ¥${fmtC(remainPool)} 结算，订单结清。`
+      : `本次释放佣金 = ¥${fmtC(amt)} × ${rate}% = ¥${fmtC(raw)}`);
+}
+
+function confirmOrgSettle(orderId) {
+  const found = findOrgOrder(orderId); if (!found) return;
+  const { p, o } = found;
+  const received = round2(parseFloat(document.getElementById('org-settle-received').value));
+  const remainContract = Math.max(0, round2(round2(o.pay_amount || 0) - orgReceivedOf(o)));
+  const remainPool = orgRemainOf(o);
+  const fee = Math.min(round2(received * (o.rate || 0) / 100), remainPool);
+  const date = (typeof REF_DATE === 'string' ? REF_DATE : '2026-11-06');
+  const voucher = document.getElementById('org-settle-voucher').value.trim();
+  const operator = document.getElementById('org-settle-operator').value.trim() || '陈嘉禾';
+  const remark = document.getElementById('org-settle-remark').value.trim();
+  if (!(received > 0)) { toast('请输入本次到账回款金额'); return; }
+  if (received > remainContract + 0.001) { toast('回款金额不能超过剩余未回款 ¥' + fmtC(remainContract)); return; }
+  if (!(fee > 0)) { toast('本次应结算佣金为 0，请核对回款金额'); return; }
+  ORG_SETTLE_PENDING = {
+    orderId: o.id, partnerId: p.id, org: o.org_name, rate: o.rate, date, received, fee,
+    remainAfter: round2(remainPool - fee), voucher, operator, remark
+  };
+  document.getElementById('modal-root').innerHTML = `
+    <div class="modal-mask show" id="modal-org-settle-confirm">
+      <div class="modal-dialog" style="width:460px;">
+        <div class="modal-dialog-header"><h3>确认结算 · ${esc(o.org_name)}</h3><button class="btn-ghost" style="padding:4px;" onclick="closeModal('modal-org-settle-confirm')">✕</button></div>
+        <div class="modal-dialog-body">
+          <div style="display:grid; gap:10px; font-size:13px;">
+            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted-foreground);">机构订单</span><span class="code-badge">${o.id}</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted-foreground);">本次到账回款</span><span class="num">¥${fmtC(received)}</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted-foreground);">核定比例</span><span class="num">${o.rate}%</span></div>
+            <div style="display:flex; justify-content:space-between;"><span style="color:var(--muted-foreground);">结算后待结算</span><span class="num">¥${fmtC(round2(remainPool - fee))}</span></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:10px;"><span style="color:var(--muted-foreground);">本次结算佣金</span><strong class="num" style="font-size:18px; color:#15803D;">¥${fmtC(fee)}</strong></div>
+          </div>
+          <div style="margin-top:12px; font-size:12px; color:var(--muted-foreground);">确认后将从该订单的待结算佣金中扣减，并实时同步合伙人端，可在结算历史中查看。</div>
+        </div>
+        <div class="modal-dialog-footer"><button class="btn btn-outline" onclick="closeModal('modal-org-settle-confirm')">取消</button><button class="btn btn-primary" onclick="executeOrgSettle()">确认结算并同步</button></div>
+      </div>
+    </div>`;
+}
+
+function executeOrgSettle() {
+  const d = ORG_SETTLE_PENDING; if (!d) return;
+  ORG_SETTLE_PENDING = null;
+  closeModal('modal-org-settle-confirm');
+  const found = findOrgOrder(d.orderId); if (!found) return;
+  const { p, o } = found;
+  const { date, received, fee, voucher, operator, remark } = d;
+  const ym = date.slice(0, 7).replace('-', '');
+  let seq = 1, sid = '';
+  do { sid = 'SETTLE-' + ym + '-' + String(seq).padStart(3, '0'); seq++; } while (SETTLEMENT_HISTORY.some(s => s.settle_id === sid));
+  SETTLEMENT_HISTORY.unshift({
+    settle_id: sid, partner_id: p.id, partner_name: p.name, partner_phone: p.phone,
+    channel_type: p.channel_type, points: fee, received, rate: o.rate, org_name: o.org_name, voucher, operator, settle_time: date + ' 10:00',
+    remark: remark || (o.org_name + ' 机构订单结算'), source: 'ORG', org_order_id: o.id, lines: []
+  });
+  o.received_amount = round2(orgReceivedOf(o) + received);
+  o.settled_amount = round2(orgSettledOf(o) + fee);
+  if (p.logs) p.logs.unshift({ time: date + ' 10:00', operator, action: '机构订单结算', before: o.id, after: `回款 ¥${fmtC(received)} · 结算 ¥${fmtC(fee)}`, reason: remark || '-' });
+  recalcAll();
+  closeDrawer('drawer-org-settle');
+  toast(`已结算 ¥${fmtC(fee)}：${o.org_name}`);
+  renderSettlementsView(document.getElementById('main-view-container'));
+}
+
+// ==========================================
+// 4.4 页面：数据看板 (DASHBOARD)
+// ==========================================
+
+// 看板「分单位数据」展示范围：默认不选，需手动勾选；选择结果持久化
+
+function renderCurrentPage() {
+  renderSettlementsView(document.getElementById("main-view-container"));
+}
+
+function startPage() {
+  initAdminNav('nav-settlements');
+  renderCurrentPage();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startPage);
+} else {
+  startPage();
+}
+  </script>
+</body>
+</html>

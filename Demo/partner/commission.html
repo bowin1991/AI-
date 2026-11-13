@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>我的订单与佣金 - 立理 S1 合伙人端</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/partner.css">
+</head>
+<body class="bg-surface-canvas text-slate-title antialiased selection:bg-brand-100 selection:text-brand-600 font-sans min-h-screen">
+
+  <!-- 根挂载容器 -->
+  <div id="app" class="min-h-screen flex flex-col"></div>
+
+  <!-- 全局 Toast 提示组件 -->
+  <div id="toast">
+    <div class="flex items-center space-x-2.5 bg-slate-title text-white text-xs font-semibold px-4 py-3 rounded-full shadow-dropdown max-w-sm border border-white/10">
+      <i data-lucide="check-circle" class="w-4 h-4 text-brand-400 flex-shrink-0"></i>
+      <span id="toast-text" class="truncate text-white">提示信息</span>
+    </div>
+  </div>
+
+  <!-- ==================== 右下角独立演示控制助手 (FLOATING DEMO TOOLKIT) ==================== -->
+  <div id="demo-toolkit" class="fixed bottom-5 right-5 z-40 flex flex-col items-end text-[#111827]">
+    <!-- 展开的操作面板 -->
+    <div id="demo-toolkit-panel" class="bg-white rounded-[20px] border border-[#E8ECF2] p-4 shadow-dropdown w-80 text-left transition-all mb-2.5">
+      <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-[#F1F3F7]">
+        <div class="flex items-center space-x-1.5">
+          <div class="w-6 h-6 rounded-lg bg-[#FFF5F0] text-[#FF5C28] flex items-center justify-center shadow-2xs"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i></div>
+          <span class="font-bold text-xs text-[#111827]">演示控制助手</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-[#FAFAFC] text-[#4B5563] border border-[#E8ECF2] font-medium">Demo</span>
+        </div>
+        <button type="button" onclick="toggleDemoToolkit(false)" class="text-[#4B5563] hover:text-[#111827] p-1 rounded-md text-xs" title="收起面板">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+
+      <!-- 快捷切换测试账号 -->
+      <div class="space-y-1.5 mb-3">
+        <div class="text-xs font-semibold text-[#4B5563] flex items-center justify-between">
+          <span>快捷切换测试身份:</span>
+          <span class="text-[#4B5563]">密码: Test1234</span>
+        </div>
+        <div class="grid grid-cols-2 gap-1.5 text-xs">
+          <button type="button" onclick="demoSwitchAccount('13800000003')" class="p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+            <div class="font-bold text-[#111827] group-hover:text-[#FF5C28]">13800000003</div>
+            <div class="text-emerald-600 font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 flex-shrink-0"></span>已通过 (正式)</div>
+          </button>
+          <button type="button" onclick="demoSwitchAccount('13800000001')" class="p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+            <div class="font-bold text-[#111827] group-hover:text-[#FF5C28]">13800000001</div>
+            <div class="text-amber-600 font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1 flex-shrink-0"></span>审核中 (Pending)</div>
+          </button>
+          <button type="button" onclick="demoSwitchAccount('13800000002')" class="p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+            <div class="font-bold text-[#111827] group-hover:text-[#FF5C28]">13800000002</div>
+            <div class="text-rose-600 font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1 flex-shrink-0"></span>已拒绝 (Rejected)</div>
+          </button>
+          <button type="button" onclick="demoSwitchAccount('13800000004')" class="p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+            <div class="font-bold text-[#111827] group-hover:text-[#FF5C28]">13800000004</div>
+            <div class="text-[#4B5563] font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1 flex-shrink-0"></span>已冻结 (Frozen)</div>
+          </button>
+        </div>
+        <button type="button" onclick="demoFillOps()" class="mt-1.5 w-full p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+          <div class="font-bold text-[#111827] group-hover:text-[#FF5C28] text-xs">运营账号 ops_admin</div>
+          <div class="text-[#4B5563] font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mr-1 flex-shrink-0"></span>密码 Admin1234（进入运营工作台）</div>
+        </button>
+      </div>
+
+      <!-- 快速模拟审核通过 -->
+      <div class="pt-2.5 border-t border-[#F1F3F7] flex flex-col space-y-1.5">
+        <button type="button" onclick="simulateApprove()" class="w-full py-2 px-3 rounded-full bg-[#FF5C28] hover:bg-[#E04816] text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center space-x-1">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>模拟运营审核通过 (直达工作台)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 收起状态下的浮动胶囊入口按钮 -->
+    <button id="demo-toolkit-btn" onclick="toggleDemoToolkit()" class="flex items-center space-x-2 bg-[#111827] hover:bg-[#FF5C28] text-white text-xs font-bold px-3.5 py-2.5 rounded-full shadow-dropdown border border-white/10 transition-all hover:scale-105 group">
+      <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+      <i data-lucide="sparkles" class="w-3.5 h-3.5 text-brand-400"></i><span>演示助手</span>
+    </button>
+
+  <script src="js/common.js"></script>
+  <script>
+function pComm() {
+  if (['flow', 'org', 'settle'].indexOf(S.tab) < 0) S.tab = 'flow';
+  var isFlow = S.tab === 'flow';
+  var isOrg = S.tab === 'org';
+  var isSettle = S.tab === 'settle';
+
+  var sum = getSum();
+  var osum = getOrgSum();
+  var sk = S.sk || 'all';
+  var settleAll = SETTLE.filter(function(r) { return sk === 'all' || r.kind === sk; });
+  var settlePg = paged(settleAll, S.sp);
+  var flowHtml = ordListInner();
+
+  var settleHtml = settlePg.items.map(function(r) {
+    var isOrg = r.kind === 'ORG';
+    var typeCls = isOrg ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-white text-slate-body border border-surface-border';
+    var badge = '<span class="px-2 py-0.5 rounded-full text-xs font-semibold ' + typeCls + '">' + (isOrg ? '机构订单' : '个人订单') + '</span>';
+    var mainLabel = '本次结算推广币';
+    var subLine = isOrg
+      ? esc(r.org || '') + ' · ' + esc(r.order_id || '')
+      : '含 ' + (r.count || 1) + ' 笔个人订单';
+    return [
+      '<div class="p-4 rounded-2xl bg-surface-subtle border border-surface-border">',
+        '<div class="flex flex-wrap items-center gap-2">',
+          '<span class="font-bold text-sm text-slate-title">' + r.batch + '</span>',
+          badge,
+        '</div>',
+        '<div class="text-xs text-slate-muted mt-1">' + r.time + ' · ' + subLine + '</div>',
+        '<div class="mt-3 flex items-baseline gap-2">',
+          '<span class="text-xs text-slate-muted">' + mainLabel + '</span>',
+          '<span class="text-lg font-extrabold text-slate-title tabular-nums">' + fmt2(r.gross || 0) + '</span>',
+        '</div>',
+        isOrg
+          ? '<div class="text-xs text-slate-muted mt-1">本次到账回款 ¥' + fmt2(r.received || 0) + '</div>'
+          : ((r.offset || 0) > 0 ? '<div class="text-xs text-rose-600 mt-1">本次已抵扣 ' + fmt2(r.offset) + ' 推广币（退款待抵扣）</div>' : ''),
+      '</div>'
+    ].join('');
+  }).join('');
+
+  var dimTabs = [
+    '<div class="flex flex-wrap items-center justify-between gap-3">',
+      '<div class="bg-surface-subtle p-1 rounded-full border border-surface-border flex items-center text-xs font-semibold">',
+        '<button onclick="setDim(\'flow\')" class="px-4 py-1.5 rounded-full transition-all ' + (isFlow ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">个人订单</button>',
+        '<button onclick="setDim(\'org\')" class="px-4 py-1.5 rounded-full transition-all ' + (isOrg ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">机构订单</button>',
+        '<button onclick="setDim(\'settle\')" class="px-4 py-1.5 rounded-full transition-all ' + (isSettle ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">结算明细</button>',
+      '</div>',
+      (isSettle ? '<div class="text-xs text-slate-muted hidden sm:block">个人订单与机构订单的历次结算记录</div>' : ''),
+    '</div>'
+  ].join('');
+
+  var userCards = [
+    sum.unrecovered > 0
+      ? '<div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs text-rose-700">'
+        + '待抵扣 ' + fmt2(sum.unrecovered) + ' 推广币：因客户退款，部分订单已结算的金额超出了应得推广币，将在下次结算时从可结算金额中抵扣；可结算不足时，剩余部分结转到下一次结算。'
+        + '</div>'
+      : '',
+    '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">',
+      '<div class="relative rounded-[20px] bg-gradient-to-br from-brand-500 to-brand-600 text-white p-5 shadow-hero flex flex-col">',
+        '<div class="flex items-center justify-between">',
+          '<span class="text-xs font-semibold tracking-wide text-white/90">总推广币 (净收益)</span>',
+          '<div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white backdrop-blur-sm"><i data-lucide="coins" class="w-4 h-4"></i></div>',
+        '</div>',
+        '<div class="mt-3 text-3xl font-extrabold tracking-tight tabular-nums">' + fmt2(getSum().total) + '</div>',
+        '<div class="mt-auto pt-4 flex items-center justify-end">',
+          '<div class="relative group">',
+            '<button type="button" aria-label="查看总推广币口径" class="w-4 h-4 rounded-full border border-white/60 text-white/90 text-[10px] font-bold leading-none flex items-center justify-center cursor-help">i</button>',
+            '<div class="pointer-events-none absolute right-0 bottom-full mb-2 w-60 rounded-xl bg-slate-900/95 text-white text-[11px] leading-relaxed p-3 shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all z-20">总推广币 = 可结算 + 冻结中 + 已结算 − 待抵扣，即扣除退款后的有效推广币。</div>',
+          '</div>',
+        '</div>',
+      '</div>',
+
+      '<div class="rounded-[20px] bg-surface-card border border-surface-border p-5 shadow-card hover:shadow-card-hover flex flex-col transition-all">',
+        '<div class="flex items-center justify-between">',
+          '<span class="text-xs font-semibold text-slate-body">可结算推广币</span>',
+          '<div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center"><i data-lucide="check-circle-2" class="w-4 h-4"></i></div>',
+        '</div>',
+        '<div class="mt-3 text-3xl font-extrabold tracking-tight text-emerald-600 tabular-nums">' + fmt2(sum.settleable) + '</div>',
+        (sum.unrecovered > 0
+          ? '<div class="mt-auto pt-4 flex items-center gap-1.5 text-xs text-rose-600">'
+              + '<span>待抵扣 ' + fmt2(Math.min(sum.unrecovered, sum.settleable)) + '</span>'
+              + '<div class="relative group flex-shrink-0">'
+                + '<button type="button" aria-label="待抵扣说明" class="w-4 h-4 rounded-full border border-rose-300 text-rose-500 text-[10px] font-bold leading-none flex items-center justify-center cursor-help">?</button>'
+                + '<div class="pointer-events-none absolute left-0 bottom-full mb-2 w-56 rounded-xl bg-slate-900/95 text-white text-[11px] leading-relaxed p-3 shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all z-20">待抵扣：因客户退款，部分订单已结算的金额超出了应得推广币，超出部分将在下次结算时抵扣。</div>'
+              + '</div>'
+            + '</div>'
+          : '<div class="mt-auto pt-4 text-xs text-slate-muted">已可结算，可线下核销</div>'),
+      '</div>',
+
+      '<div class="rounded-[20px] bg-surface-card border border-surface-border p-5 shadow-card hover:shadow-card-hover flex flex-col transition-all">',
+        '<div class="flex items-center justify-between">',
+          '<span class="text-xs font-semibold text-slate-body">冻结推广币</span>',
+          '<div class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center"><i data-lucide="lock" class="w-4 h-4"></i></div>',
+        '</div>',
+        '<div class="mt-3 text-3xl font-extrabold tracking-tight text-amber-600 tabular-nums">' + fmt2(getSum().frozen) + '</div>',
+        '<div class="mt-auto pt-4 text-xs text-slate-muted">履约周期保护中</div>',
+      '</div>',
+
+      '<div class="rounded-[20px] bg-surface-card border border-surface-border p-5 shadow-card hover:shadow-card-hover flex flex-col transition-all">',
+        '<div class="flex items-center justify-between">',
+          '<span class="text-xs font-semibold text-slate-body">已结算推广币</span>',
+          '<div class="w-8 h-8 rounded-full bg-surface-subtle text-slate-body flex items-center justify-center"><i data-lucide="banknote" class="w-4 h-4"></i></div>',
+        '</div>',
+        '<div class="mt-3 text-3xl font-extrabold tracking-tight text-slate-title tabular-nums">' + fmt2(getSum().settled) + '</div>',
+      '</div>',
+    '</div>'
+  ].join('');
+
+  var orgCards = [
+    '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">',
+      '<div class="relative rounded-[20px] bg-gradient-to-br from-brand-500 to-brand-600 text-white p-5 shadow-hero flex flex-col">',
+        '<div class="flex items-center justify-between">',
+          '<span class="text-xs font-semibold tracking-wide text-white/90">总推广币</span>',
+          '<div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white backdrop-blur-sm"><i data-lucide="coins" class="w-4 h-4"></i></div>',
+        '</div>',
+        '<div class="mt-3 text-3xl font-extrabold tracking-tight tabular-nums">' + fmt2(osum.pool) + '</div>',
+        '<div class="mt-auto pt-4 flex items-center justify-end">',
+          '<div class="relative group">',
+            '<button type="button" aria-label="查看机构总推广币口径" class="w-4 h-4 rounded-full border border-white/60 text-white/90 text-[10px] font-bold leading-none flex items-center justify-center cursor-help">i</button>',
+            '<div class="pointer-events-none absolute right-0 bottom-full mb-2 w-56 rounded-xl bg-slate-900/95 text-white text-[11px] leading-relaxed p-3 shadow-lg opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all z-20">仅统计已审核机构合同的推广币，与个人订单独立核算。</div>',
+          '</div>',
+        '</div>',
+      '</div>',
+
+      '<div class="rounded-[20px] bg-surface-card border border-surface-border p-5 shadow-card hover:shadow-card-hover flex flex-col transition-all">',
+        '<div class="flex items-center justify-between">',
+          '<span class="text-xs font-semibold text-slate-body">待结算推广币</span>',
+          '<div class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center"><i data-lucide="clock" class="w-4 h-4"></i></div>',
+        '</div>',
+        '<div class="mt-3 text-3xl font-extrabold tracking-tight text-amber-600 tabular-nums">' + fmt2(osum.due) + '</div>',
+      '</div>',
+
+      '<div class="rounded-[20px] bg-surface-card border border-surface-border p-5 shadow-card hover:shadow-card-hover flex flex-col transition-all">',
+        '<div class="flex items-center justify-between">',
+          '<span class="text-xs font-semibold text-slate-body">已结算推广币</span>',
+          '<div class="w-8 h-8 rounded-full bg-surface-subtle text-slate-body flex items-center justify-center"><i data-lucide="banknote" class="w-4 h-4"></i></div>',
+        '</div>',
+        '<div class="mt-3 text-3xl font-extrabold tracking-tight text-slate-title tabular-nums">' + fmt2(osum.settled) + '</div>',
+      '</div>',
+    '</div>'
+  ].join('');
+
+  var contentHtml = [
+    dimTabs,
+    isSettle ? '' : (isOrg ? orgCards : userCards),
+
+    '<div class="rounded-[20px] bg-surface-card border border-surface-border p-6 shadow-card">',
+      (isSettle
+        ? '<div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-surface-border-subtle">'
+            + '<div>'
+              + '<h3 class="font-bold text-base text-slate-title">结算明细</h3>'
+              + '<p class="text-xs text-slate-muted mt-0.5">个人订单与机构订单的历次结算记录</p>'
+            + '</div>'
+            + '<select onchange="setSettleKind(this.value)" class="bg-surface-subtle border border-surface-border rounded-full px-3 py-1.5 text-xs text-slate-title font-medium focus:outline-none cursor-pointer">'
+              + [['all', '全部类型'], ['USER', '个人订单'], ['ORG', '机构订单']].map(function(o) {
+                return '<option value="' + o[0] + '"' + (sk === o[0] ? ' selected' : '') + '>' + o[1] + '</option>';
+              }).join('')
+            + '</select>'
+          + '</div>'
+          + '<div class="mt-4 space-y-3">' + (settleHtml || '<div class="py-10 text-center text-xs text-slate-muted">暂无结算记录</div>') + '</div>'
+          + pagerHtml(settlePg, 'goSettlePage')
+        : (isOrg
+          ? safeOrgReqHtml()
+          : '<div class="pb-4 border-b border-surface-border-subtle">' + ordFilterBar() + '</div>'
+            + '<div id="ord-list" class="space-y-3 mt-4">' + flowHtml + '</div>')),
+    '</div>'
+  ].join('');
+
+  $('app').innerHTML = renderDashboardLayout('commission', '我的订单', '资产结算', contentHtml);
+  renderIcons();
+}
+
+// ==================== 页面 8: 我的资料 (pProfile) ====================
+
+function renderCurrentPage() {
+  pComm();
+}
+
+function startPage() {
+  initAuth(true);
+  renderCurrentPage();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startPage);
+} else {
+  startPage();
+}
+  </script>
+</body>
+</html>

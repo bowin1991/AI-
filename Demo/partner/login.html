@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>合伙人登录 - 立理 S1 合伙人端</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/partner.css">
+</head>
+<body class="bg-surface-canvas text-slate-title antialiased selection:bg-brand-100 selection:text-brand-600 font-sans min-h-screen">
+
+  <!-- 根挂载容器 -->
+  <div id="app" class="min-h-screen flex flex-col"></div>
+
+  <!-- 全局 Toast 提示组件 -->
+  <div id="toast">
+    <div class="flex items-center space-x-2.5 bg-slate-title text-white text-xs font-semibold px-4 py-3 rounded-full shadow-dropdown max-w-sm border border-white/10">
+      <i data-lucide="check-circle" class="w-4 h-4 text-brand-400 flex-shrink-0"></i>
+      <span id="toast-text" class="truncate text-white">提示信息</span>
+    </div>
+  </div>
+
+  <!-- ==================== 右下角独立演示控制助手 (FLOATING DEMO TOOLKIT) ==================== -->
+  <div id="demo-toolkit" class="fixed bottom-5 right-5 z-40 flex flex-col items-end text-[#111827]">
+    <!-- 展开的操作面板 -->
+    <div id="demo-toolkit-panel" class="bg-white rounded-[20px] border border-[#E8ECF2] p-4 shadow-dropdown w-80 text-left transition-all mb-2.5">
+      <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-[#F1F3F7]">
+        <div class="flex items-center space-x-1.5">
+          <div class="w-6 h-6 rounded-lg bg-[#FFF5F0] text-[#FF5C28] flex items-center justify-center shadow-2xs"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i></div>
+          <span class="font-bold text-xs text-[#111827]">演示控制助手</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-[#FAFAFC] text-[#4B5563] border border-[#E8ECF2] font-medium">Demo</span>
+        </div>
+        <button type="button" onclick="toggleDemoToolkit(false)" class="text-[#4B5563] hover:text-[#111827] p-1 rounded-md text-xs" title="收起面板">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+
+      <!-- 快捷切换测试账号 -->
+      <div class="space-y-1.5 mb-3">
+        <div class="text-xs font-semibold text-[#4B5563] flex items-center justify-between">
+          <span>快捷切换测试身份:</span>
+          <span class="text-[#4B5563]">密码: Test1234</span>
+        </div>
+        <div class="grid grid-cols-2 gap-1.5 text-xs">
+          <button type="button" onclick="demoSwitchAccount('13800000003')" class="p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+            <div class="font-bold text-[#111827] group-hover:text-[#FF5C28]">13800000003</div>
+            <div class="text-emerald-600 font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 flex-shrink-0"></span>已通过 (正式)</div>
+          </button>
+          <button type="button" onclick="demoSwitchAccount('13800000001')" class="p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+            <div class="font-bold text-[#111827] group-hover:text-[#FF5C28]">13800000001</div>
+            <div class="text-amber-600 font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1 flex-shrink-0"></span>审核中 (Pending)</div>
+          </button>
+          <button type="button" onclick="demoSwitchAccount('13800000002')" class="p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+            <div class="font-bold text-[#111827] group-hover:text-[#FF5C28]">13800000002</div>
+            <div class="text-rose-600 font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1 flex-shrink-0"></span>已拒绝 (Rejected)</div>
+          </button>
+          <button type="button" onclick="demoSwitchAccount('13800000004')" class="p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+            <div class="font-bold text-[#111827] group-hover:text-[#FF5C28]">13800000004</div>
+            <div class="text-[#4B5563] font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1 flex-shrink-0"></span>已冻结 (Frozen)</div>
+          </button>
+        </div>
+        <button type="button" onclick="demoFillOps()" class="mt-1.5 w-full p-2 rounded-xl bg-[#FAFAFC] border border-[#E8ECF2] hover:border-[#FF5C28] hover:bg-white text-left transition-all group">
+          <div class="font-bold text-[#111827] group-hover:text-[#FF5C28] text-xs">运营账号 ops_admin</div>
+          <div class="text-[#4B5563] font-semibold flex items-center text-xs"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mr-1 flex-shrink-0"></span>密码 Admin1234（进入运营工作台）</div>
+        </button>
+      </div>
+
+      <!-- 快速模拟审核通过 -->
+      <div class="pt-2.5 border-t border-[#F1F3F7] flex flex-col space-y-1.5">
+        <button type="button" onclick="simulateApprove()" class="w-full py-2 px-3 rounded-full bg-[#FF5C28] hover:bg-[#E04816] text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center space-x-1">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>模拟运营审核通过 (直达工作台)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 收起状态下的浮动胶囊入口按钮 -->
+    <button id="demo-toolkit-btn" onclick="toggleDemoToolkit()" class="flex items-center space-x-2 bg-[#111827] hover:bg-[#FF5C28] text-white text-xs font-bold px-3.5 py-2.5 rounded-full shadow-dropdown border border-white/10 transition-all hover:scale-105 group">
+      <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+      <i data-lucide="sparkles" class="w-3.5 h-3.5 text-brand-400"></i><span>演示助手</span>
+    </button>
+
+  <script src="js/common.js"></script>
+  <script>
+function pLogin() {
+  var isPwd = S.lmode === 'pwd';
+  
+  var formHtml = [
+    '<div class="bg-surface-subtle p-1 rounded-full border border-surface-border flex items-center text-xs font-semibold mb-5">',
+      '<button type="button" onclick="S.lmode=\'pwd\';pLogin()" class="flex-1 py-1.5 rounded-full transition-all ' + (isPwd ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">密码登录</button>',
+      '<button type="button" onclick="S.lmode=\'sms\';pLogin()" class="flex-1 py-1.5 rounded-full transition-all ' + (!isPwd ? 'bg-white text-slate-title shadow-2xs font-bold' : 'text-slate-muted hover:text-slate-title') + '">短信登录</button>',
+    '</div>',
+
+    '<div class="space-y-4 text-left">',
+      '<div>',
+        '<label class="block text-xs font-semibold text-slate-body mb-1.5">手机号/账号</label>',
+        '<div class="relative">',
+          '<i data-lucide="user" class="w-4 h-4 text-slate-muted absolute left-3.5 top-1/2 -translate-y-1/2"></i>',
+          '<input id="l_phone" autocomplete="username" maxlength="32" placeholder="请输入11位手机号/账号" class="w-full bg-surface-subtle text-slate-title text-sm rounded-xl pl-10 pr-4 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+        '</div>',
+        '<div class="text-xs text-rose-600 mt-1 min-h-[16px]" id="e_lp"></div>',
+      '</div>',
+
+      (isPwd ? [
+        '<div>',
+          '<div class="flex items-center justify-between mb-1.5">',
+            '<label class="text-xs font-semibold text-slate-body">登录密码</label>',
+            '<button type="button" onclick="forgotEntry()" class="text-xs text-brand-600 hover:text-brand-700 font-medium">忘记密码？</button>',
+          '</div>',
+          '<div class="relative">',
+            '<i data-lucide="lock" class="w-4 h-4 text-slate-muted absolute left-3.5 top-1/2 -translate-y-1/2"></i>',
+            '<input id="l_pwd" type="password" placeholder="请输入登录密码" class="w-full bg-surface-subtle text-slate-title text-sm rounded-xl pl-10 pr-11 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+            '<button type="button" aria-label="显示或隐藏密码" onclick="togglePwdVisibility(\'l_pwd\', this)" class="absolute right-0 top-0 bottom-0 px-3.5 flex items-center justify-center text-slate-muted hover:text-slate-title">',
+              '<i data-lucide="eye" class="w-4 h-4"></i>',
+            '</button>',
+          '</div>',
+          '<div class="text-xs text-rose-600 mt-1 min-h-[16px]" id="e_lc"></div>',
+        '</div>'
+      ].join('') : [
+        '<div>',
+          '<label class="block text-xs font-semibold text-slate-body mb-1.5">短信验证码</label>',
+          '<div class="flex space-x-2">',
+            '<div class="relative flex-1">',
+              '<i data-lucide="key-round" class="w-4 h-4 text-slate-muted absolute left-3.5 top-1/2 -translate-y-1/2"></i>',
+              '<input id="l_code" inputmode="numeric" maxlength="6" placeholder="6 位验证码" class="w-full bg-surface-subtle text-slate-title text-sm rounded-xl pl-10 pr-3 py-2.5 border border-surface-border focus:outline-none focus:border-brand-500 focus:bg-white transition-all">',
+            '</div>',
+            '<button type="button" id="l_send" onclick="sendCode(\'l_send\',\'l_phone\',\'e_lp\')" class="px-4 py-2.5 rounded-xl border border-surface-border bg-white text-xs font-semibold text-slate-title hover:bg-surface-subtle transition-all whitespace-nowrap">获取验证码</button>',
+          '</div>',
+          '<div class="text-xs text-rose-600 mt-1 min-h-[16px]" id="e_lc"></div>',
+        '</div>'
+      ].join('')),
+
+      '<button type="button" onclick="' + (isPwd ? 'doPwdLogin()' : 'doLogin()') + '" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm py-3 rounded-full shadow-sm shadow-brand-500/30 transition-all transform active:scale-95 flex items-center justify-center">',
+        '<span>登录</span>',
+      '</button>',
+    '</div>',
+
+    '<div class="mt-6 pt-5 border-t border-surface-border-subtle">',
+      '<div class="p-3.5 rounded-2xl bg-brand-50/70 border border-brand-200 flex items-center justify-between gap-3 text-left">',
+        '<div>',
+          '<div class="text-xs font-bold text-slate-title flex items-center space-x-1.5">',
+            '<span class="w-1.5 h-1.5 rounded-full bg-brand-500 flex-shrink-0"></span>',
+            '<span>尚未成为立理合伙人？</span>',
+          '</div>',
+        '</div>',
+        '<button type="button" onclick="S.done=false;S.pending=\'\';go(\'apply\')" class="py-2 px-3.5 rounded-full bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs shadow-xs hover:shadow-brand-500/20 transition-all flex items-center space-x-1 whitespace-nowrap flex-shrink-0 group">',
+          '<i data-lucide="user-plus" class="w-3.5 h-3.5"></i>',
+          '<span>立即申请</span>',
+          '<i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>',
+        '</button>',
+      '</div>',
+    '</div>'
+  ].join('');
+
+  $('app').innerHTML = renderAuthLayout('登录', '', formHtml);
+  renderIcons();
+}
+
+function doLogin() {
+  var p = $('l_phone').value.trim(), c = $('l_code').value.trim();
+  if (isOpsAccount(p)) {
+    S.lmode = 'pwd'; pLogin();
+    toast('运营账号不支持验证码登录，请使用账号登录');
+    return;
+  }
+  if (!phoneOk(p)) { err('e_lp', '请输入有效的 11 位手机号'); return; }
+  err('e_lp', '');
+  if (!/^\d{6}$/.test(c)) { err('e_lc', '请输入 6 位数字验证码'); return; }
+  err('e_lc', '');
+  finishLogin(p);
+}
+
+function isOpsAccount(v) { return /^[A-Za-z]/.test(v); }
+
+function doPwdLogin() {
+  var id = $('l_phone').value.trim(), w = $('l_pwd').value;
+  if (!id) { err('e_lp', '请输入手机号或运营账号'); return; }
+  if (isOpsAccount(id)) {
+    if (!/^[A-Za-z][A-Za-z0-9_]{3,19}$/.test(id)) { err('e_lp', '运营账号为字母开头，4-20 位字母、数字或下划线'); return; }
+  } else if (!phoneOk(id)) { err('e_lp', '请输入有效的 11 位手机号或运营账号'); return; }
+  err('e_lp', '');
+  if (!w) { err('e_lc', '请输入登录密码'); return; }
+  err('e_lc', '');
+  if (isOpsAccount(id)) {
+    var o = OPS[id];
+    if (!o || o.pwd !== w) { err('e_lc', '账号或密码错误'); return; }
+    loginOps(id, o);
+    return;
+  }
+  if (!PHONES[id]) return finishLogin(id);
+  if (!PWD[id]) { err('e_lc', '该账号尚未设置密码，请通过“忘记密码”重设密码或使用验证码登录'); return; }
+  if (PWD[id] !== w) { err('e_lc', '账号或密码错误'); return; }
+  finishLogin(id);
+}
+
+function loginOps(id, o) {
+  S.user = { account: id, ops: true, name: o.name, role: o.role };
+  toast('登录成功，正在进入运营工作台...');
+  setTimeout(function(){ window.location.href = '../admin/dashboard.html'; }, 700);
+}
+
+function forgotEntry() {
+  var v = $('l_phone') ? $('l_phone').value.trim() : '';
+  if (isOpsAccount(v)) { toast('运营账号请联系超级管理员重置密码'); return; }
+  go('forgot');
+}
+
+function finishLogin(p) {
+  var st = PHONES[p];
+  if (!st) {
+    showUnappliedModal(p);
+    return;
+  }
+  if (st === 'FROZEN') {
+    err('e_lc', '您的合伙人合作权限已被暂停，如有疑问请联系官方客服人员');
+    toast('账号权限已被冻结');
+    return;
+  }
+  S.user = { phone: p, st: st };
+  localStorage.setItem('lili_partner_user', JSON.stringify(S.user));
+  toast('登录成功！正在进入合伙人中心...');
+  setTimeout(function() { go(st === 'APPROVED' ? 'promotion' : 'status'); }, 300);
+}
+
+function showUnappliedModal(p) {
+  var old = $('unapplied-modal'); if (old) old.remove();
+  var m = document.createElement('div');
+  m.id = 'unapplied-modal';
+  m.className = 'fixed inset-0 bg-slate-title/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in';
+  m.innerHTML = [
+    '<div class="bg-surface-card rounded-[24px] border border-surface-border p-6 max-w-sm w-full shadow-dropdown text-center">',
+      '<div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-4 border border-amber-100">',
+        '<i data-lucide="alert-circle" class="w-6 h-6"></i>',
+      '</div>',
+      '<h3 class="text-base font-bold text-slate-title">尚未申请合伙人</h3>',
+      '<p class="text-xs text-slate-body mt-2 leading-relaxed">手机号 <span class="font-bold text-slate-title">' + p + '</span> 尚未提交立理合伙人入驻资质。请先完成申请，官方审核通过后即可获得推广分佣权限。</p>',
+      '<div class="mt-6 flex space-x-2">',
+        '<button type="button" onclick="$(\'unapplied-modal\').remove()" class="flex-1 py-2.5 rounded-full border border-surface-border text-xs font-semibold text-slate-body hover:bg-surface-subtle transition-all">返回登录</button>',
+        '<button type="button" onclick="S.pending=\'' + p + '\';S.done=false;$(\'unapplied-modal\').remove();go(\'apply\')" class="flex-1 py-2.5 rounded-full bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold shadow-sm shadow-brand-500/30 transition-all">立即申请</button>',
+      '</div>',
+    '</div>'
+  ].join('');
+  document.body.appendChild(m);
+  renderIcons();
+}
+
+// ==================== 页面 2: 申请入驻 (pApply) ====================
+
+function renderCurrentPage() {
+  pLogin();
+}
+
+function startPage() {
+  initAuth(false);
+  renderCurrentPage();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startPage);
+} else {
+  startPage();
+}
+  </script>
+</body>
+</html>
